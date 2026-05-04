@@ -193,4 +193,6 @@ For detailed token values, component specs, and platform-specific guidance:
 - **`references/patterns.md`** — Screen-level compositions: kanban board, timeline feed, service dashboard, knowledge index, stats grid, empty/error/loading states.
 - **`references/platform-mapping.md`** — HTML/CSS, React/Tailwind, SwiftUI output conventions.
 - **`references/schematics.md`** — Operator-console architecture diagrams. Layered cards as modules, SVG traces as connectors, animation grammar where flow speed encodes link load and breathing dots encode liveness.
+- **`references/glyphs.md`** — Animated state glyphs (idle, thinking, error). Pixel-grid canvas renderers for one "thinking object" entity in three states, with `mountGlyph` API and embed snippets.
+- **`references/glyphs-starter.html`** — Worked example showing the three glyphs side by side, loading the renderer module from `references/glyphs/cicrus-glyphs.js`.
 - **`references/starter.html`** — Copy-pasteable single-file starter with full dark+light token set, mode toggle, sample nav, and one worked screen.
