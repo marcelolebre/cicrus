@@ -41,10 +41,9 @@ These values are non-negotiable — they are the design.
 | Cell size | 5 px |
 | Dot per cell | 3 × 3 px, offset (1, 1) inside the cell |
 | Internal canvas | 180 × 180 px (scaled via CSS `image-rendering: pixelated`) |
-| Background (thinking, error) | `#060606` (fixed) |
-| Background (idle) | Resolved per frame — first opaque ancestor's `background-color`, then the document element, then `#060606` |
-| Thinking colour | `rgba(240, 237, 224, α)` (paper-white, fixed) |
-| Error colour | `rgba(255, 92, 92, α)` (warning red, fixed) |
+| Background (all states) | Resolved per frame — first opaque ancestor's `background-color`, then the document element, then `#060606`. None of the states paint a fixed dark backing, so the glyph composites cleanly into any page surface. |
+| Thinking colour | Resolved per frame — the canvas's inherited computed `color` (mode-aware, identical to idle) |
+| Error colour | `rgba(255, 92, 92, α)` (warning red, fixed). Error is the one state that does **not** follow page text colour — a red dot is part of the alarm signal. |
 | Idle colour | Resolved per frame — the canvas's inherited computed `color` (so it follows page text colour automatically; falls back to paper-white) |
 | Alpha quantization | 8 steps (rounded to nearest 1/8) |
 | No pilot grid | The dim background dot grid was removed — do not reintroduce it |
@@ -112,13 +111,15 @@ Most natural placements:
 
 **Thinking and error** paint a fixed `#060606` backing and read against near-black only — keep them on a dark page background. **Do not place them over `--surface` (#111) on dark mode** unless you accept that the glyph's own #060606 square will be visible — put them on the page background, not inside a card.
 
-**Idle** is mode-aware: it paints whatever opaque background-color it finds walking up its ancestor chain, and reads against the page's text colour. So idle works on both dark and light cicrus pages without configuration, and it will sit cleanly inside a `--surface` card too (it picks up the card's background). Thinking and error remain dark-mode-only by design — paper-white and warning-red pixels are tuned to read against `#060606` and don't translate to a printed-page surface. If you need a light-mode "thinking" or "error" equivalent, use a static `status-dot` with a 1.6s / 0.9s breathe (see `schematics.md`).
+**All three states** are background-aware: they paint whatever opaque background-color they find walking up the ancestor chain, falling back to the document element and finally `#060606`. So a glyph mounted inside a `--surface` card picks up the card's background, and a glyph mounted on the page picks up the page's background — in both dark and light mode, without configuration.
+
+**Idle and thinking** are also colour-aware: their dots use the canvas's inherited computed `color`, so they follow the page text colour. That makes them white on a dark cicrus page and near-black on a light cicrus page — the same legibility on both. **Error** keeps its fixed warning-red dots regardless of mode — the alarm signal is part of the meaning, and red reads as red on either background.
 
 ---
 
 ## Anti-patterns
 
-- **Don't recolor thinking or error.** Their palettes (paper-white, warning red) and state pairings are the design. No "blue thinking" or "amber warning" variants. (Idle is intentionally adaptive — it follows the page text color — but that's the only mode-aware state.)
+- **Don't recolor error.** Warning-red is the alarm signal — no "amber warning" or "blue thinking" variants. (Idle and thinking are intentionally adaptive — they follow the page text colour — but error stays red on every surface.)
 - **Don't soften the cell grid.** No CSS blur, no opacity ramps on the canvas element, no `image-rendering: auto`.
 - **Don't reintroduce the pilot grid.** The faint background dots were removed deliberately — they fight the silhouette.
 - **Don't run more than one of the same state on a screen.** One idle-blob is presence; two idle-blobs is confusion.

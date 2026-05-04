@@ -985,13 +985,13 @@ const STATES = {
   },
   thinking: {
     update: updateThinking,
-    color: COLORS.paper,
-    bg: BG_RGB,
+    resolveColor: effectiveTextColor,
+    resolveBg: effectiveBgColor,
   },
   error: {
     update: updateError,
     color: COLORS.alarm,
-    bg: BG_RGB,
+    resolveBg: effectiveBgColor,
   },
 };
 
