@@ -166,6 +166,7 @@ Lead section → heaviest treatment. Secondary → different form. Tertiary → 
 - No muted text below 4.5:1 contrast for anything a user needs to read.
 - No label text in sentence case. Labels are ALL CAPS Space Mono.
 - Data visualization: differentiate with **opacity** (100%/60%/30%) or **pattern** (solid/striped/dotted) before introducing color.
+- **Schematics:** no moving particles along traces (the line itself encodes flow via dashed animation). No border flash on event arrival; state changes via colour, not motion. No text flicker on metric refresh; numbers just change. No marching dashed borders — only trace *lines* may flow, never card *borders*.
 
 ---
 
@@ -191,4 +192,5 @@ For detailed token values, component specs, and platform-specific guidance:
 - **`references/components.md`** — Nav, mode toggle, view header, badges, filter buttons, inputs, cards (task, service, stat), kanban column, timeline item, knowledge column, alert banner, status dot, theme bar, segmented progress, toggles, scrollbar.
 - **`references/patterns.md`** — Screen-level compositions: kanban board, timeline feed, service dashboard, knowledge index, stats grid, empty/error/loading states.
 - **`references/platform-mapping.md`** — HTML/CSS, React/Tailwind, SwiftUI output conventions.
+- **`references/schematics.md`** — Operator-console architecture diagrams. Layered cards as modules, SVG traces as connectors, animation grammar where flow speed encodes link load and breathing dots encode liveness.
 - **`references/starter.html`** — Copy-pasteable single-file starter with full dark+light token set, mode toggle, sample nav, and one worked screen.

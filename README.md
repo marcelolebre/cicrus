@@ -17,6 +17,8 @@
 | [`skill/references/components.md`](./skill/references/components.md) | Component patterns with HTML: badges, cards, kanban columns, forms, tables, timelines. |
 | [`skill/references/patterns.md`](./skill/references/patterns.md) | Layout patterns: view shells, headers, navigation, empty states. |
 | [`skill/references/platform-mapping.md`](./skill/references/platform-mapping.md) | How the system maps to non-CSS surfaces (iOS, native, TUIs). |
+| `skill/references/schematics.md` | Architecture and topology diagrams in Cicrus style — system boards, service stacks, agent meshes. Includes a worked starter (`schematic-starter.html`). |
+| `skill/references/schematic-starter.html` | Minimal three-module schematic. Drop-in example showing healthy/under-load/idle states and trace flow encoding. |
 | [`skill/references/starter.html`](./skill/references/starter.html) | A single-file HTML starter that drops in Cicrus, both modes, and the core components. Open it in a browser — no build. |
 
 ---
