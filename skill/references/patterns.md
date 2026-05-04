@@ -66,7 +66,210 @@ Screen-level compositions observed in the prototype. These are the "blueprints" 
 
 ---
 
-## 3. SERVICE DASHBOARD (Status view)
+## 3. AGENT TIMELINE
+
+**Purpose:** HUD-style chronological feed of system events anchored on `now`. Use for scheduler runs, automation logs, build pipelines, monitoring streams — places where multiple events cluster within a single minute and the present moment is the focal point.
+
+Distinct from §2 Timeline Feed: that pattern is a flat ISO-timestamped event log with badges and source tags. This one strips to time + colored dot + agent name + result, anchored on a NOW marker with sub-minute clustering. Reads as a HUD readout, not a calendar agenda.
+
+### When to use
+
+- Reverse-chronological feed where multiple events share a minute
+- Events have a status (success / info / error) and a short result string
+- The `now` moment should anchor the view
+
+### When NOT to use
+
+- Events carry rich content → use task cards
+- Fewer than 4–5 events → a plain list is enough
+- Conversational user actions → use chat patterns
+
+### Structure
+
+```
+17:32  ◯  now            ← ringed marker, pulsing radar ring
+       │
+14:50  ●── AgentName     result detail
+       ●── AgentName     result detail
+       ●── AgentName     result detail   +22s
+       │
+14:49  ●── AgentName     result detail
+       │
+       ▾                 ← tail arrow, "history continues"
+```
+
+### Layout
+
+- 3-column grid: time `60px` right-aligned · rail `32px` centered · content `1fr`
+- Monospace throughout (`var(--font-mono)`)
+- Row min-height **26px**; body **13px**; time **11px** with **0.05em** letter-spacing
+- A 1px vertical spine runs down the center of the rail column for the full content height
+- Each event sits on the spine as a **7px** filled dot
+- An **18px** horizontal tick extends from the dot into the content area (visual "branch")
+- Time labels appear only on the **first event of each minute group**. Subsequent rows in the same minute keep their time cell with `visibility: hidden` so the column width and spine stay continuous
+
+### NOW marker
+
+- Hollow 9px circle: 1px border in `--success`, fill set to the host page background (`--black`) so it punches through the spine cleanly
+- Pulsing overlay ring scales `0.9× → 2.2×`, opacity `0.9 → 0`, `2.2s` ease-out infinite — the radar ping
+- Time displayed to the left at **17px / weight 500** (heavier than row times); lowercase `now` label to the right at **11px** with **0.22em** letter-spacing in `--text-disabled`
+- The spine begins at the marker's vertical center and descends — it does **not** pass through the marker
+- The NOW segment of the spine (between the marker and the first event below it) uses `--border-visible` instead of `--border`, so the "live" segment reads slightly stronger than the historical spine
+
+### Event rows
+
+Dot color encodes type:
+
+| Event type                | Dot              |
+|---------------------------|------------------|
+| Success / completed run   | `--success`      |
+| Audit / health / info     | `--interactive`  |
+| Error                     | `--accent`       |
+
+- Empty results render as a single muted word (`idle`) in `--text-disabled`. Never `"0 created, 0 errors"` noise.
+- Sub-minute offsets shown as `+22s` suffix in `--text-disabled`, **only when non-zero**
+- Two weights only: agent name **500** in `--text-primary`, result detail **400** in `--text-secondary`
+
+### Tail
+
+- Spine ends in a CSS triangle (4×5 px, `--text-disabled` border color)
+- Spine stops 5px short of the tip so the line meets the arrowhead cleanly
+
+### Strip ruthlessly
+
+- No repeated date on every row
+- No source tag (e.g. `scheduler`) when every row shares it
+- No double prefixes (`EmailResponder: EmailResponder: …`) — name appears once
+- No paired emoji + status pill — the colored dot is the only status signal
+- Place the timeline on the page background, not inside a `--surface` card. If you must put it in a card, change the NOW marker fill from `var(--black)` to whatever the card background is (`--surface` / `--surface-raised`), or the marker won't punch through cleanly
+
+### CSS skeleton
+
+```css
+.agent-timeline {
+  display: grid;
+  grid-template-columns: 60px 32px 1fr;
+  font-family: var(--font-mono);
+}
+.atl-row { display: contents; }
+.atl-row > .atl-time,
+.atl-row > .atl-rail,
+.atl-row > .atl-content {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+}
+
+.atl-time {
+  justify-content: flex-end;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--text-disabled);
+  padding-right: var(--space-sm);
+}
+.atl-time.is-hidden { visibility: hidden; }
+
+.atl-rail { position: relative; justify-content: center; }
+.atl-rail::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 1px;
+  background: var(--border);
+  transform: translateX(-0.5px);
+}
+
+.atl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  position: relative; z-index: 1;
+}
+.atl-dot.success { background: var(--success); }
+.atl-dot.info    { background: var(--interactive); }
+.atl-dot.error   { background: var(--accent); }
+.atl-dot::after {
+  content: "";
+  position: absolute;
+  left: 100%; top: 50%;
+  width: 18px; height: 1px;
+  background: var(--border);
+  transform: translateY(-0.5px);
+}
+
+.atl-content {
+  font-size: 13px;
+  gap: var(--space-sm);
+  padding-left: var(--space-sm);
+}
+.atl-name   { color: var(--text-primary);   font-weight: 500; }
+.atl-detail { color: var(--text-secondary); font-weight: 400; }
+.atl-detail.muted { color: var(--text-disabled); }
+.atl-offset { color: var(--text-disabled); margin-left: var(--space-xs); }
+
+/* ── NOW marker ── */
+.atl-row.is-now > .atl-time {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.atl-row.is-now > .atl-rail::before {
+  /* spine begins at marker center and descends, in stronger weight */
+  top: 50%;
+  background: var(--border-visible);
+}
+.atl-now-marker {
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 1px solid var(--success);
+  background: var(--black);
+  position: relative; z-index: 2;
+}
+.atl-now-marker::after {
+  content: "";
+  position: absolute; inset: -1px;
+  border-radius: 50%;
+  border: 1px solid var(--success);
+  animation: atl-pulse 2.2s ease-out infinite;
+  transform-origin: center;
+}
+.atl-now-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: lowercase;
+  color: var(--text-disabled);
+}
+@keyframes atl-pulse {
+  from { transform: scale(0.9); opacity: 0.9; }
+  to   { transform: scale(2.2); opacity: 0; }
+}
+
+/* ── Tail ── */
+.atl-row.is-tail > .atl-rail { min-height: 24px; }
+.atl-row.is-tail > .atl-rail::before {
+  top: 0;
+  bottom: 10px; /* stops 5px short of the 5px-tall arrow tip */
+}
+.atl-row.is-tail > .atl-rail::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 0; height: 0;
+  border-left:  4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top:   5px solid var(--text-disabled);
+  transform: translateX(-50%);
+}
+```
+
+### Anti-patterns (specific to this layout)
+
+- Don't draw the spine **through** the NOW marker — the marker is the anchor; the spine descends from it.
+- Don't render second-level precision on every timestamp. Minute granularity + sub-minute `+Ns` offset is the whole point.
+- Don't replace the colored dot with an icon (`✓`, `⚠`) or a status pill — the dot **is** the status.
+- Don't show repeated timestamps; group by minute and hide the duplicates' time cells with `visibility: hidden` (preserving column width — no layout shift).
+- Don't animate the dots themselves. Only the NOW marker's overlay ring pulses. Other rows are still — the spine and ticks do all the work.
+
+---
+
+## 4. SERVICE DASHBOARD (Status view)
 
 **Purpose:** Live infrastructure health. Banner + grid of service cards + failures list.
 
@@ -101,7 +304,7 @@ Screen-level compositions observed in the prototype. These are the "blueprints" 
 
 ---
 
-## 4. KNOWLEDGE INDEX (Knowledge view)
+## 5. KNOWLEDGE INDEX (Knowledge view)
 
 **Purpose:** Browse a large tagged corpus. 3-column index with filter.
 
@@ -134,7 +337,7 @@ Screen-level compositions observed in the prototype. These are the "blueprints" 
 
 ---
 
-## 5. STATS GRID (Dashboard pattern)
+## 6. STATS GRID (Dashboard pattern)
 
 **Purpose:** 4–6 headline metrics at the top of a dashboard.
 
@@ -156,7 +359,7 @@ Screen-level compositions observed in the prototype. These are the "blueprints" 
 
 ---
 
-## 6. EMPTY / ERROR / LOADING STATES
+## 7. EMPTY / ERROR / LOADING STATES
 
 ### Empty state
 
@@ -195,7 +398,7 @@ Space Mono ALL CAPS, `--text-disabled`, 12px, 48px top padding. The prototype us
 
 ---
 
-## 7. VIEW SWITCHING
+## 8. VIEW SWITCHING
 
 Views are siblings, one `.view.active` at a time. Transition = `fadeIn 0.25s` on class add. Navigation = nav links that toggle `active` and the corresponding view.
 
@@ -218,7 +421,7 @@ navLinks.forEach(link => {
 
 ---
 
-## 8. COMPOSITION CHECKLIST
+## 9. COMPOSITION CHECKLIST
 
 Before shipping any screen, verify:
 
