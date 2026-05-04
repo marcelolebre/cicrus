@@ -15,10 +15,10 @@ const DOT = 3, DOT_OFF = 1;
 const HALF = GRID / 2;
 
 const COLORS = {
-  paper: [240, 237, 224],   // idle, thinking
+  paper: [240, 237, 224],   // thinking
   alarm: [255, 92, 92],     // error
 };
-const BG = '#060606';
+const BG_RGB = [6, 6, 6];   // #060606 — fixed backing for thinking/error
 
 // ────────────────────────────────────────────────────────────
 // Shared utilities
@@ -74,74 +74,122 @@ function makeRand(seed) {
 }
 
 // ────────────────────────────────────────────────────────────
-// IDLE — slow putty blob (signed distance field)
+// IDLE — continuously wobbling putty blob (signed distance field)
 //
-//   Rendered as a continuous shape field rather than discrete
-//   particles. For each grid cell, compute its distance to a
-//   deformed sphere surface — the deformation is driven by
-//   smooth multi-frequency flow patterns evaluated in 3D.
-//   The blob morphs its shape continuously, never breaking
-//   apart, like soft putty being kneaded slowly. Bright,
-//   coherent, breathing.
+//   Rendered as a continuous shape field, not particles. The surface
+//   is the sum of: multi-frequency ripples, three traveling 3D bulges
+//   that drift across the body, a slowly rotating squash axis, an
+//   off-center pull that breaks symmetry, and a wobble drive built
+//   from three non-commensurate sines (7.3s / 4.1s / 2.7s) with a
+//   guaranteed floor — so the surface tension never goes silent.
+//   Soap-bubble-in-wind: always asymmetric, always wobbling, varying
+//   in intensity but never still. The dot color follows the host
+//   page's inherited text color automatically (mode-aware).
 // ────────────────────────────────────────────────────────────
 const IDLE_R = 7;
 
 function updateIdle(t, scene) {
   const intensities = scene.intensities;
 
-  // Slow whole-body translation — the blob drifts gently
+  // ── Continuous wobble drive ──
+  // Three non-commensurate sines (periods 7.3s, 4.1s, 2.7s), each in [0,1].
+  // The 0.45 floor on totalTension guarantees the wobble never stops.
+  const wobble1 = (1 + Math.sin(t * TAU / 7.3)) * 0.5;
+  const wobble2 = (1 + Math.sin(t * TAU / 4.1)) * 0.5;
+  const wobble3 = (1 + Math.sin(t * TAU / 2.7)) * 0.5;
+  const totalTension = 0.45 + wobble1 * 0.55 + wobble2 * 0.45 + wobble3 * 0.30;
+  const pullStrength = totalTension * 0.20;
+  const bulgeMult = 0.7 + totalTension * 0.4;
+  const squashMult = 0.8 + totalTension * 0.4;
+
+  // ── Slow whole-body slosh translation (≤ ~0.8 cells) ──
   const sloshX = Math.sin(t * 0.05 * TAU) * 0.5 + Math.sin(t * 0.07 * TAU + 1.2) * 0.3;
   const sloshY = Math.sin(t * 0.06 * TAU + 2.0) * 0.5 + Math.cos(t * 0.04 * TAU) * 0.3;
 
-  // Stronger radius breath — clearly visible inhale/exhale on a ~10s cycle,
-  // plus a smaller faster pulse to give it organic irregularity.
+  // ── Body breath ──
   const breath =
     1 +
     Math.sin(t * 0.10 * TAU) * 0.13 +
     Math.sin(t * 0.17 * TAU + 0.7) * 0.04;
   const radius = IDLE_R * breath;
+  const projR = radius * 1.6;
 
-  // Light direction
+  // ── Light direction (screen frame, normalized) ──
   const LX = -0.40, LY = -0.45, LZ = 0.80;
   const Llen = Math.sqrt(LX*LX + LY*LY + LZ*LZ);
   const lx = LX / Llen, ly = LY / Llen, lz = LZ / Llen;
 
-  // Faster deformation drift — the blob's shape morphs visibly,
-  // not just imperceptibly.
+  // ── Surface ripple time multipliers ──
   const dt1 = t * 0.10;
   const dt2 = t * 0.14;
   const dt3 = t * 0.08;
 
-  // Stronger deformation amplitudes so the blob is clearly putty-like,
-  // not a clean sphere.
-  const DEF_A = 0.16;
-  const DEF_B = 0.12;
-  const DEF_C = 0.09;
-  const DEF_D = 0.07;
+  // ── Three traveling 3D bulges (each direction drifts independently) ──
+  const [b1x, b1y, b1z] = swirlAxis(t, 0.04, 0.0);
+  const [b2x, b2y, b2z] = swirlAxis(t, 0.05, 2.1);
+  const [b3x, b3y, b3z] = swirlAxis(t, 0.07, 4.3);
+  const B1_S = 0.20, B1_W = 0.70;
+  const B2_S = 0.16, B2_W = 0.85;
+  const B3_S = 0.14, B3_W = 0.95;
+  const B1_K = 1 / (B1_W * B1_W * 0.5);
+  const B2_K = 1 / (B2_W * B2_W * 0.5);
+  const B3_K = 1 / (B3_W * B3_W * 0.5);
 
+  // ── Drifting squash axis ──
+  const [sax, say, saz] = swirlAxis(t, 0.08, 1.3);
+  const squashFactor = Math.sin(t * 0.12 * TAU) * 0.16;
+
+  // ── Off-center pull (3D direction drifts at 0.06 / 0.09 Hz) ──
+  const pt1 = t * 0.06 * TAU;
+  const pt2 = t * 0.09 * TAU;
+  let pullX = Math.sin(pt1) * 0.7 + Math.sin(pt2 + 1.1) * 0.3;
+  let pullY = Math.cos(pt2) * 0.7 + Math.sin(pt1 + 0.5) * 0.3;
+  let pullZ = Math.cos(pt1 + 1.7) * 0.5 + Math.cos(pt2 * 1.3) * 0.5;
+  const pLen = Math.sqrt(pullX*pullX + pullY*pullY + pullZ*pullZ) || 1;
+  pullX /= pLen; pullY /= pLen; pullZ /= pLen;
+
+  // ── Bbox (covers bulged surface + atmospheric glow) ──
   const cxC = HALF + sloshX;
   const cyC = HALF + sloshY;
-  const bbox = Math.ceil(radius + 2);
+  const bbox = Math.ceil(radius * (1 + 0.60) + 2);
 
   for (let gy = Math.max(0, Math.floor(cyC - bbox)); gy < Math.min(GRID, Math.ceil(cyC + bbox)); gy++) {
     for (let gx = Math.max(0, Math.floor(cxC - bbox)); gx < Math.min(GRID, Math.ceil(cxC + bbox)); gx++) {
       const dx = gx + 0.5 - cxC;
       const dy = gy + 0.5 - cyC;
       const r2D = Math.sqrt(dx * dx + dy * dy);
-      if (r2D > radius + 1.5) continue;
 
-      const xN = dx / radius;
-      const yN = dy / radius;
+      const xN = dx / projR;
+      const yN = dy / projR;
       const r2N = xN * xN + yN * yN;
       if (r2N > 1.15) continue;
       const zN = r2N < 1 ? Math.sqrt(1 - r2N) : 0;
 
-      const def =
-        Math.sin(xN * 1.6 + dt1) * Math.cos(yN * 1.4 - dt1 * 0.7) * DEF_A +
-        Math.sin(zN * 1.8 + dt2 * 0.9) * DEF_B +
-        Math.cos(xN * 2.4 - yN * 1.7 + dt3) * DEF_C +
-        Math.sin((xN + yN + zN) * 1.2 + dt2 * 1.3) * DEF_D;
+      // ── Surface ripples ──
+      const ripples =
+        Math.sin(xN * 1.6 + dt1) * Math.cos(yN * 1.4 - dt1 * 0.7) * 0.10 +
+        Math.sin(zN * 1.8 + dt2 * 0.9) * 0.08 +
+        Math.cos(xN * 2.4 - yN * 1.7 + dt3) * 0.06 +
+        Math.sin((xN + yN + zN) * 1.2 + dt2 * 1.3) * 0.05;
 
+      // ── Three traveling bulges (only contribute on the near hemisphere) ──
+      const d1 = xN * b1x + yN * b1y + zN * b1z;
+      const d2 = xN * b2x + yN * b2y + zN * b2z;
+      const d3 = xN * b3x + yN * b3y + zN * b3z;
+      let bulges = 0;
+      if (d1 > 0) bulges += B1_S * Math.exp(-(1 - d1) * (1 - d1) * B1_K);
+      if (d2 > 0) bulges += B2_S * Math.exp(-(1 - d2) * (1 - d2) * B2_K);
+      if (d3 > 0) bulges += B3_S * Math.exp(-(1 - d3) * (1 - d3) * B3_K);
+
+      // ── Drifting squash ──
+      const axisDot = xN * sax + yN * say + zN * saz;
+      const squash = squashFactor * (axisDot * axisDot - 0.5);
+
+      // ── Off-center pull ──
+      const pullDot = xN * pullX + yN * pullY + zN * pullZ;
+      const pull = pullDot * pullStrength;
+
+      const def = ripples + bulges * bulgeMult + squash * squashMult + pull;
       const surfaceR = radius * (1 + def);
       const fieldDist = r2D - surfaceR;
 
@@ -150,25 +198,35 @@ function updateIdle(t, scene) {
         const innerF = (-fieldDist - 2.5) / radius;
         intensity = 0.62 - innerF * 0.18;
       } else if (fieldDist < 0) {
-        const t2 = -fieldDist / 2.5;
-        intensity = 0.62 + (1 - t2) * 0.18;
+        const tFD = -fieldDist / 2.5;
+        intensity = 0.62 + (1 - tFD) * 0.18;
       } else {
-        const t2 = fieldDist / 1.8;
-        if (t2 > 1) continue;
+        if (fieldDist / 1.8 > 1) continue;
         intensity = 0.80 * Math.exp(-fieldDist * fieldDist * 0.7);
       }
 
+      // ── Lambertian shading ──
       const lambert = Math.max(0, xN * lx + yN * ly + zN * lz);
-      const ambient = 0.55;
-      const shading = ambient + (1 - ambient) * lambert;
+      const diffuse = Math.pow(lambert, 0.85);
+      const ambient = 0.32;
+      const shading = ambient + (1 - ambient) * diffuse;
       intensity *= shading;
 
+      // ── Specular highlight ──
+      if (lambert > 0.85) {
+        intensity += Math.pow((lambert - 0.85) / 0.15, 2.5) * 0.18;
+      }
+
+      // ── Rim darkening ──
+      intensity *= 0.78 + 0.22 * Math.pow(zN, 0.6);
+
+      // ── Internal flow boost (only inside surface) ──
       if (fieldDist < 0) {
         const surfaceFlow =
           Math.sin(xN * 3.0 + dt1 * 1.2) * Math.cos(yN * 2.5 - dt2) +
           Math.sin(zN * 2.8 + dt2 * 0.8) * 0.7;
         if (surfaceFlow > 0.4) {
-          intensity += Math.pow((surfaceFlow - 0.4) / 1.3, 1.4) * 0.20;
+          intensity += Math.pow((surfaceFlow - 0.4) / 1.3, 1.4) * 0.16 * shading;
         }
       }
 
@@ -857,11 +915,51 @@ function updateError(t, scene, dt) {
 }
 
 // ────────────────────────────────────────────────────────────
+// Mode-aware color resolution (idle only)
+//
+// Idle's dot color and canvas backing are resolved per frame from
+// the host page's actual computed styles, so the glyph follows
+// dark/light mode automatically without any consumer-defined CSS
+// variable. Foreground = the canvas's inherited `color`; background
+// = the first opaque ancestor's background-color (then the document
+// element, then a literal #060606 fallback). Thinking and error are
+// fixed (paper-white / warning red on #060606).
+// ────────────────────────────────────────────────────────────
+function parseRgbString(s) {
+  if (!s) return null;
+  const m = s.match(/-?\d*\.?\d+/g);
+  if (!m || m.length < 3) return null;
+  return [Math.round(+m[0]), Math.round(+m[1]), Math.round(+m[2])];
+}
+
+function effectiveTextColor(canvas) {
+  return parseRgbString(getComputedStyle(canvas).color) || COLORS.paper;
+}
+
+function effectiveBgColor(canvas) {
+  let node = canvas.parentElement;
+  while (node && node.nodeType === 1) {
+    const bg = getComputedStyle(node).backgroundColor;
+    const m = bg ? bg.match(/-?\d*\.?\d+/g) : null;
+    if (m && m.length >= 3) {
+      const a = m.length >= 4 ? +m[3] : 1;
+      if (a >= 0.99) {
+        return [Math.round(+m[0]), Math.round(+m[1]), Math.round(+m[2])];
+      }
+    }
+    node = node.parentElement;
+  }
+  const docBg = parseRgbString(getComputedStyle(document.documentElement).backgroundColor);
+  return docBg || BG_RGB;
+}
+
+// ────────────────────────────────────────────────────────────
 // Render
 // ────────────────────────────────────────────────────────────
 function renderScene(scene) {
   const ctx = scene.ctx;
-  ctx.fillStyle = BG;
+  const bg = scene.bg;
+  ctx.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
   ctx.fillRect(0, 0, SIZE, SIZE);
   const intensities = scene.intensities;
   const cR = scene.color[0], cG = scene.color[1], cB = scene.color[2];
@@ -876,10 +974,25 @@ function renderScene(scene) {
   }
 }
 
+// Each STATES entry has: update fn, plus EITHER a fixed color/bg pair
+// (thinking, error) OR resolveColor/resolveBg fns called per frame
+// against the live canvas (idle).
 const STATES = {
-  idle:     { color: COLORS.paper, update: updateIdle },
-  thinking: { color: COLORS.paper, update: updateThinking },
-  error:    { color: COLORS.alarm, update: updateError },
+  idle: {
+    update: updateIdle,
+    resolveColor: effectiveTextColor,
+    resolveBg: effectiveBgColor,
+  },
+  thinking: {
+    update: updateThinking,
+    color: COLORS.paper,
+    bg: BG_RGB,
+  },
+  error: {
+    update: updateError,
+    color: COLORS.alarm,
+    bg: BG_RGB,
+  },
 };
 
 // ────────────────────────────────────────────────────────────
@@ -925,10 +1038,13 @@ export function mountGlyph(target, options = {}) {
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
 
+  let active = STATES[stateName];
+
   const scene = {
     ctx,
-    color: STATES[stateName].color,
-    update: STATES[stateName].update,
+    update: active.update,
+    color: active.color || COLORS.paper,
+    bg: active.bg || BG_RGB,
     intensities: new Float32Array(GRID * GRID),
   };
 
@@ -937,6 +1053,11 @@ export function mountGlyph(target, options = {}) {
   let elapsed = 0;
   let paused = true;
 
+  function resolveColors() {
+    scene.color = active.color || active.resolveColor(canvas);
+    scene.bg = active.bg || active.resolveBg(canvas);
+  }
+
   function frame(ts) {
     if (paused) return;
     const dtSec = lastTs ? Math.min(0.1, Math.max(0, (ts - lastTs) / 1000)) : 0;
@@ -944,6 +1065,7 @@ export function mountGlyph(target, options = {}) {
     elapsed += dtSec;
     scene.intensities.fill(0);
     scene.update(elapsed, scene, dtSec);
+    resolveColors();
     renderScene(scene);
     rafId = requestAnimationFrame(frame);
   }
@@ -964,8 +1086,8 @@ export function mountGlyph(target, options = {}) {
 
   function setState(name) {
     if (!STATES[name]) throw new Error(`cicrus-glyphs: unknown state "${name}"`);
-    scene.color = STATES[name].color;
-    scene.update = STATES[name].update;
+    active = STATES[name];
+    scene.update = active.update;
     delete scene.thinkRing;
     delete scene.errorRingShards;
   }

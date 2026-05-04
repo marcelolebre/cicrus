@@ -21,7 +21,7 @@ Pick exactly one glyph per "thinking object" on a screen. They are the one expre
 ## Visual description
 
 ### Idle
-Slow breathing putty blob — a continuous signed distance field, not particles. Whole-body drift on a ~14–20s cycle, radius breath on a ~10s cycle, smooth multi-frequency surface deformation so the silhouette is irregular and organically morphing. Bright (`#f0ede0`), high ambient, no ring. Looks asleep but alive.
+Continuously wobbling putty blob — a signed distance field, not particles. The surface is the sum of multi-frequency ripples, three traveling 3D bulges that drift across the body at independent rates, a slowly turning squash axis, an off-center radial pull, and a wobble drive built from three non-commensurate sines (periods 7.3s / 4.1s / 2.7s) with a guaranteed floor — so the surface tension never goes silent. Whole-body slosh on a ~14–20s cycle, radius breath on a ~10s cycle. Visibly asymmetric: the silhouette never settles into a clean sphere. Faint specular hot spot and rim darkening for 3D form. No ring. Soap bubble in wind: surface tension fighting drift, varying in intensity but never still. **Mode-aware** — the dot color follows the host page's inherited text color and the canvas backing follows its background, automatically, no consumer setup required.
 
 ### Thinking
 Siri-style swirling sphere. ~360 particles distributed by Fibonacci-sphere over a tight outer shell, sloshed and rotated as a rigid body. Three independent swirl systems wrap the sphere with bright spiral bands (different axes, speeds, pitches) — they continuously combine and dissolve like cream poured into coffee. Around the sphere: a fine ink-line ring with uneven thickness, beating to a heartbeat envelope (lub-dub-rest, 1.4s period), with a traveling pulse that varies speed and direction. The pulse spawns sparks that fly off radially, an outer halo that bleeds energy outward, and occasional jagged arc-lightning across the ring's interior.
@@ -41,9 +41,11 @@ These values are non-negotiable — they are the design.
 | Cell size | 5 px |
 | Dot per cell | 3 × 3 px, offset (1, 1) inside the cell |
 | Internal canvas | 180 × 180 px (scaled via CSS `image-rendering: pixelated`) |
-| Background | `#060606` |
-| Idle / thinking colour | `rgba(240, 237, 224, α)` (paper-white) |
-| Error colour | `rgba(255, 92, 92, α)` (warning red) |
+| Background (thinking, error) | `#060606` (fixed) |
+| Background (idle) | Resolved per frame — first opaque ancestor's `background-color`, then the document element, then `#060606` |
+| Thinking colour | `rgba(240, 237, 224, α)` (paper-white, fixed) |
+| Error colour | `rgba(255, 92, 92, α)` (warning red, fixed) |
+| Idle colour | Resolved per frame — the canvas's inherited computed `color` (so it follows page text colour automatically; falls back to paper-white) |
 | Alpha quantization | 8 steps (rounded to nearest 1/8) |
 | No pilot grid | The dim background dot grid was removed — do not reintroduce it |
 | Anti-aliasing | None on the cell grid; `image-rendering: pixelated` is required |
@@ -108,15 +110,15 @@ Most natural placements:
 - **Dashboard tile** for an agent/worker, 200px size, with a `t-title` label below.
 - **Loading takeover**, 240–288px size, centered on a card that's currently fetching its content. Replaces `[LOADING...]` (`components.md` §20) when the operation is long-running enough to warrant atmospheric weight.
 
-Always keep the background dark (`#060606` or `--black`). The glyph paints its own background and its silhouette only reads against near-black. **Do not place over `--surface` (#111) on dark mode** unless you accept that the glyph's own #060606 backing will be visible as a square — instead put the glyph on the page background, not inside a card.
+**Thinking and error** paint a fixed `#060606` backing and read against near-black only — keep them on a dark page background. **Do not place them over `--surface` (#111) on dark mode** unless you accept that the glyph's own #060606 square will be visible — put them on the page background, not inside a card.
 
-**Light mode:** the glyph is dark-mode-only by design. Paper-white pixels on a #060606 backing don't translate to a printed-page surface. If you need a light-mode equivalent, use a static `status-dot` with a 2.8s breathe (see `schematics.md`).
+**Idle** is mode-aware: it paints whatever opaque background-color it finds walking up its ancestor chain, and reads against the page's text colour. So idle works on both dark and light cicrus pages without configuration, and it will sit cleanly inside a `--surface` card too (it picks up the card's background). Thinking and error remain dark-mode-only by design — paper-white and warning-red pixels are tuned to read against `#060606` and don't translate to a printed-page surface. If you need a light-mode "thinking" or "error" equivalent, use a static `status-dot` with a 1.6s / 0.9s breathe (see `schematics.md`).
 
 ---
 
 ## Anti-patterns
 
-- **Don't recolor.** The two palettes (paper-white, warning red) and their state pairings are the design. No "blue thinking" or "amber warning" variants.
+- **Don't recolor thinking or error.** Their palettes (paper-white, warning red) and state pairings are the design. No "blue thinking" or "amber warning" variants. (Idle is intentionally adaptive — it follows the page text color — but that's the only mode-aware state.)
 - **Don't soften the cell grid.** No CSS blur, no opacity ramps on the canvas element, no `image-rendering: auto`.
 - **Don't reintroduce the pilot grid.** The faint background dots were removed deliberately — they fight the silhouette.
 - **Don't run more than one of the same state on a screen.** One idle-blob is presence; two idle-blobs is confusion.
