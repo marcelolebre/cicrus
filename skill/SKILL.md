@@ -190,7 +190,7 @@ For detailed token values, component specs, and platform-specific guidance:
 
 - **`references/tokens.md`** — Fonts, type scale, color system (dark + light with WCAG ratios), spacing scale, grid, motion, iconography, dot-matrix motif, badge taxonomy.
 - **`references/components.md`** — Nav, mode toggle, view header, badges, filter buttons, inputs, cards (task, service, stat), kanban column, timeline item, knowledge column, alert banner, status dot, theme bar, segmented progress, toggles, scrollbar.
-- **`references/patterns.md`** — Screen-level compositions: kanban board, timeline feed, service dashboard, knowledge index, stats grid, empty/error/loading states.
+- **`references/patterns.md`** — Screen-level compositions: kanban board, timeline feed, agent timeline, notification inbox, service dashboard, knowledge index, stats grid, empty/error/loading states.
 - **`references/platform-mapping.md`** — HTML/CSS, React/Tailwind, SwiftUI output conventions.
 - **`references/schematics.md`** — Operator-console architecture diagrams. Layered cards as modules, SVG traces as connectors, animation grammar where flow speed encodes link load and breathing dots encode liveness.
 - **`references/glyphs.md`** — Animated state glyphs (idle, thinking, error). Pixel-grid canvas renderers for one "thinking object" entity in three states, with `mountGlyph` API and embed snippets.

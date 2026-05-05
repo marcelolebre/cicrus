@@ -269,7 +269,228 @@ Dot color encodes type:
 
 ---
 
-## 4. SERVICE DASHBOARD (Status view)
+## 4. NOTIFICATION INBOX
+
+**Purpose:** A list of system-generated notifications that arrive over time and need triage — read, archive, inspect. System messages, task outcomes, alerts.
+
+Distinct from §2 Timeline Feed and §3 Agent Timeline: those are time-ordered streams meant to be **observed**. This is a list meant to be **triaged** — every item has a state (read/unread, routine/exception) and an outcome the user picks. Reads as a notification center, not a calendar agenda.
+
+### When to use
+
+- Reverse-chronological list of system events that require triage (read / archive / inspect)
+- Every item has a state and a typical outcome ("read it and move on")
+- Most items are routine completions; warnings and failures are the exception
+
+### When NOT to use
+
+- Time-ordered streams meant to be observed, not triaged → use §2 Timeline Feed or §3 Agent Timeline
+- Records the user actively edits with rich affordances → use a list-detail layout
+- Conversational threads → use a chat pattern
+
+### Core principle
+
+Routine is quiet, exceptions are loud. 99% of notifications are routine completions and should fade; only warnings and failures should reach for the eye.
+
+### Structure
+
+```
+┌─ Header ──────────────────────────────────────────────┐
+│  cicrus / inbox  · 12 unread       bulk · 17:32       │
+├─ Tabs ────────────────────────────────────────────────┤
+│  inbox (12)   archived (84)                            │
+├─ Section: today ─────────────────────────────────────┤
+│  ●  AgentName                  17:31      [actions]   │
+│  ┃  AgentName — failed         17:25      [actions]   │
+│     AgentName                  17:22      [actions]   │
+│     ▾ expanded detail (in-list, no modal)             │
+│       body / metadata / actions / notes               │
+├─ Section: yesterday ─────────────────────────────────┤
+│     AgentName                  23:48                   │
+│     ...                                                │
+└───────────────────────────────────────────────────────┘
+```
+
+### Layout
+
+- Header bar: wordmark · unread count · spacer · bulk actions · clock
+- Tab strip: `inbox` / `archived`, each with a count
+- Day section dividers (sentence-case label, mono, muted)
+- Row: 3-zone flex — name + inline meta (`1fr`) · time (`auto`) · hover-revealed actions (`auto`)
+- Optional inline-detail variant (expanded state, in-list, no modal)
+
+### Row layout
+
+- Padding: `6px 12px 6px 24px` — the 24px left reserves the edge-mark gutter
+- Min-height: **36px**
+- Radius: **4px** (technical surface, per `tokens.md` §4)
+
+### Edge mark
+
+Absolute, `left: 10px`, vertically centered.
+
+| State | Mark | Color |
+|---|---|---|
+| routine unread | 6px circle | `--interactive` (info blue) |
+| warning | 3px × 18px bar | `--warning` |
+| danger | 3px × 18px bar | `--accent` |
+| read | none | — |
+
+The mark is the single severity signal. Every redundant severity affordance (status pill, emoji, color text) is dropped — see "Strip ruthlessly".
+
+### Row states
+
+- **unread:** name in `--text-primary`, edge mark present
+- **read:** name in `--text-secondary`, no edge mark
+- **danger:** row tinted with `--accent-subtle`
+- **hover:** background → `--surface-raised`, action opacity → 1
+- **expanded:** background → `--surface-raised`, bottom corners squared so row + detail surface read as one continuous block
+
+### Meta tag (inline, after the name)
+
+Mono 11px. `--text-disabled` by default; `--warning` or `--accent` when matching the edge mark. Render only when state is non-default — never decorate a routine completion. Forbidden meta: `completed`, `ok`, `done`, `✅`, `INFO`, any pill that names a severity already encoded by the edge mark.
+
+### Typography
+
+| Element | Font | Size | Color |
+|---|---|---|---|
+| Wordmark | mono | 13px / 0.04em | `--text-secondary` |
+| Tab label (on) | mono | 13px, underlined | `--text-primary` |
+| Tab label (off) | mono | 13px | `--text-disabled` |
+| Day section label | mono | 11px / 0.04em | `--text-disabled` |
+| Row name (unread) | sans | 14px | `--text-primary` |
+| Row name (read) | sans | 14px | `--text-secondary` |
+| Meta / time | mono | 11–12px | `--text-disabled` |
+| Buttons (hover-revealed) | mono | 12px, 0.5px border | `--text-secondary`, hover bg `--surface-raised` |
+
+### Inline detail (expanded variant)
+
+Replaces the modal pattern. Click a row to expand beneath it; click again or click another row to collapse / switch. **Only one expanded at a time.**
+
+- Detail surface shares the row's tinted background — row + detail read as one continuous block. **No outer border, no card chrome.**
+- Detail content x-aligns with the row's name — `24px` from the container edge.
+- Body: sans 14px, line-height 1.55. Inline mono code chips for paths / identifiers — mono 12px on `--black`, 4px radius, `word-break: break-all`.
+- Metadata row: `created HH:MM:SS   updated HH:MM:SS`, mono 11px in `--text-disabled`. Day-level date is **omitted** — the section header carries it.
+- Action row: same buttons as the hover state (archive, etc.).
+- Notes section: mono 11px label, separated by a 0.5px `--border` top rule, followed by empty-state copy and an input + send button row.
+
+### Strip ruthlessly
+
+Source designs typically arrive with several elements signaling the same thing. Drop:
+
+- Severity-named status pill (`INFO`, `WARNING`) when an edge mark already encodes severity
+- Type pill that's the only category in view (`task-outcome` when every row is one)
+- Status emoji (✅, ⚠️) when an edge mark or text already encodes status
+- The default verb (`completed`) — its absence implies it. Render explicit verbs only for non-default states (`failed`, `slow`, `blocked`)
+- Per-row card chrome (border + shadow + radius) — the list is one surface
+- Per-row dates when a day section header carries them
+- Modal title that repeats the row name on expand
+- A `body` label above the body
+
+Net effect on a typical row: a name and a timestamp. Anything else has earned its place.
+
+### CSS skeleton
+
+```css
+.inbox-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 36px;
+  padding: 6px 12px 6px 24px;
+  border-radius: 4px;
+}
+.inbox-row > .inbox-name { flex: 1; min-width: 0; }
+.inbox-row > .inbox-time { font-family: var(--font-mono); font-size: 11px; color: var(--text-disabled); }
+.inbox-row > .inbox-actions { opacity: 0; }
+
+.inbox-name {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.inbox-row.is-read   .inbox-name { color: var(--text-secondary); }
+.inbox-row.is-danger { background: var(--accent-subtle); }
+.inbox-row:hover,
+.inbox-row.is-expanded {
+  background: var(--surface-raised);
+}
+.inbox-row:hover > .inbox-actions { opacity: 1; }
+.inbox-row.is-expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ── Edge mark ── */
+.inbox-row::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.inbox-row.is-unread::before {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--interactive);
+}
+.inbox-row.is-warning::before {
+  width: 3px; height: 18px;
+  background: var(--warning);
+}
+.inbox-row.is-danger::before {
+  width: 3px; height: 18px;
+  background: var(--accent);
+}
+.inbox-row.is-read::before { content: none; }
+
+/* ── Inline meta ── */
+.inbox-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-disabled);
+  margin-left: var(--space-xs);
+}
+.inbox-meta.is-warning { color: var(--warning); }
+.inbox-meta.is-danger  { color: var(--accent); }
+
+/* ── Inline detail ── */
+.inbox-detail {
+  background: inherit; /* picks up row tint */
+  padding: var(--space-md) 12px var(--space-md) 24px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.inbox-detail .code-chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--black);
+  border-radius: 4px;
+  padding: 0 4px;
+  word-break: break-all;
+}
+.inbox-detail .meta-row {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-disabled);
+}
+.inbox-detail .notes {
+  border-top: 0.5px solid var(--border);
+  padding-top: var(--space-sm);
+}
+```
+
+### Anti-patterns (specific to this layout)
+
+- **Don't recolor the routine edge mark.** It is `--interactive` for "system info" — repurposing it for category fragments the severity vocabulary.
+- **Don't paint the entire row red on danger.** Tint with `--accent-subtle`; the edge mark is the loud signal, the tint is just the room dimming.
+- **Don't animate the expand/collapse.** State changes are events, not eases (`DESIGN.md` §2.8). Show the detail block instantly under the row.
+- **Don't open a modal from a row.** The inline-detail variant is the modal — using both creates two competing surfaces for the same record.
+- **Don't render a "mark all as read" button when there are zero unread.** The bulk-action area collapses to empty rather than rendering disabled buttons.
+- **Don't pair an edge mark with a severity pill.** They encode the same thing; the mark is the cheaper signal.
+
+---
+
+## 5. SERVICE DASHBOARD (Status view)
 
 **Purpose:** Live infrastructure health. Banner + grid of service cards + failures list.
 
@@ -304,7 +525,7 @@ Dot color encodes type:
 
 ---
 
-## 5. KNOWLEDGE INDEX (Knowledge view)
+## 6. KNOWLEDGE INDEX (Knowledge view)
 
 **Purpose:** Browse a large tagged corpus. 3-column index with filter.
 
@@ -337,7 +558,7 @@ Dot color encodes type:
 
 ---
 
-## 6. STATS GRID (Dashboard pattern)
+## 7. STATS GRID (Dashboard pattern)
 
 **Purpose:** 4–6 headline metrics at the top of a dashboard.
 
@@ -359,7 +580,7 @@ Dot color encodes type:
 
 ---
 
-## 7. EMPTY / ERROR / LOADING STATES
+## 8. EMPTY / ERROR / LOADING STATES
 
 ### Empty state
 
@@ -398,7 +619,7 @@ Space Mono ALL CAPS, `--text-disabled`, 12px, 48px top padding. The prototype us
 
 ---
 
-## 8. VIEW SWITCHING
+## 9. VIEW SWITCHING
 
 Views are siblings, one `.view.active` at a time. Transition = `fadeIn 0.25s` on class add. Navigation = nav links that toggle `active` and the corresponding view.
 
@@ -421,7 +642,7 @@ navLinks.forEach(link => {
 
 ---
 
-## 9. COMPOSITION CHECKLIST
+## 10. COMPOSITION CHECKLIST
 
 Before shipping any screen, verify:
 
