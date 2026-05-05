@@ -1,6 +1,6 @@
 # State Glyphs — Animated Operator-Console Signals
 
-Three pixel-grid canvas animations depicting one "thinking object" entity in three states. They are the operator-console equivalent of a status light — but where a `status-dot` (see `components.md` §8) is a flat 8×8 signal, a state glyph is a 36×36 pixel-grid sphere with character. Use them for any place a system component is performing real cognitive or background work and a static dot would be too quiet.
+Three pixel-grid canvas animations depicting one "thinking object" entity in three states. They are the operator-console equivalent of a status light — but where a `status-dot` (see `components.md` §8) is a flat 8×8 signal, a state glyph is a 96×96 pixel-grid sphere with character. Use them for any place a system component is performing real cognitive or background work and a static dot would be too quiet.
 
 The renderer is `glyphs/cicrus-glyphs.js` — a single ES module, no dependencies, pure 2D canvas. See `glyphs-starter.html` for a worked example.
 
@@ -24,10 +24,10 @@ Pick exactly one glyph per "thinking object" on a screen. They are the one expre
 Continuously wobbling putty blob — a signed distance field, not particles. The surface is the sum of multi-frequency ripples, three traveling 3D bulges that drift across the body at independent rates, a slowly turning squash axis, an off-center radial pull, and a wobble drive built from three non-commensurate sines (periods 7.3s / 4.1s / 2.7s) with a guaranteed floor — so the surface tension never goes silent. Whole-body slosh on a ~14–20s cycle, radius breath on a ~10s cycle. Visibly asymmetric: the silhouette never settles into a clean sphere. Faint specular hot spot and rim darkening for 3D form. No ring. Soap bubble in wind: surface tension fighting drift, varying in intensity but never still. **Mode-aware** — the dot color follows the host page's inherited text color and the canvas backing follows its background, automatically, no consumer setup required.
 
 ### Thinking
-Siri-style swirling sphere. ~360 particles distributed by Fibonacci-sphere over a tight outer shell, sloshed and rotated as a rigid body. Three independent swirl systems wrap the sphere with bright spiral bands (different axes, speeds, pitches) — they continuously combine and dissolve like cream poured into coffee. Around the sphere: a fine ink-line ring with uneven thickness, beating to a heartbeat envelope (lub-dub-rest, 1.4s period), with a traveling pulse that varies speed and direction. The pulse spawns sparks that fly off radially, an outer halo that bleeds energy outward, and occasional jagged arc-lightning across the ring's interior.
+Siri-style swirling sphere. ~2400 particles distributed by Fibonacci-sphere over a tight outer shell, sloshed and rotated as a rigid body. Three independent swirl systems wrap the sphere with bright spiral bands (different axes, speeds, pitches) — they continuously combine and dissolve like cream poured into coffee. Around the sphere: a fine ink-line ring (a perfect circle — the only ring of the three with no radius wobble), beating to a heartbeat envelope (lub-dub-rest, 1.4s period), with a traveling pulse that varies speed and direction. The pulse spawns sparks that fly off radially, an outer halo that bleeds energy outward, and occasional jagged arc-lightning across the ring's interior.
 
 ### Error
-The thinking sphere, broken. The 360 particles are bound to 12 fragments (an "asteroid breakup"), each with its own permanent outward drift and oscillation — the body is no longer a sphere but a cloud of chunks that almost reassemble. Stuttering rotation (servos failing — yaw advances in 8 discrete steps/sec, pitch in 5, roll in 6). Periodic crashes every ~3s shoot fragments outward; disintegration events every ~7.3s scatter particles for ~200ms; brown-outs every ~4s briefly dim everything to 20% for ~130ms. Swirl phases occasionally jump backward. The ring is shattered — five permanent fixed gaps plus transient tears, heavy radius wobble, ~18% per-segment dropout, arrhythmic heartbeat. No sparks, no halo, no arc lightning — the electricity is gone. Color: warning red `#ff5c5c`.
+The thinking sphere, broken. The 2400 particles are bound to 12 fragments (an "asteroid breakup"), each with its own permanent outward drift and oscillation — the body is no longer a sphere but a cloud of chunks that almost reassemble. Stuttering rotation (servos failing — yaw advances in 8 discrete steps/sec, pitch in 5, roll in 6). Periodic crashes every ~3s shoot fragments outward; disintegration events every ~7.3s scatter particles for ~200ms; brown-outs every ~4s briefly dim everything to 20% for ~130ms. Swirl phases occasionally jump backward. The ring is shattered — five permanent fixed gaps plus transient tears, heavy radius wobble, ~18% per-segment dropout, arrhythmic heartbeat. No sparks, no halo, no arc lightning — the electricity is gone. Color: warning red `#ff5c5c`.
 
 ---
 
@@ -37,10 +37,10 @@ These values are non-negotiable — they are the design.
 
 | | Value |
 |---|---|
-| Logical grid | 36 × 36 cells |
-| Cell size | 5 px |
-| Dot per cell | 3 × 3 px, offset (1, 1) inside the cell |
-| Internal canvas | 180 × 180 px (scaled via CSS `image-rendering: pixelated`) |
+| Logical grid | 96 × 96 cells |
+| Cell size | 2 px |
+| Dot per cell | 1 × 1 px, offset (0, 0) inside the cell |
+| Internal canvas | 192 × 192 px (scaled via CSS `image-rendering: pixelated`) |
 | Background (all states) | Resolved per frame — first opaque ancestor's `background-color`, then the document element, then `#060606`. None of the states paint a fixed dark backing, so the glyph composites cleanly into any page surface. |
 | Thinking colour | Resolved per frame — the canvas's inherited computed `color` (mode-aware, identical to idle) |
 | Error colour | `rgba(255, 92, 92, α)` (warning red, fixed). Error is the one state that does **not** follow page text colour — a red dot is part of the alarm signal. |
@@ -49,7 +49,7 @@ These values are non-negotiable — they are the design.
 | No pilot grid | The dim background dot grid was removed — do not reintroduce it |
 | Anti-aliasing | None on the cell grid; `image-rendering: pixelated` is required |
 
-**Sizing:** the displayed `size` (CSS pixels) can be anything, but multiples of 36 (180, 216, 252, 288) keep each cell on whole pixels for the sharpest result. Other sizes still render correctly via pixelated scaling but each cell straddles a fractional boundary.
+**Sizing:** the displayed `size` (CSS pixels) can be anything, but multiples of 96 (192, 288, 384, 480) keep each cell on whole pixels for the sharpest result. Other sizes still render correctly via pixelated scaling but each cell straddles a fractional boundary.
 
 ---
 

@@ -8,10 +8,10 @@
 
 const TAU = Math.PI * 2;
 const PHI_GOLD = Math.PI * (1 + Math.sqrt(5));
-const GRID = 36;
-const CELL = 5;
+const GRID = 96;
+const CELL = 2;
 const SIZE = GRID * CELL;
-const DOT = 3, DOT_OFF = 1;
+const DOT = 1, DOT_OFF = 0;
 const HALF = GRID / 2;
 
 const COLORS = {
@@ -86,7 +86,7 @@ function makeRand(seed) {
 //   in intensity but never still. The dot color follows the host
 //   page's inherited text color automatically (mode-aware).
 // ────────────────────────────────────────────────────────────
-const IDLE_R = 7;
+const IDLE_R = 18;
 
 function updateIdle(t, scene) {
   const intensities = scene.intensities;
@@ -194,15 +194,15 @@ function updateIdle(t, scene) {
       const fieldDist = r2D - surfaceR;
 
       let intensity;
-      if (fieldDist < -2.5) {
-        const innerF = (-fieldDist - 2.5) / radius;
+      if (fieldDist < -6.6) {
+        const innerF = (-fieldDist - 6.6) / radius;
         intensity = 0.62 - innerF * 0.18;
       } else if (fieldDist < 0) {
-        const tFD = -fieldDist / 2.5;
+        const tFD = -fieldDist / 6.6;
         intensity = 0.62 + (1 - tFD) * 0.18;
       } else {
-        if (fieldDist / 1.8 > 1) continue;
-        intensity = 0.80 * Math.exp(-fieldDist * fieldDist * 0.7);
+        if (fieldDist / 4.8 > 1) continue;
+        intensity = 0.80 * Math.exp(-fieldDist * fieldDist * 0.10);
       }
 
       // ── Lambertian shading ──
@@ -250,8 +250,8 @@ function updateIdle(t, scene) {
 //   rhythm: sharp lub, smaller dub, then rest. Inspired by the
 //   Arrival logogram.
 // ────────────────────────────────────────────────────────────
-const THINK_R = 9;
-const THINK_N = 360;
+const THINK_R = 24;
+const THINK_N = 2400;
 
 const THINK_PARTICLES = (() => {
   const arr = [];
@@ -389,7 +389,7 @@ function updateThinking(t, scene, dt) {
   // ── Heartbeat ring with traveling pulse and energy field ──
   const cx = HALF + sloshX * THINK_R;
   const cy = HALF + sloshY * THINK_R;
-  const ringR = (THINK_R + 5) * breath;
+  const ringR = (THINK_R + 14) * breath;
 
   const beat = heartbeat(t, 1.4);
 
@@ -427,7 +427,7 @@ function updateThinking(t, scene, dt) {
     const tangY = Math.cos(ang);
     const outDir = Math.random() < 0.7 ? 1 : -1;
     const tangComp = (Math.random() - 0.5) * 0.6;
-    const speed = 6 + Math.random() * 6;
+    const speed = 16 + Math.random() * 16;
     ring.sparks.push({
       x: startX, y: startY,
       vx: (radialX * outDir + tangX * tangComp) * speed,
@@ -476,7 +476,7 @@ function updateThinking(t, scene, dt) {
     if (localEnergy < 0.06) continue;
     const cosA = Math.cos(a), sinA = Math.sin(a);
     for (let lvl = 1; lvl <= haloLevels; lvl++) {
-      const rOff = lvl * 0.85;
+      const rOff = lvl * 2.26;
       const r = ringR + rOff;
       const px = cx + cosA * r;
       const py = cy + sinA * r;
@@ -541,17 +541,14 @@ function updateThinking(t, scene, dt) {
   }
 
   // Ring with traveling pulse
-  const STEPS = 220;
+  const STEPS = 580;
   const baseB = 0.14;
   const beatB = 0.30;
   const pulseB = 0.78;
 
   for (let i = 0; i < STEPS; i++) {
     const a = (i / STEPS) * TAU;
-    const rWobble =
-      Math.sin(a * 9 + t * 0.4) * 0.10 +
-      Math.sin(a * 15 - t * 0.3) * 0.06;
-    const r = ringR + rWobble;
+    const r = ringR;
 
     let dAng = a - pulseAngle;
     while (dAng > Math.PI) dAng -= TAU;
@@ -594,8 +591,8 @@ function updateThinking(t, scene, dt) {
 //   crashes. The thinking object is recognizable but visibly
 //   damaged — fighting to maintain coherence.
 // ────────────────────────────────────────────────────────────
-const ERROR_R = 9;
-const ERROR_N = 360;
+const ERROR_R = 24;
+const ERROR_N = 2400;
 const ERROR_FRAG_COUNT = 12;
 
 const ERROR_FRAGMENTS = (() => {
@@ -823,7 +820,7 @@ function updateError(t, scene, dt) {
   // Shattered ring
   const cx = HALF + sloshX * ERROR_R;
   const cy = HALF + sloshY * ERROR_R;
-  const ringR = (ERROR_R + 5) * breath;
+  const ringR = (ERROR_R + 14) * breath;
 
   const beatBase = heartbeat(t, 1.4);
   const skipChance = Math.sin(t * 0.43) > 0.7 ? 0.0 : 1.0;
@@ -852,7 +849,7 @@ function updateError(t, scene, dt) {
     tearWidth = 0.4 + r2 * 0.6;
   }
 
-  const STEPS = 220;
+  const STEPS = 580;
   const baseB = 0.10;
   const beatB = 0.34;
 
@@ -876,10 +873,10 @@ function updateError(t, scene, dt) {
     }
 
     const rWobble =
-      Math.sin(a * 9 + t * 0.4) * 0.30 +
-      Math.sin(a * 15 - t * 0.3) * 0.20 +
-      Math.sin(a * 23 + t * 0.7) * 0.14 +
-      Math.sin(a * 37 - t * 0.5) * 0.08;
+      Math.sin(a * 9 + t * 0.4) * 0.80 +
+      Math.sin(a * 15 - t * 0.3) * 0.54 +
+      Math.sin(a * 23 + t * 0.7) * 0.38 +
+      Math.sin(a * 37 - t * 0.5) * 0.22;
     const r = ringR + rWobble;
 
     let segB = baseB + beat * beatB;
@@ -1004,10 +1001,10 @@ const STATES = {
 //   target    — host element. A <canvas> is appended to it.
 //   options.state    — 'idle' | 'thinking' | 'error' (default 'idle')
 //   options.size     — CSS pixel size of the displayed glyph (default 200).
-//                      The internal canvas stays at 180×180 logical pixels
-//                      (36×5) and is scaled via CSS with image-rendering:
+//                      The internal canvas stays at 192×192 logical pixels
+//                      (96×2) and is scaled via CSS with image-rendering:
 //                      pixelated. For sharpest pixels, use a multiple of
-//                      36 (180, 216, 252, 288).
+//                      96 (192, 288, 384, 480).
 //   options.autoplay — start the RAF loop on mount (default true)
 //
 // Returns:
