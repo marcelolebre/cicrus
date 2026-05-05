@@ -45,6 +45,7 @@ These values are non-negotiable — they are the design.
 | Thinking colour | Resolved per frame — the canvas's inherited computed `color` (mode-aware, identical to idle) |
 | Error colour | `rgba(255, 92, 92, α)` (warning red, fixed). Error is the one state that does **not** follow page text colour — a red dot is part of the alarm signal. |
 | Idle colour | Resolved per frame — the canvas's inherited computed `color` (so it follows page text colour automatically; falls back to paper-white) |
+| Contrast curve | `pow(intensity, 0.7)` applied before alpha quantization. Lifts faint pixels (silhouette edge, atmospheric glow, ring tail-offs) above the just-visible floor on both dark and light backgrounds without crushing highlights. |
 | Alpha quantization | 8 steps (rounded to nearest 1/8) |
 | No pilot grid | The dim background dot grid was removed — do not reintroduce it |
 | Anti-aliasing | None on the cell grid; `image-rendering: pixelated` is required |

@@ -37,6 +37,16 @@ function heartbeat(t, period) {
 
 function quantize(v) { return Math.round(v * 8) / 8; }
 
+// Contrast lift applied to intensity before alpha quantization. Faint
+// pixels (silhouette edge, atmospheric glow, ring tail-offs) are dim
+// enough to disappear into both dark (#000) and light (#F5F5F5) page
+// backgrounds at the raw intensity. A gamma < 1 brightens mid/low
+// values without crushing highlights — pixels at intensity 0.10
+// (the visibility threshold) lift to ~0.20, while peaks near 1.0
+// stay at 1.0. Tunes how much "atmospheric haze" survives:
+// lower = more solid, higher = more ghostly.
+const CONTRAST_GAMMA = 0.7;
+
 // Swirl axis as a 3D unit vector that drifts slowly over time.
 function swirlAxis(t, t0, ph) {
   const tt = t * t0 * TAU + ph;
@@ -963,7 +973,7 @@ function renderScene(scene) {
   for (let i = 0; i < intensities.length; i++) {
     const v = intensities[i];
     if (v < 0.10) continue;
-    const q = quantize(v);
+    const q = quantize(Math.pow(v, CONTRAST_GAMMA));
     const gx = i % GRID;
     const gy = (i / GRID) | 0;
     ctx.fillStyle = `rgba(${cR},${cG},${cB},${q})`;
