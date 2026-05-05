@@ -75,6 +75,61 @@ function basis(ax, ay, az) {
   return [ux, uy, uz, vx, vy, vz];
 }
 
+// Fractal lightning bolt via midpoint displacement. Starts with three
+// anchors — the two endpoints and a midpoint pulled toward (cx, cy)
+// by `curveAmt` so the bolt arcs across the ring's interior — then
+// recursively subdivides each segment, perturbing each new midpoint
+// perpendicular to its segment by an amount that decays per level.
+// The result is a fixed jagged polyline with sharp angular jags at
+// multiple scales. Generated once at spawn time, frozen for the bolt's
+// lifetime — the flicker envelope only modulates intensity, not shape.
+function generateBolt(p1x, p1y, p2x, p2y, cx, cy, curveAmt, initialDisp, levels) {
+  const mx0 = (p1x + p2x) / 2;
+  const my0 = (p1y + p2y) / 2;
+  let pts = [
+    { x: p1x, y: p1y },
+    { x: mx0 + (cx - mx0) * curveAmt, y: my0 + (cy - my0) * curveAmt },
+    { x: p2x, y: p2y },
+  ];
+  for (let lvl = 0; lvl < levels; lvl++) {
+    const d = initialDisp * Math.pow(0.55, lvl);
+    const next = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i], b = pts[i + 1];
+      next.push(a);
+      const sdx = b.x - a.x, sdy = b.y - a.y;
+      const slen = Math.sqrt(sdx * sdx + sdy * sdy) || 1;
+      const off = (Math.random() - 0.5) * 2 * d;
+      next.push({
+        x: (a.x + b.x) / 2 + (-sdy / slen) * off,
+        y: (a.y + b.y) / 2 + (sdx / slen) * off,
+      });
+    }
+    next.push(pts[pts.length - 1]);
+    pts = next;
+  }
+  return pts;
+}
+
+// Rasterize a polyline as a 1-cell-wide thin line by stepping each
+// segment at 0.5-cell intervals and depositing a single dot per cell.
+// Same max-blend as everywhere else: keeps the brightest sample at
+// each cell index.
+function rasterizeLine(ax, ay, bx, by, intensity, intensities) {
+  const dx = bx - ax, dy = by - ay;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 0.01) return;
+  const steps = Math.max(1, Math.ceil(len * 2));
+  for (let s = 0; s <= steps; s++) {
+    const u = s / steps;
+    const ix = Math.round(ax + dx * u);
+    const iy = Math.round(ay + dy * u);
+    if (ix < 0 || ix >= GRID || iy < 0 || iy >= GRID) continue;
+    const idx = iy * GRID + ix;
+    if (intensity > intensities[idx]) intensities[idx] = intensity;
+  }
+}
+
 // Seeded LCG — used at module load time to build deterministic
 // particle pools and fragment layouts. Each pool gets its own seed
 // so they don't share PRNG state.
@@ -461,13 +516,35 @@ function updateThinking(t, scene, dt) {
   if (t > ring.nextArcT) {
     const a1 = Math.random() * TAU;
     const a2 = a1 + Math.PI * (0.4 + Math.random() * 0.5) * (Math.random() < 0.5 ? 1 : -1);
+    const p1x = cx + Math.cos(a1) * ringR;
+    const p1y = cy + Math.sin(a1) * ringR;
+    const p2x = cx + Math.cos(a2) * ringR;
+    const p2y = cy + Math.sin(a2) * ringR;
+    const curve = 0.35 + Math.random() * 0.25;
+    const mainPath = generateBolt(p1x, p1y, p2x, p2y, cx, cy, curve, 2.0, 5);
+
+    // Optional fork: branches off a random midpoint of the main bolt,
+    // perpendicular to the local tangent, with a slight forward bias.
+    const forks = [];
+    if (Math.random() < 0.55) {
+      const fIdx = Math.floor(mainPath.length * (0.30 + Math.random() * 0.35));
+      const fStart = mainPath[fIdx];
+      const fNext = mainPath[Math.min(fIdx + 4, mainPath.length - 1)];
+      const tdx = fNext.x - fStart.x, tdy = fNext.y - fStart.y;
+      const tlen = Math.sqrt(tdx * tdx + tdy * tdy) || 1;
+      const sign = Math.random() < 0.5 ? 1 : -1;
+      const fLen = 6 + Math.random() * 12;
+      const fEndX = fStart.x + (-tdy / tlen) * sign * fLen + (tdx / tlen) * fLen * 0.4;
+      const fEndY = fStart.y + ( tdx / tlen) * sign * fLen + (tdy / tlen) * fLen * 0.4;
+      forks.push(generateBolt(fStart.x, fStart.y, fEndX, fEndY, fStart.x, fStart.y, 0, 1.0, 3));
+    }
+
     ring.arcs.push({
       spawnT: t,
-      a1, a2,
       duration: 0.18 + Math.random() * 0.12,
       intensity: 0.75 + Math.random() * 0.25,
-      curve: 0.35 + Math.random() * 0.25,
-      jitterSeed: Math.random() * 1000,
+      mainPath,
+      forks,
     });
     ring.nextArcT = t + 0.7 + Math.random() * 1.8;
   }
@@ -501,7 +578,9 @@ function updateThinking(t, scene, dt) {
     }
   }
 
-  // Arc paths
+  // Arc paths — render the precomputed jagged polyline as 1-cell-wide
+  // line segments. The shape is fixed at spawn time; flicker only
+  // modulates intensity.
   for (const arc of ring.arcs) {
     const age = t - arc.spawnT;
     const lifeProg = age / arc.duration;
@@ -511,29 +590,19 @@ function updateThinking(t, scene, dt) {
     const arcB = arc.intensity * flicker;
     if (arcB < 0.10) continue;
 
-    const p1x = cx + Math.cos(arc.a1) * ringR;
-    const p1y = cy + Math.sin(arc.a1) * ringR;
-    const p2x = cx + Math.cos(arc.a2) * ringR;
-    const p2y = cy + Math.sin(arc.a2) * ringR;
-
-    const N_ARC = 90;
-    for (let s = 0; s <= N_ARC; s++) {
-      const u = s / N_ARC;
-      const linX = p1x * (1 - u) + p2x * u;
-      const linY = p1y * (1 - u) + p2y * u;
-      const curveAmt = Math.sin(u * Math.PI) * arc.curve;
-      const px = linX + (cx - linX) * curveAmt;
-      const py = linY + (cy - linY) * curveAmt;
-      const jSeed = arc.jitterSeed + s * 7.3 + Math.floor(t * 30);
-      const jx = (Math.sin(jSeed) - 0.5) * 1.6;
-      const jy = (Math.cos(jSeed * 1.3) - 0.5) * 1.6;
-      const fx = px + jx;
-      const fy = py + jy;
-      const ix = Math.round(fx);
-      const iy = Math.round(fy);
-      if (ix < 0 || ix >= GRID || iy < 0 || iy >= GRID) continue;
-      const idx = iy * GRID + ix;
-      if (arcB > intensities[idx]) intensities[idx] = arcB;
+    const main = arc.mainPath;
+    for (let i = 0; i < main.length - 1; i++) {
+      const a = main[i], b = main[i + 1];
+      rasterizeLine(a.x, a.y, b.x, b.y, arcB, intensities);
+    }
+    const forkB = arcB * 0.65;
+    if (forkB >= 0.10) {
+      for (const fork of arc.forks) {
+        for (let i = 0; i < fork.length - 1; i++) {
+          const a = fork[i], b = fork[i + 1];
+          rasterizeLine(a.x, a.y, b.x, b.y, forkB, intensities);
+        }
+      }
     }
   }
 
