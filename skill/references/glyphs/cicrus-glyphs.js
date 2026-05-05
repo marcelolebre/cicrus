@@ -465,7 +465,7 @@ function updateThinking(t, scene, dt) {
       spawnT: t,
       a1, a2,
       duration: 0.18 + Math.random() * 0.12,
-      intensity: 0.55 + Math.random() * 0.30,
+      intensity: 0.75 + Math.random() * 0.25,
       curve: 0.35 + Math.random() * 0.25,
       jitterSeed: Math.random() * 1000,
     });
@@ -516,7 +516,7 @@ function updateThinking(t, scene, dt) {
     const p2x = cx + Math.cos(arc.a2) * ringR;
     const p2y = cy + Math.sin(arc.a2) * ringR;
 
-    const N_ARC = 26;
+    const N_ARC = 90;
     for (let s = 0; s <= N_ARC; s++) {
       const u = s / N_ARC;
       const linX = p1x * (1 - u) + p2x * u;
@@ -525,8 +525,8 @@ function updateThinking(t, scene, dt) {
       const px = linX + (cx - linX) * curveAmt;
       const py = linY + (cy - linY) * curveAmt;
       const jSeed = arc.jitterSeed + s * 7.3 + Math.floor(t * 30);
-      const jx = (Math.sin(jSeed) - 0.5) * 0.6;
-      const jy = (Math.cos(jSeed * 1.3) - 0.5) * 0.6;
+      const jx = (Math.sin(jSeed) - 0.5) * 1.6;
+      const jy = (Math.cos(jSeed * 1.3) - 0.5) * 1.6;
       const fx = px + jx;
       const fy = py + jy;
       const ix = Math.round(fx);
