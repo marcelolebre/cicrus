@@ -11,7 +11,7 @@ const PHI_GOLD = Math.PI * (1 + Math.sqrt(5));
 const GRID = 96;
 const CELL = 2;
 const SIZE = GRID * CELL;
-const DOT = 1, DOT_OFF = 0;
+const DOT = 2, DOT_OFF = 0;
 const HALF = GRID / 2;
 
 const COLORS = {
@@ -162,20 +162,20 @@ function updateIdle(t, scene) {
   const wobble1 = (1 + Math.sin(t * TAU / 7.3)) * 0.5;
   const wobble2 = (1 + Math.sin(t * TAU / 4.1)) * 0.5;
   const wobble3 = (1 + Math.sin(t * TAU / 2.7)) * 0.5;
-  const totalTension = 0.45 + wobble1 * 0.55 + wobble2 * 0.45 + wobble3 * 0.30;
-  const pullStrength = totalTension * 0.20;
-  const bulgeMult = 0.7 + totalTension * 0.4;
-  const squashMult = 0.8 + totalTension * 0.4;
+  const totalTension = 0.55 + wobble1 * 0.75 + wobble2 * 0.65 + wobble3 * 0.45;
+  const pullStrength = totalTension * 0.42;
+  const bulgeMult = 1.2 + totalTension * 0.85;
+  const squashMult = 1.4 + totalTension * 0.85;
 
-  // ── Slow whole-body slosh translation (≤ ~0.8 cells) ──
-  const sloshX = Math.sin(t * 0.05 * TAU) * 0.5 + Math.sin(t * 0.07 * TAU + 1.2) * 0.3;
-  const sloshY = Math.sin(t * 0.06 * TAU + 2.0) * 0.5 + Math.cos(t * 0.04 * TAU) * 0.3;
+  // ── Whole-body slosh translation (deeper, asymmetric) ──
+  const sloshX = Math.sin(t * 0.05 * TAU) * 1.4 + Math.sin(t * 0.07 * TAU + 1.2) * 0.9;
+  const sloshY = Math.sin(t * 0.06 * TAU + 2.0) * 1.4 + Math.cos(t * 0.04 * TAU) * 0.8;
 
-  // ── Body breath ──
+  // ── Body breath (more dramatic) ──
   const breath =
     1 +
-    Math.sin(t * 0.10 * TAU) * 0.13 +
-    Math.sin(t * 0.17 * TAU + 0.7) * 0.04;
+    Math.sin(t * 0.10 * TAU) * 0.22 +
+    Math.sin(t * 0.17 * TAU + 0.7) * 0.08;
   const radius = IDLE_R * breath;
   const projR = radius * 1.6;
 
@@ -216,7 +216,7 @@ function updateIdle(t, scene) {
   // ── Bbox (covers bulged surface + atmospheric glow) ──
   const cxC = HALF + sloshX;
   const cyC = HALF + sloshY;
-  const bbox = Math.ceil(radius * (1 + 0.60) + 2);
+  const bbox = Math.ceil(radius * (1 + 0.85) + 3);
 
   for (let gy = Math.max(0, Math.floor(cyC - bbox)); gy < Math.min(GRID, Math.ceil(cyC + bbox)); gy++) {
     for (let gx = Math.max(0, Math.floor(cxC - bbox)); gx < Math.min(GRID, Math.ceil(cxC + bbox)); gx++) {
@@ -230,12 +230,12 @@ function updateIdle(t, scene) {
       if (r2N > 1.15) continue;
       const zN = r2N < 1 ? Math.sqrt(1 - r2N) : 0;
 
-      // ── Surface ripples ──
+      // ── Surface ripples (low-frequency only — high freq aliases with cell grid) ──
       const ripples =
-        Math.sin(xN * 1.6 + dt1) * Math.cos(yN * 1.4 - dt1 * 0.7) * 0.10 +
-        Math.sin(zN * 1.8 + dt2 * 0.9) * 0.08 +
-        Math.cos(xN * 2.4 - yN * 1.7 + dt3) * 0.06 +
-        Math.sin((xN + yN + zN) * 1.2 + dt2 * 1.3) * 0.05;
+        Math.sin(xN * 0.9 + dt1) * Math.cos(yN * 0.8 - dt1 * 0.7) * 0.10 +
+        Math.sin(zN * 1.1 + dt2 * 0.9) * 0.08 +
+        Math.cos(xN * 1.3 - yN * 1.0 + dt3) * 0.06 +
+        Math.sin((xN + yN + zN) * 0.7 + dt2 * 1.3) * 0.05;
 
       // ── Three traveling bulges (only contribute on the near hemisphere) ──
       const d1 = xN * b1x + yN * b1y + zN * b1z;
@@ -296,7 +296,7 @@ function updateIdle(t, scene) {
       }
 
       if (intensity > 1) intensity = 1;
-      if (intensity < 0.10) continue;
+      if (intensity < 0.04) continue;
       const idx = gy * GRID + gx;
       if (intensity > intensities[idx]) intensities[idx] = intensity;
     }
@@ -1032,6 +1032,17 @@ function effectiveBgColor(canvas) {
 // ────────────────────────────────────────────────────────────
 // Render
 // ────────────────────────────────────────────────────────────
+// Hash-based noise dither. Bayer matrices have period 4 which
+// constructively interferes with the body's surface-ripple
+// frequencies, producing visible vertical/horizontal stripes.
+// A position hash gives white noise — no periodicity, no stripes.
+function hashDither(x, y) {
+  let h = (x * 374761393 + y * 668265263) | 0;
+  h = (h ^ (h >>> 13)) * 1274126177;
+  h = h ^ (h >>> 16);
+  return ((h >>> 0) / 4294967295) - 0.5;
+}
+
 function renderScene(scene) {
   const ctx = scene.ctx;
   const bg = scene.bg;
@@ -1041,11 +1052,14 @@ function renderScene(scene) {
   const cR = scene.color[0], cG = scene.color[1], cB = scene.color[2];
   for (let i = 0; i < intensities.length; i++) {
     const v = intensities[i];
-    if (v < 0.10) continue;
-    const q = quantize(Math.pow(v, CONTRAST_GAMMA));
+    if (v < 0.06) continue;
     const gx = i % GRID;
     const gy = (i / GRID) | 0;
-    ctx.fillStyle = `rgba(${cR},${cG},${cB},${q})`;
+    const lifted = Math.pow(v, CONTRAST_GAMMA);
+    const dither = hashDither(gx, gy) * (1 / 8);
+    const q = quantize(lifted + dither);
+    if (q <= 0) continue;
+    ctx.fillStyle = `rgba(${cR},${cG},${cB},${q > 1 ? 1 : q})`;
     ctx.fillRect(gx * CELL + DOT_OFF, gy * CELL + DOT_OFF, DOT, DOT);
   }
 }

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Status colors — Cicrus</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display:flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+    }
+    .card .swatch {
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .card .meaning {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-display);
+      mix-blend-mode: difference;
+    }
+    .card .body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .card .role {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+    }
+    .card .hex {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-disabled);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .card .uses {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .doctrine {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .doctrine .label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .doctrine .quote { font-family: var(--font-body); font-size: 16px; font-weight: 300; line-height: 1.6; color: var(--text-primary); }
+    .doctrine .quote em { font-style: normal; color: var(--accent); }
+    .doctrine .rules { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); line-height: 1.8; letter-spacing: 0.02em; }
+    .doctrine .rules strong { color: var(--text-display); font-weight: 400; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Status & accent</div>
+    <div class="sub">COLOR ENCODES STATE — NOT DECORATION</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="swatch" style="background:#D71921"><span class="meaning">ACCENT</span></div>
+      <div class="body">
+        <span class="role">--accent / --error</span>
+        <span class="hex">#D71921</span>
+        <span class="uses">Signal light. Destructive, errors, failed states. <strong style="color:var(--text-display);font-weight:400;">One per screen, never decorative.</strong></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="swatch" style="background:#4A9E5C"><span class="meaning">SUCCESS</span></div>
+      <div class="body">
+        <span class="role">--success</span>
+        <span class="hex">#4A9E5C</span>
+        <span class="uses">Confirmed, completed, connected. UP services. Step counts.</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="swatch" style="background:#D4A843"><span class="meaning">WARNING</span></div>
+      <div class="body">
+        <span class="role">--warning</span>
+        <span class="hex">#D4A843</span>
+        <span class="uses">Caution, pending, degraded. Triage states. Monitor badges.</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="swatch" style="background:#5B9BF6"><span class="meaning">INTERACTIVE</span></div>
+      <div class="body">
+        <span class="role">--interactive</span>
+        <span class="hex">#5B9BF6 · #007AFF light</span>
+        <span class="uses">Tappable text. Links, picker values, resource badges. Not for buttons.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="doctrine">
+    <div class="label">DOCTRINE</div>
+    <div class="quote">
+      Monochrome is the canvas. <em>Color is an event.</em> Apply color to the value, not the row background. Labels stay <code class="t-mono" style="color:var(--text-secondary);">--text-secondary</code>; values flip to status.
+    </div>
+    <div class="label">RULES</div>
+    <div class="rules">
+      <strong>One</strong> accent moment per screen, or zero.<br>
+      Differentiate by <strong>opacity</strong> or <strong>pattern</strong> before color.<br>
+      Badges color the <strong>text + border</strong> only — never the fill.<br>
+      Status dot pulses on <strong>down</strong>, static on <strong>up</strong>. No checkmarks.
+    </div>
+  </div>
+</body>
+</html>

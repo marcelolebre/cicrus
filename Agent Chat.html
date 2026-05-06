@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cicrus — Agent Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Doto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="cicrus.css">
+<style>
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height: 100%; background: var(--black); color: var(--text-primary); overflow: hidden; }
+
+  /* ── shell ── */
+  .shell {
+    display: grid;
+    grid-template-columns: 260px 280px 1fr;
+    height: 100vh;
+  }
+  .pane { display: flex; flex-direction: column; min-height: 0; }
+  .pane + .pane { border-left: 1px solid var(--border); }
+
+  /* ── pane headers ── */
+  .pane-header {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+  .pane-title {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .pane-title b { color: var(--text-secondary); font-weight: 400; }
+  .icon-btn {
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    background: transparent; border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .icon-btn:hover { color: var(--text-display); border-color: var(--border-visible); background: var(--surface); }
+  .icon-btn svg { width: 14px; height: 14px; }
+
+  /* ── projects rail ── */
+  .brand-row {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font-family: 'Doto', monospace; font-weight: 700; font-size: 22px;
+    letter-spacing: 0.02em; color: var(--text-display);
+  }
+  .mode-toggle {
+    display: inline-flex; padding: 2px;
+    border: 1px solid var(--border); border-radius: 999px;
+  }
+  .mode-toggle button {
+    border: 0; background: transparent; cursor: pointer;
+    padding: 3px 9px; border-radius: 999px;
+    font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .mode-toggle button.on { background: var(--text-display); color: var(--black); }
+
+  .projects-search {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .projects-search input {
+    flex: 1;
+    background: transparent; border: 0; outline: 0;
+    color: var(--text-primary);
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .projects-search input::placeholder {
+    color: var(--text-disabled);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  .projects-list {
+    flex: 1; overflow: auto;
+    padding: 8px;
+  }
+  .group-label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled);
+    padding: 12px 8px 6px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .group-label .chev {
+    transition: transform 0.15s;
+  }
+  .group-label.collapsed .chev { transform: rotate(-90deg); }
+  .group-label b { color: var(--text-secondary); font-weight: 400; font-variant-numeric: tabular-nums; }
+
+  .project {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+  }
+  .project:hover { background: var(--surface); }
+  .project.on { background: var(--surface-raised); }
+  .project.on::before {
+    content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+    width: 2px; background: var(--text-display);
+  }
+  .project-glyph {
+    color: var(--text-disabled);
+    display: grid; place-items: center;
+  }
+  .project.on .project-glyph { color: var(--text-display); }
+  .project.pinned .project-glyph { color: var(--warning); }
+  .project-name {
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .project.on .project-name { color: var(--text-display); font-weight: 500; }
+  .project[contenteditable="true"] .project-name,
+  .project-name[contenteditable="true"] {
+    outline: 1px solid var(--text-display);
+    outline-offset: 2px;
+    background: var(--black);
+    border-radius: 2px;
+  }
+  .project-count {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .project-actions {
+    display: none;
+    gap: 2px;
+  }
+  .project:hover .project-actions { display: flex; }
+  .project:hover .project-count { display: none; }
+  .project-actions .icon-btn { width: 22px; height: 22px; }
+  .project-actions .icon-btn svg { width: 12px; height: 12px; }
+
+  .archived-group .project { opacity: 0.55; }
+  .archived-group .project:hover { opacity: 1; }
+  .group-content.collapsed { display: none; }
+
+  /* ── conversations pane ── */
+  .conv-meta {
+    padding: 12px var(--space-md);
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .conv-meta-title {
+    font-family: var(--font-display); font-weight: 300;
+    font-size: 22px; color: var(--text-display);
+    letter-spacing: -0.01em;
+  }
+  .conv-meta-stats {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .conv-meta-stats b { color: var(--text-secondary); font-weight: 400; }
+
+  .new-conv {
+    margin: var(--space-md);
+    padding: 10px 12px;
+    border: 1px dashed var(--border-visible);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    background: transparent;
+    transition: all 0.12s;
+    width: calc(100% - var(--space-md) * 2);
+  }
+  .new-conv:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .new-conv-kbd {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--text-disabled);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .conv-list {
+    flex: 1; overflow: auto;
+    padding: 0 8px 8px;
+  }
+  .conv-day-label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled);
+    padding: 12px 8px 6px;
+  }
+  .conv {
+    padding: 10px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px;
+    position: relative;
+  }
+  .conv:hover { background: var(--surface); }
+  .conv.on { background: var(--surface-raised); }
+  .conv.on::before {
+    content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 2px; background: var(--text-display);
+  }
+  .conv-title {
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .conv.on .conv-title { color: var(--text-display); font-weight: 500; }
+  .conv-snippet {
+    font-family: var(--font-body); font-size: 12px; font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .conv-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 2px;
+  }
+  .conv-time {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .conv-pills { display: flex; gap: 4px; }
+
+  /* ── chat pane ── */
+  .chat-header {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--space-lg);
+    border-bottom: 1px solid var(--border);
+  }
+  .chat-header-left { display: flex; align-items: center; gap: var(--space-md); }
+  .chat-bread {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .chat-bread b { color: var(--text-primary); font-weight: 400; }
+  .chat-bread .sep { padding: 0 8px; color: var(--text-disabled); }
+  .chat-header-right { display: flex; gap: 8px; align-items: center; }
+  .chat-header-right .meta {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+
+  .chat-scroll {
+    flex: 1;
+    overflow: auto;
+    padding: var(--space-xl) 0;
+  }
+  .chat-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+    display: flex; flex-direction: column; gap: var(--space-xl);
+  }
+
+  /* messages */
+  .msg { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-md); }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .avatar.user { background: var(--text-display); color: var(--black); border-color: var(--text-display); font-weight: 700; }
+  .avatar.agent { background: var(--surface-raised); color: var(--text-display); }
+  .avatar.agent .glyph { width: 16px; height: 16px; }
+  .msg-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .msg-meta {
+    display: flex; gap: 12px; align-items: baseline;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .msg-meta b { color: var(--text-primary); font-weight: 400; }
+  .msg-content {
+    font-family: var(--font-body); font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+  .msg-content p + p { margin-top: 10px; }
+  .msg-content code {
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--text-display);
+  }
+  .msg-content a { color: var(--interactive); text-decoration: none; border-bottom: 1px solid currentColor; }
+  .mention {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--interactive);
+    background: rgba(91,155,246,0.1);
+    padding: 1px 6px; border-radius: 3px;
+    border: 1px solid rgba(91,155,246,0.25);
+  }
+  .mention::before { content: '@'; opacity: 0.7; }
+
+  .msg-actions {
+    display: flex; gap: 4px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .msg:hover .msg-actions { opacity: 1; }
+  .msg-actions .icon-btn { width: 24px; height: 24px; color: var(--text-disabled); }
+  .msg-actions .icon-btn svg { width: 12px; height: 12px; }
+
+  /* code block */
+  .codeblock {
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .codeblock-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .codeblock pre {
+    padding: 12px;
+    overflow: auto;
+    font-family: var(--font-mono); font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+  .codeblock .kw { color: var(--interactive); }
+  .codeblock .str { color: var(--success); }
+  .codeblock .num { color: var(--warning); }
+  .codeblock .com { color: var(--text-disabled); }
+
+  /* tool call */
+  .tool {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .tool-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tool-head:hover { background: var(--surface-raised); }
+  .tool-icon {
+    width: 22px; height: 22px;
+    border: 1px solid var(--border-visible);
+    border-radius: 3px;
+    display: grid; place-items: center;
+    color: var(--text-secondary);
+  }
+  .tool-icon svg { width: 12px; height: 12px; }
+  .tool-name {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--text-primary);
+  }
+  .tool-args {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-disabled);
+    margin-left: 4px;
+  }
+  .tool-status {
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--success);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tool-chev {
+    color: var(--text-disabled);
+    transition: transform 0.15s;
+  }
+  .tool.open .tool-chev { transform: rotate(180deg); }
+  .tool-body {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--black);
+    display: none;
+  }
+  .tool.open .tool-body { display: block; }
+  .tool-body pre {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  /* runbook card */
+  .runbook {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    padding: var(--space-md);
+  }
+  .runbook-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .runbook-title {
+    font-family: var(--font-body); font-size: 14px; font-weight: 500;
+    color: var(--text-display);
+  }
+  .runbook-sub {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-disabled);
+    margin-top: 2px;
+  }
+  .runbook-steps {
+    display: flex; flex-direction: column;
+    counter-reset: step;
+  }
+  .runbook-step {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    align-items: center;
+  }
+  .runbook-step::before {
+    counter-increment: step;
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .runbook-step.done::before { color: var(--success); }
+  .runbook-step.active::before { color: var(--text-display); }
+  .runbook-step-text {
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--text-primary);
+  }
+  .runbook-step.done .runbook-step-text { color: var(--text-secondary); text-decoration: line-through; text-decoration-color: var(--border-visible); }
+  .runbook-step-tag {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .runbook-step.active .runbook-step-tag {
+    color: var(--warning);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .runbook-step.active .runbook-step-tag::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--warning); border-radius: 999px;
+    animation: c-pulse 1.6s infinite;
+  }
+
+  /* service link cards */
+  .svc-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .svc {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    background: var(--surface);
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 0.12s;
+  }
+  .svc:hover { border-color: var(--border-visible); }
+  .svc-head { display: flex; align-items: center; gap: 8px; }
+  .svc-name { font-family: var(--font-body); font-size: 13px; color: var(--text-primary); font-weight: 500; }
+  .svc-meta {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--text-disabled);
+  }
+  .svc-stats {
+    display: flex; gap: 14px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .svc-stats b { color: var(--text-primary); font-weight: 400; }
+  .svc-stats .danger { color: var(--accent); }
+  .svc-stats .success { color: var(--success); }
+
+  /* sparkline */
+  .spark-row {
+    display: flex; gap: 12px; align-items: center;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+  .spark-label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .spark-value {
+    font-family: var(--font-display); font-size: 18px;
+    color: var(--text-display); font-weight: 300;
+    font-variant-numeric: tabular-nums;
+  }
+  .spark-value.danger { color: var(--accent); }
+  .spark { flex: 1; height: 28px; }
+
+  /* citations */
+  .cites {
+    display: flex; flex-direction: column; gap: 6px;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-visible);
+  }
+  .cite {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: flex; gap: 8px;
+  }
+  .cite-num {
+    flex-shrink: 0;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .cite a { color: var(--interactive); text-decoration: none; }
+  .cite a:hover { border-bottom: 1px solid currentColor; }
+
+  /* action buttons */
+  .actions-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+
+  /* typing indicator */
+  .typing {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .typing-dots { display: inline-flex; gap: 3px; }
+  .typing-dots span {
+    width: 4px; height: 4px;
+    background: var(--text-secondary);
+    border-radius: 999px;
+    animation: typingBounce 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typingBounce {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-2px); }
+  }
+
+  /* suggested follow-ups */
+  .suggestions {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl) var(--space-md);
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .suggestion {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+    background: transparent;
+    font-family: var(--font-body); font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .suggestion::before {
+    content: '↗'; color: var(--text-disabled); font-size: 11px;
+  }
+  .suggestion:hover { border-color: var(--text-primary); color: var(--text-primary); }
+
+  /* ── composer ── */
+  .composer-wrap {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    padding: var(--space-md) var(--space-xl) var(--space-md);
+    background: var(--black);
+  }
+  .composer-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .composer {
+    border: 1px solid var(--border-visible);
+    border-radius: 6px;
+    background: var(--surface);
+    transition: border-color 0.12s;
+  }
+  .composer:focus-within { border-color: var(--text-primary); }
+  .composer-attachments {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px 10px 0;
+  }
+  .attach {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 8px;
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-primary);
+  }
+  .attach svg { width: 12px; height: 12px; color: var(--text-disabled); }
+  .attach .x {
+    color: var(--text-disabled);
+    cursor: pointer; padding: 0 2px;
+  }
+  .attach .x:hover { color: var(--accent); }
+
+  .composer textarea {
+    width: 100%;
+    min-height: 64px;
+    max-height: 220px;
+    border: 0; outline: 0; resize: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-body); font-size: 14px;
+    line-height: 1.5;
+    padding: 12px 14px 4px;
+  }
+  .composer textarea::placeholder { color: var(--text-disabled); }
+
+  .composer-bar {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 8px 8px;
+  }
+  .composer-bar .left, .composer-bar .right { display: flex; gap: 4px; align-items: center; }
+  .composer-bar .right { margin-left: auto; }
+  .composer-tag {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-disabled);
+    padding: 0 8px;
+  }
+  .composer-tag b { color: var(--text-secondary); font-weight: 400; }
+  .send-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: var(--text-display); color: var(--black);
+    border: 1px solid var(--text-display);
+    border-radius: 4px;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.12s;
+  }
+  .send-btn:hover { opacity: 0.9; }
+  .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .send-btn svg { width: 12px; height: 12px; }
+  .send-btn .kbd { font-size: 9px; opacity: 0.6; padding-left: 4px; border-left: 1px solid rgba(0,0,0,0.2); margin-left: 4px; padding-left: 8px; }
+
+  .stop-btn {
+    background: var(--accent-subtle); color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  /* slash menu / mention menu */
+  .floating {
+    position: absolute;
+    bottom: calc(100% + 6px); left: 14px;
+    width: 320px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-visible);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 20;
+    display: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .floating.show { display: block; }
+  .floating-head {
+    padding: 8px 10px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-disabled);
+    border-bottom: 1px solid var(--border);
+  }
+  .floating-item {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .floating-item:last-child { border-bottom: 0; }
+  .floating-item:hover, .floating-item.on { background: var(--surface); }
+  .floating-key {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--interactive);
+  }
+  .floating-desc {
+    font-family: var(--font-body); font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .floating-kbd {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-disabled);
+    border: 1px solid var(--border);
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* voice button */
+  .icon-btn.recording {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+  }
+  .icon-btn.recording svg { animation: c-pulse 1.4s infinite; }
+
+  /* light-mode tweaks */
+  body.light .avatar.user { background: var(--text-display); color: var(--surface); }
+  body.light .codeblock .kw { color: #0070C9; }
+  body.light .codeblock .str { color: #2E7D32; }
+
+  /* utility */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ════════════════════ PROJECTS ════════════════════ -->
+  <aside class="pane">
+    <div class="brand-row">
+      <div class="brand">CICRUS</div>
+      <div class="mode-toggle" id="modeToggle">
+        <button class="on" data-mode="dark">Dark</button>
+        <button data-mode="light">Light</button>
+      </div>
+    </div>
+
+    <div class="projects-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-disabled);"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="projectSearch" placeholder="Find project" />
+    </div>
+
+    <div class="projects-list" id="projectsList">
+      <!-- populated by JS -->
+    </div>
+  </aside>
+
+  <!-- ════════════════════ CONVERSATIONS ════════════════════ -->
+  <aside class="pane">
+    <div class="pane-header">
+      <span class="pane-title" id="convPaneTitle">Conversations <b id="convCount">12</b></span>
+      <button class="icon-btn" title="Search conversations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+    </div>
+
+    <div class="conv-meta">
+      <div class="conv-meta-title" id="projectName">Payment Gateway</div>
+      <div class="conv-meta-stats" id="projectStats">12 conversations · last activity 2m ago</div>
+    </div>
+
+    <button class="new-conv" id="newConvBtn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      New conversation
+      <span class="new-conv-kbd">⌘N</span>
+    </button>
+
+    <div class="conv-list" id="convList">
+      <!-- populated by JS -->
+    </div>
+  </aside>
+
+  <!-- ════════════════════ CHAT ════════════════════ -->
+  <main class="pane">
+    <header class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-bread">
+          <b id="bcProject">Payment Gateway</b>
+          <span class="sep">/</span>
+          <b id="bcConv">503 spike investigation</b>
+        </div>
+      </div>
+      <div class="chat-header-right">
+        <span class="meta">42 MSG · 18.2K TOK</span>
+        <button class="icon-btn" title="Share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+        </button>
+        <button class="icon-btn" title="More">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-scroll" id="chatScroll">
+      <div class="chat-inner" id="chatInner">
+
+        <!-- USER -->
+        <div class="msg">
+          <div class="avatar user">ML</div>
+          <div class="msg-body">
+            <div class="msg-meta"><b>Marcelo</b> <span>02:42 UTC</span></div>
+            <div class="msg-content">
+              auth endpoint just started returning 503s on <span class="mention">payment-gateway</span> us-east-1. can you pull the last 15 min of error logs and check whether the cert validator is saturated again?
+            </div>
+          </div>
+        </div>
+
+        <!-- AGENT -->
+        <div class="msg">
+          <div class="avatar agent">
+            <svg class="glyph" viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="3" r="1"/><circle cx="8" cy="3" r="1"/><circle cx="13" cy="3" r="1"/><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="1.5"/><circle cx="3" cy="13" r="1"/><circle cx="8" cy="13" r="1"/><circle cx="13" cy="13" r="1"/></svg>
+          </div>
+          <div class="msg-body">
+            <div class="msg-meta"><b>Agent</b> <span>02:42 UTC</span> <span>3.4s · 2 tools</span></div>
+
+            <div class="tool open" id="tool1">
+              <div class="tool-head" onclick="this.parentElement.classList.toggle('open')">
+                <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
+                <span class="tool-name">logs.query</span>
+                <span class="tool-args">service=payment-gateway region=us-east-1 since=15m level=error</span>
+                <span class="tool-status"><span class="c-dot c-dot-up"></span>OK · 247 ROWS</span>
+                <svg class="tool-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div class="tool-body">
+<pre><span class="com">// 247 results · grouped by error_code</span>
+<span class="kw">503</span> upstream_unavailable    <span class="num">  198</span>  cert_validator_pool_exhausted
+<span class="kw">503</span> upstream_unavailable    <span class="num">   31</span>  tls_handshake_timeout
+<span class="kw">429</span> rate_limited            <span class="num">   12</span>  partner_acme
+<span class="kw">404</span> webhook_unreachable     <span class="num">    6</span>  merchant_id_88129</pre>
+              </div>
+            </div>
+
+            <div class="tool" id="tool2">
+              <div class="tool-head" onclick="this.parentElement.classList.toggle('open')">
+                <span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l3 3 5-5"/><path d="M3 19l3 3 5-5"/><path d="M14 8h7M14 18h7"/></svg></span>
+                <span class="tool-name">metrics.query</span>
+                <span class="tool-args">cert_validator.pool_size, cert_validator.in_use</span>
+                <span class="tool-status"><span class="c-dot c-dot-up"></span>OK</span>
+                <svg class="tool-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+
+            <div class="msg-content">
+              <p>Confirmed — <b>cert validator pool is saturated</b> in us-east-1. 198 of 247 errors are <code>cert_validator_pool_exhausted</code>; the remaining 31 are downstream TLS handshake timeouts caused by the same backpressure.</p>
+              <p>Pool sized at <code>32</code>; in-use has been pinned at <code>32/32</code> for the last 11 minutes. Below is the saturation curve and the two related services worth watching:</p>
+            </div>
+
+            <!-- sparkline -->
+            <div class="spark-row">
+              <span class="spark-label">CERT POOL · 15M</span>
+              <svg class="spark" viewBox="0 0 240 28" preserveAspectRatio="none">
+                <path d="M0,22 L20,20 L40,21 L60,18 L80,16 L100,14 L120,10 L140,6 L160,4 L180,3 L200,2 L220,2 L240,2"
+                      fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+                <path d="M0,22 L20,20 L40,21 L60,18 L80,16 L100,14 L120,10 L140,6 L160,4 L180,3 L200,2 L220,2 L240,2 L240,28 L0,28 Z"
+                      fill="var(--accent-subtle)"/>
+                <line x1="0" y1="2" x2="240" y2="2" stroke="var(--accent)" stroke-dasharray="2,2" stroke-width="0.5" opacity="0.5"/>
+              </svg>
+              <span class="spark-value danger">32 / 32</span>
+            </div>
+
+            <div class="svc-cards">
+              <a class="svc">
+                <div class="svc-head">
+                  <span class="c-dot c-dot-down"></span>
+                  <span class="svc-name">payment-gateway</span>
+                </div>
+                <div class="svc-meta">us-east-1 · v4.18.2</div>
+                <div class="svc-stats"><span><b class="danger">99.4%</b> uptime</span><span>p95 <b>214ms</b></span></div>
+              </a>
+              <a class="svc">
+                <div class="svc-head">
+                  <span class="c-dot c-dot-warn"></span>
+                  <span class="svc-name">cert-rotator</span>
+                </div>
+                <div class="svc-meta">us-east-1 · v2.1.0</div>
+                <div class="svc-stats"><span>queue <b>184</b></span><span>last run <b>22m</b></span></div>
+              </a>
+            </div>
+
+            <div class="msg-content">
+              <p>This matches the runbook for <a href="#">RB-AUTH-503</a> almost exactly. Want me to start it? Step 02 (failover to us-west-2) needs your sign-off.</p>
+            </div>
+
+            <!-- runbook -->
+            <div class="runbook">
+              <div class="runbook-head">
+                <div>
+                  <div class="runbook-title">RB-AUTH-503 · Cert validator saturation</div>
+                  <div class="runbook-sub">7 STEPS · OWNER PLATFORM · LAST RUN 14D AGO</div>
+                </div>
+              </div>
+              <div class="runbook-steps">
+                <div class="runbook-step done">
+                  <span class="runbook-step-text">Confirm cert_validator_pool_exhausted in error logs</span>
+                  <span class="runbook-step-tag">DONE · AUTO</span>
+                </div>
+                <div class="runbook-step done">
+                  <span class="runbook-step-text">Verify pool saturation via metrics</span>
+                  <span class="runbook-step-tag">DONE · AUTO</span>
+                </div>
+                <div class="runbook-step active">
+                  <span class="runbook-step-text">Initiate failover to us-west-2</span>
+                  <span class="runbook-step-tag">AWAITING APPROVAL</span>
+                </div>
+                <div class="runbook-step">
+                  <span class="runbook-step-text">Page on-call for cert-rotator queue drain</span>
+                  <span class="runbook-step-tag">PENDING</span>
+                </div>
+                <div class="runbook-step">
+                  <span class="runbook-step-text">Increase pool size to 64 · canary first</span>
+                  <span class="runbook-step-tag">PENDING</span>
+                </div>
+                <div class="runbook-step">
+                  <span class="runbook-step-text">Monitor recovery for 10 min · close incident</span>
+                  <span class="runbook-step-tag">PENDING</span>
+                </div>
+                <div class="runbook-step">
+                  <span class="runbook-step-text">File postmortem stub</span>
+                  <span class="runbook-step-tag">PENDING</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions-row">
+              <button class="c-btn c-btn-primary c-btn-sm">Approve failover</button>
+              <button class="c-btn c-btn-secondary c-btn-sm">Page on-call</button>
+              <button class="c-btn c-btn-danger c-btn-sm">Restart pool</button>
+              <button class="c-btn c-btn-ghost c-btn-sm">Acknowledge only</button>
+            </div>
+
+            <div class="msg-content" style="margin-top: 4px;">
+              <p style="color: var(--text-secondary); font-size: 13px;">Sources:</p>
+            </div>
+            <div class="cites">
+              <div class="cite">
+                <span class="cite-num">[1]</span>
+                <span><a href="#">Runbook · RB-AUTH-503</a> · last edited 11d ago by m.lebre</span>
+              </div>
+              <div class="cite">
+                <span class="cite-num">[2]</span>
+                <span><a href="#">Postmortem · 2024-12-18 outage</a> · same root cause, action item 3/6 was to raise pool size — never shipped</span>
+              </div>
+              <div class="cite">
+                <span class="cite-num">[3]</span>
+                <span><a href="#">Decision · Why we use idempotency keys</a> · 2024-Q4</span>
+              </div>
+            </div>
+
+            <div class="msg-actions">
+              <button class="icon-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V4a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2h4"/></svg></button>
+              <button class="icon-btn" title="Good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 011.92 2.56l-2.33 8A2 2 0 0117.5 22H7"/></svg></button>
+              <button class="icon-btn" title="Bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 01-1.92-2.56l2.33-8A2 2 0 016.5 2H17"/></svg></button>
+              <button class="icon-btn" title="Retry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 0115-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- USER follow-up -->
+        <div class="msg">
+          <div class="avatar user">ML</div>
+          <div class="msg-body">
+            <div class="msg-meta"><b>Marcelo</b> <span>02:44 UTC</span></div>
+            <div class="msg-content">
+              go. start the failover. and link this to the postmortem from 12/18 — we should have shipped that pool-size action item.
+            </div>
+          </div>
+        </div>
+
+        <!-- AGENT typing -->
+        <div class="msg" id="typingMsg">
+          <div class="avatar agent">
+            <svg class="glyph" viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="3" r="1"/><circle cx="8" cy="3" r="1"/><circle cx="13" cy="3" r="1"/><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="2"/><circle cx="13" cy="8" r="1.5"/><circle cx="3" cy="13" r="1"/><circle cx="8" cy="13" r="1"/><circle cx="13" cy="13" r="1"/></svg>
+          </div>
+          <div class="msg-body">
+            <div class="msg-meta"><b>Agent</b> <span>02:44 UTC</span></div>
+            <div class="typing">
+              <span class="typing-dots"><span></span><span></span><span></span></span>
+              Working — running <code style="font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);">failover.initiate</code>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- suggested follow-ups -->
+    <div class="suggestions" id="suggestions">
+      <button class="suggestion">Create a tracking task for the pool-size fix</button>
+      <button class="suggestion">Show me the 12/18 postmortem</button>
+      <button class="suggestion">Estimate impact of 503s on partner SLAs</button>
+    </div>
+
+    <!-- composer -->
+    <div class="composer-wrap">
+      <div class="composer-inner" style="position: relative;">
+
+        <!-- slash menu -->
+        <div class="floating" id="slashMenu">
+          <div class="floating-head">Commands</div>
+          <div class="floating-item on"><span class="floating-key">/restart</span><span class="floating-desc">Restart a service</span><span class="floating-kbd">↵</span></div>
+          <div class="floating-item"><span class="floating-key">/runbook</span><span class="floating-desc">Run a saved runbook</span><span class="floating-kbd"></span></div>
+          <div class="floating-item"><span class="floating-key">/logs</span><span class="floating-desc">Query logs</span><span class="floating-kbd"></span></div>
+          <div class="floating-item"><span class="floating-key">/page</span><span class="floating-desc">Page the on-call</span><span class="floating-kbd"></span></div>
+          <div class="floating-item"><span class="floating-key">/note</span><span class="floating-desc">Save to knowledge</span><span class="floating-kbd"></span></div>
+        </div>
+
+        <!-- mention menu -->
+        <div class="floating" id="mentionMenu">
+          <div class="floating-head">Mention service or project</div>
+          <div class="floating-item on"><span class="c-dot c-dot-down"></span><span class="floating-desc"><b style="color:var(--text-primary)">payment-gateway</b> — us-east-1</span><span class="floating-kbd">SVC</span></div>
+          <div class="floating-item"><span class="c-dot c-dot-warn"></span><span class="floating-desc"><b style="color:var(--text-primary)">notif-relay</b> — degraded</span><span class="floating-kbd">SVC</span></div>
+          <div class="floating-item"><span class="c-dot c-dot-up"></span><span class="floating-desc"><b style="color:var(--text-primary)">postgres-primary</b></span><span class="floating-kbd">SVC</span></div>
+          <div class="floating-item"><span class="c-dot c-dot-idle"></span><span class="floating-desc"><b style="color:var(--text-primary)">Payment Gateway</b> — project</span><span class="floating-kbd">PRJ</span></div>
+        </div>
+
+        <div class="composer">
+          <div class="composer-attachments" id="attachments">
+            <div class="attach">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+              auth-503.log
+              <span style="color:var(--text-disabled);font-size:10px;margin-left:2px;">412 KB</span>
+              <span class="x" onclick="this.parentElement.remove()">✕</span>
+            </div>
+          </div>
+          <textarea id="composer" placeholder="Reply to the agent. /  for commands, @ to mention a service.  ⌘↵ to send."></textarea>
+          <div class="composer-bar">
+            <div class="left">
+              <button class="icon-btn" title="Attach" id="attachBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.4 11l-9 9a5 5 0 01-7-7l9-9a3.5 3.5 0 015 5l-9 9a2 2 0 01-3-3l8-8"/></svg>
+              </button>
+              <button class="icon-btn" title="Slash command" onclick="toggleMenu('slashMenu')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4l-8 16"/></svg>
+              </button>
+              <button class="icon-btn" title="Mention" onclick="toggleMenu('mentionMenu')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M16 8v6a2 2 0 002 2 2 2 0 002-2v-2a10 10 0 10-4 8"/></svg>
+              </button>
+              <button class="icon-btn" id="voiceBtn" title="Voice input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0014 0v-2"/><path d="M12 19v3"/></svg>
+              </button>
+              <span class="composer-tag">CTX <b>PAYMENT-GATEWAY</b></span>
+            </div>
+            <div class="right">
+              <button class="send-btn stop-btn" id="stopBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                Stop
+              </button>
+              <button class="send-btn hidden" id="sendBtn" disabled>
+                Send
+                <span class="kbd">⌘↵</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ════════════════════ DATA ════════════════════
+const PROJECTS = [
+  { id: 'general', name: 'General', pinned: true, count: 24, glyph: 'star' },
+  { id: 'pg', name: 'Payment Gateway', count: 12, glyph: 'square', active: true },
+  { id: 'auth', name: 'Auth Migration', count: 8, glyph: 'square' },
+  { id: 'q1', name: 'Q1 Reliability Goals', count: 19, glyph: 'square' },
+  { id: 'pg-pm', name: 'Postmortem Drafts', count: 4, glyph: 'square' },
+  { id: 'rfc', name: 'RFC Reviews', count: 6, glyph: 'square' },
+  { id: 'oncall', name: 'On-call Notes', count: 31, glyph: 'square' },
+];
+const ARCHIVED = [
+  { id: 'a1', name: 'Stripe-EU Sandbox Migration', count: 14, glyph: 'square', archived: true },
+  { id: 'a2', name: '2024 Capacity Planning', count: 9, glyph: 'square', archived: true },
+  { id: 'a3', name: 'Legacy Webhook Cleanup', count: 22, glyph: 'square', archived: true },
+];
+
+const CONVERSATIONS = {
+  pg: [
+    { day: 'TODAY', items: [
+      { id: 'c1', title: '503 spike investigation', snippet: 'Confirmed — cert validator pool is saturated in us-east-1. 198 of 247 errors are cert_validator_pool_exhausted...', time: '2m', live: true, active: true },
+      { id: 'c2', title: 'Idempotency window raise: 24h → 72h', snippet: 'Rolled out to canary at 09:30 UTC. p95 unchanged. Promoting to production now.', time: '6h' },
+    ]},
+    { day: 'YESTERDAY', items: [
+      { id: 'c3', title: 'v4.18.2 deploy plan', snippet: 'Three migrations, two feature flags. I\'d recommend canarying flag B for at least 24 hours before…', time: '20h' },
+      { id: 'c4', title: 'Webhook retry backoff tuning', snippet: 'Current exponential schedule too aggressive — driving 4xx amplification on partner sandbox.', time: '1d' },
+    ]},
+    { day: 'EARLIER', items: [
+      { id: 'c5', title: 'Cert rotation Q2 plan', snippet: 'Quarterly rotation. Stage in canary first, promote on green.', time: '3d' },
+      { id: 'c6', title: 'Partner-acme rate limit review', snippet: '612 requests throttled at 15:02 UTC yesterday. Their plan caps us at 500 RPS, but our…', time: '4d' },
+      { id: 'c7', title: 'Audit log retention bump', snippet: 'Compliance asked for 7 years. Storage cost models attached.', time: '6d' },
+      { id: 'c8', title: 'p95 latency root cause', snippet: 'Walked the trace from edge to ledger. Three hops dominate: cert validator, fraud check, persist.', time: '1w' },
+      { id: 'c9', title: 'Failover drill · us-west-2', snippet: '12-minute drill. Recovery clean. One alert misfire on cert-rotator queue depth.', time: '2w' },
+    ]},
+  ],
+  general: [
+    { day: 'TODAY', items: [
+      { id: 'g1', title: 'What does our error budget look like this month?', snippet: 'Across the four critical services, you have 23 minutes of error budget left for May.', time: '1h' },
+      { id: 'g2', title: 'Summarise the eng all-hands notes', snippet: 'Three themes: reliability over features for Q2, two new headcount in Platform, deprecation…', time: '4h' },
+    ]},
+    { day: 'EARLIER', items: [
+      { id: 'g3', title: 'Onboarding doc for new SREs', snippet: 'Drafted a 10-section document. Sections 3 and 7 still need your input…', time: '3d' },
+    ]},
+  ],
+};
+// fill empty conversation arrays for other projects
+['auth', 'q1', 'pg-pm', 'rfc', 'oncall', 'a1', 'a2', 'a3'].forEach(id => {
+  if (!CONVERSATIONS[id]) {
+    CONVERSATIONS[id] = [{ day: 'EARLIER', items: [
+      { id: id+'-1', title: 'Initial scoping', snippet: 'Started laying out the open questions and known constraints.', time: '2d' },
+      { id: id+'-2', title: 'Status check', snippet: 'Where are we against the original plan?', time: '5d' },
+    ]}];
+  }
+});
+
+let currentProjectId = 'pg';
+let currentConvId = 'c1';
+let archivedCollapsed = true;
+
+// ════════════════════ RENDER ════════════════════
+function projectGlyphSVG(p) {
+  if (p.pinned) {
+    return `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .7-5.3 4.8 1.6 7L12 17.8 5.7 21.5l1.6-7L2 9.7 9 9z"/></svg>`;
+  }
+  if (p.archived) {
+    return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="4"/><path d="M5 8v12h14V8M9 12h6"/></svg>`;
+  }
+  return `<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg>`;
+}
+
+function renderProjects() {
+  const list = document.getElementById('projectsList');
+  list.innerHTML = '';
+
+  // active projects
+  PROJECTS.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'project' + (p.id === currentProjectId ? ' on' : '') + (p.pinned ? ' pinned' : '');
+    el.dataset.id = p.id;
+    el.innerHTML = `
+      <span class="project-glyph">${projectGlyphSVG(p)}</span>
+      <span class="project-name">${escapeHtml(p.name)}</span>
+      <span class="project-count">${String(p.count).padStart(2, '0')}</span>
+      <span class="project-actions">
+        ${!p.pinned ? `<button class="icon-btn" title="Rename" data-action="rename"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 113 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
+        ${!p.pinned ? `<button class="icon-btn" title="Archive" data-action="archive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="4"/><path d="M5 8v12h14V8M9 12h6"/></svg></button>` : ''}
+      </span>
+    `;
+    el.addEventListener('click', (e) => {
+      const action = e.target.closest('[data-action]')?.dataset.action;
+      if (action === 'rename') { e.stopPropagation(); startRename(el); return; }
+      if (action === 'archive') { e.stopPropagation(); archive(p.id); return; }
+      selectProject(p.id);
+    });
+    list.appendChild(el);
+  });
+
+  // archived group
+  const grp = document.createElement('div');
+  grp.className = 'group-label' + (archivedCollapsed ? ' collapsed' : '');
+  grp.innerHTML = `
+    <span>Archived <b>${ARCHIVED.length.toString().padStart(2,'0')}</b></span>
+    <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  `;
+  grp.addEventListener('click', () => {
+    archivedCollapsed = !archivedCollapsed;
+    renderProjects();
+  });
+  list.appendChild(grp);
+
+  const grpContent = document.createElement('div');
+  grpContent.className = 'archived-group group-content' + (archivedCollapsed ? ' collapsed' : '');
+  ARCHIVED.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'project' + (p.id === currentProjectId ? ' on' : '');
+    el.dataset.id = p.id;
+    el.innerHTML = `
+      <span class="project-glyph">${projectGlyphSVG(p)}</span>
+      <span class="project-name">${escapeHtml(p.name)}</span>
+      <span class="project-count">${String(p.count).padStart(2, '0')}</span>
+      <span class="project-actions">
+        <button class="icon-btn" title="Restore" data-action="restore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 0115-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+      </span>
+    `;
+    el.addEventListener('click', (e) => {
+      const action = e.target.closest('[data-action]')?.dataset.action;
+      if (action === 'restore') { e.stopPropagation(); restore(p.id); return; }
+      selectProject(p.id);
+    });
+    grpContent.appendChild(el);
+  });
+  list.appendChild(grpContent);
+}
+
+function startRename(el) {
+  const nameSpan = el.querySelector('.project-name');
+  const id = el.dataset.id;
+  nameSpan.contentEditable = 'true';
+  nameSpan.focus();
+  // select content
+  const range = document.createRange();
+  range.selectNodeContents(nameSpan);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  const finish = (commit) => {
+    nameSpan.contentEditable = 'false';
+    const p = PROJECTS.find(p => p.id === id) || ARCHIVED.find(p => p.id === id);
+    if (p && commit) p.name = nameSpan.textContent.trim() || p.name;
+    renderProjects();
+    if (id === currentProjectId) renderConversations();
+  };
+  nameSpan.addEventListener('blur', () => finish(true), { once: true });
+  nameSpan.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); nameSpan.blur(); }
+    if (e.key === 'Escape') { nameSpan.textContent = (PROJECTS.find(p=>p.id===id)||ARCHIVED.find(p=>p.id===id)).name; nameSpan.blur(); }
+  });
+}
+
+function archive(id) {
+  const idx = PROJECTS.findIndex(p => p.id === id);
+  if (idx < 0) return;
+  const [p] = PROJECTS.splice(idx, 1);
+  p.archived = true;
+  ARCHIVED.unshift(p);
+  if (currentProjectId === id) selectProject('general');
+  archivedCollapsed = false;
+  renderProjects();
+}
+function restore(id) {
+  const idx = ARCHIVED.findIndex(p => p.id === id);
+  if (idx < 0) return;
+  const [p] = ARCHIVED.splice(idx, 1);
+  p.archived = false;
+  PROJECTS.push(p);
+  renderProjects();
+}
+
+function selectProject(id) {
+  currentProjectId = id;
+  // pick the first conversation in the project
+  const groups = CONVERSATIONS[id] || [];
+  const first = groups[0]?.items?.[0];
+  if (first) currentConvId = first.id;
+  renderProjects();
+  renderConversations();
+}
+
+function renderConversations() {
+  const all = [...PROJECTS, ...ARCHIVED];
+  const project = all.find(p => p.id === currentProjectId) || PROJECTS[0];
+  document.getElementById('projectName').textContent = project.name;
+  const groups = CONVERSATIONS[project.id] || [];
+  const total = groups.reduce((acc, g) => acc + g.items.length, 0);
+  document.getElementById('projectStats').textContent = `${total} conversations · last activity ${groups[0]?.items?.[0]?.time || '—'}`;
+  document.getElementById('convCount').textContent = total.toString().padStart(2, '0');
+
+  const list = document.getElementById('convList');
+  list.innerHTML = '';
+  groups.forEach(g => {
+    const lbl = document.createElement('div');
+    lbl.className = 'conv-day-label';
+    lbl.textContent = g.day;
+    list.appendChild(lbl);
+    g.items.forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'conv' + (c.id === currentConvId ? ' on' : '');
+      el.innerHTML = `
+        <div class="conv-title">${escapeHtml(c.title)}</div>
+        <div class="conv-snippet">${escapeHtml(c.snippet)}</div>
+        <div class="conv-row">
+          <div class="conv-pills">
+            ${c.live ? `<span class="c-badge c-badge-accent">LIVE</span>` : ''}
+          </div>
+          <span class="conv-time">${c.time}</span>
+        </div>
+      `;
+      el.addEventListener('click', () => {
+        currentConvId = c.id;
+        document.getElementById('bcProject').textContent = project.name;
+        document.getElementById('bcConv').textContent = c.title;
+        renderConversations();
+      });
+      list.appendChild(el);
+    });
+  });
+
+  // breadcrumbs
+  const conv = groups.flatMap(g => g.items).find(c => c.id === currentConvId);
+  document.getElementById('bcProject').textContent = project.name;
+  document.getElementById('bcConv').textContent = conv?.title || 'New conversation';
+}
+
+// new conversation button
+document.getElementById('newConvBtn').addEventListener('click', () => {
+  const groups = CONVERSATIONS[currentProjectId] = CONVERSATIONS[currentProjectId] || [];
+  let today = groups.find(g => g.day === 'TODAY');
+  if (!today) { today = { day: 'TODAY', items: [] }; groups.unshift(today); }
+  const newConv = { id: 'new-' + Date.now(), title: 'New conversation', snippet: 'Untitled. Start typing below.', time: 'now' };
+  today.items.unshift(newConv);
+  currentConvId = newConv.id;
+  renderConversations();
+  document.getElementById('composer').focus();
+});
+
+// ════════════════════ COMPOSER ════════════════════
+const composer = document.getElementById('composer');
+const sendBtn = document.getElementById('sendBtn');
+const stopBtn = document.getElementById('stopBtn');
+
+let isStreaming = true; // initial demo state
+function setStreaming(on) {
+  isStreaming = on;
+  document.getElementById('typingMsg').style.display = on ? '' : 'none';
+  stopBtn.classList.toggle('hidden', !on);
+  sendBtn.classList.toggle('hidden', on);
+}
+setStreaming(true);
+
+stopBtn.addEventListener('click', () => setStreaming(false));
+
+composer.addEventListener('input', (e) => {
+  const v = composer.value;
+  sendBtn.disabled = v.trim().length === 0;
+  // slash trigger at start
+  const last = v.slice(-1);
+  const curIsSlashStart = v.startsWith('/') && !v.includes(' ');
+  const curIsMentionToken = /(^|\s)@\S*$/.test(v);
+  showMenu('slashMenu', curIsSlashStart);
+  showMenu('mentionMenu', curIsMentionToken);
+  // auto-resize
+  composer.style.height = 'auto';
+  composer.style.height = Math.min(composer.scrollHeight, 220) + 'px';
+});
+
+composer.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    if (!sendBtn.disabled) sendMessage();
+  }
+  if (e.key === 'Escape') { showMenu('slashMenu', false); showMenu('mentionMenu', false); }
+});
+
+function showMenu(id, on) {
+  document.getElementById(id).classList.toggle('show', on);
+  if (on) {
+    // hide the other one
+    const other = id === 'slashMenu' ? 'mentionMenu' : 'slashMenu';
+    document.getElementById(other).classList.remove('show');
+  }
+}
+function toggleMenu(id) {
+  const el = document.getElementById(id);
+  const on = !el.classList.contains('show');
+  showMenu(id, on);
+  composer.focus();
+}
+window.toggleMenu = toggleMenu;
+
+// click items in slash/mention
+document.querySelectorAll('#slashMenu .floating-item').forEach(it => {
+  it.addEventListener('click', () => {
+    const key = it.querySelector('.floating-key').textContent;
+    composer.value = key + ' ';
+    composer.dispatchEvent(new Event('input'));
+    showMenu('slashMenu', false);
+    composer.focus();
+  });
+});
+document.querySelectorAll('#mentionMenu .floating-item').forEach(it => {
+  it.addEventListener('click', () => {
+    const name = it.querySelector('.floating-desc b').textContent;
+    composer.value = composer.value.replace(/@\S*$/, '@' + name + ' ');
+    composer.dispatchEvent(new Event('input'));
+    showMenu('mentionMenu', false);
+    composer.focus();
+  });
+});
+
+// voice button
+const voiceBtn = document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click', () => {
+  voiceBtn.classList.toggle('recording');
+});
+
+// suggestion click
+document.querySelectorAll('.suggestion').forEach(s => {
+  s.addEventListener('click', () => {
+    composer.value = s.textContent.trim();
+    composer.dispatchEvent(new Event('input'));
+    composer.focus();
+  });
+});
+
+function sendMessage() {
+  const text = composer.value.trim();
+  if (!text) return;
+  const inner = document.getElementById('chatInner');
+  const m = document.createElement('div');
+  m.className = 'msg';
+  m.innerHTML = `
+    <div class="avatar user">ML</div>
+    <div class="msg-body">
+      <div class="msg-meta"><b>Marcelo</b> <span>now</span></div>
+      <div class="msg-content"></div>
+    </div>
+  `;
+  m.querySelector('.msg-content').textContent = text;
+  // remove suggestions
+  document.getElementById('suggestions').style.display = 'none';
+  // insert before typing message
+  const typing = document.getElementById('typingMsg');
+  inner.insertBefore(m, typing);
+  composer.value = '';
+  composer.style.height = 'auto';
+  sendBtn.disabled = true;
+  setStreaming(true);
+  document.getElementById('chatScroll').scrollTop = 1e9;
+
+  // simulate done after 2.5s
+  setTimeout(() => setStreaming(false), 2500);
+}
+sendBtn.addEventListener('click', sendMessage);
+
+// ════════════════════ MODE TOGGLE ════════════════════
+document.querySelectorAll('#modeToggle button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#modeToggle button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    document.body.classList.toggle('light', b.dataset.mode === 'light');
+  });
+});
+
+// ════════════════════ UTIL ════════════════════
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// init
+renderProjects();
+renderConversations();
+// scroll to bottom
+setTimeout(() => { document.getElementById('chatScroll').scrollTop = 1e9; }, 50);
+</script>
+
+</body>
+</html>

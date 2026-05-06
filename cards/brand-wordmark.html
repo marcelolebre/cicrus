@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Brand wordmark — Cicrus</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 80px 64px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .hero .mark {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 96px;
+      letter-spacing: 0.04em;
+      color: var(--text-display);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .hero .tag {
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-disabled);
+    }
+
+    .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .swatch {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .swatch .ex {
+      font-family: var(--font-display);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-display);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .swatch .ex.lg { font-size: 36px; }
+    .swatch .ex.md { font-size: 28px; }
+    .swatch .ex.sm { font-size: 20px; }
+    .swatch .meta { margin-top: auto; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-disabled); padding-top: 12px; border-top: 1px solid var(--border); }
+
+    .doctrine {
+      margin-top: 24px;
+      font-family: var(--font-body); font-size: 14px; font-weight: 300;
+      color: var(--text-secondary); line-height: 1.7; max-width: 720px;
+    }
+    .doctrine code { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Brand wordmark</div>
+    <div class="sub">DOTO · 0.04EM · UPPERCASE · NO LOCKUP</div>
+  </div>
+
+  <div class="hero">
+    <div class="mark">cicrus</div>
+    <div class="tag">circus with a c · operator console as the big top</div>
+  </div>
+
+  <div class="row">
+    <div class="swatch">
+      <div class="ex lg">cicrus</div>
+      <div class="meta">DISPLAY · 36PX</div>
+    </div>
+    <div class="swatch">
+      <div class="ex md">cicrus</div>
+      <div class="meta">NAV · 28PX</div>
+    </div>
+    <div class="swatch">
+      <div class="ex sm">cicrus</div>
+      <div class="meta">FOOTER · 20PX</div>
+    </div>
+  </div>
+
+  <p class="doctrine">
+    The wordmark is set in <code>Doto</code>, weight 500, letter-spacing <code>0.04em</code>, lowercase letters rendered as ALL CAPS via <code>text-transform</code>. No tagline lockup, no logomark, no enclosing shape — the dot-matrix typography <em>is</em> the brand. The mark color always inherits from <code>--text-display</code>; in light mode it goes black, in dark it goes white. There is no colored variant, no inverse — restraint <em>is</em> the brand voice.
+  </p>
+</body>
+</html>

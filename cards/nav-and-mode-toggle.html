@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nav & mode toggle — Cicrus</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <link rel="stylesheet" href="../cicrus.css">
+  <style>
+    body { padding: 0; }
+    .container { padding: 0 0 48px; }
+    .head { padding: 48px 48px 24px; display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    nav.demo {
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      height: 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--black);
+    }
+    .demo .brand {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--text-display);
+      margin-right: 48px;
+      text-transform: uppercase;
+    }
+    .demo .nav-links { display: flex; gap: 0; height: 100%; flex: 1; }
+    .demo .nav-link {
+      display: flex; align-items: center;
+      padding: 0 16px;
+      height: 100%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-disabled);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+    }
+    .demo .nav-link.active {
+      color: var(--text-display);
+      border-bottom-color: var(--text-display);
+    }
+
+    .mode-toggle { display: flex; align-items: center; gap: 8px; margin-left: auto; cursor: pointer; user-select: none; }
+    .mode-toggle-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .mode-toggle-track { width: 36px; height: 20px; border-radius: 999px; border: 1px solid var(--border-visible); position: relative; }
+    .mode-toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text-disabled); position: absolute; top: 2px; left: 2px; }
+    .mt-on .mode-toggle-track { border-color: var(--text-primary); }
+    .mt-on .mode-toggle-thumb { transform: translateX(16px); background: var(--text-primary); }
+
+    .body-content { padding: 32px 48px; }
+    .group { margin-bottom: 40px; }
+    .group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .toggle-states { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .ts-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .ts-card .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-disabled); margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="head">
+      <div class="ttl">Nav &amp; mode toggle</div>
+      <div class="sub">STICKY · 56PX · BRAND DOTO 20PX · MONO LINKS</div>
+    </div>
+
+    <nav class="demo">
+      <div class="brand">cicrus</div>
+      <div class="nav-links">
+        <a class="nav-link active">Dashboard</a>
+        <a class="nav-link">Status</a>
+        <a class="nav-link">Timeline</a>
+        <a class="nav-link">Tasks</a>
+        <a class="nav-link">Knowledge</a>
+        <a class="nav-link">Inbox</a>
+      </div>
+      <div class="mode-toggle">
+        <span class="mode-toggle-label">DARK</span>
+        <div class="mode-toggle-track"><div class="mode-toggle-thumb"></div></div>
+      </div>
+    </nav>
+
+    <div class="body-content">
+      <div class="group">
+        <div class="group-title">Mode toggle states</div>
+        <div class="toggle-states">
+          <div class="ts-card">
+            <div class="lbl">DARK · DEFAULT</div>
+            <div class="mode-toggle">
+              <span class="mode-toggle-label">DARK</span>
+              <div class="mode-toggle-track"><div class="mode-toggle-thumb"></div></div>
+            </div>
+          </div>
+          <div class="ts-card">
+            <div class="lbl">LIGHT</div>
+            <div class="mode-toggle mt-on">
+              <span class="mode-toggle-label" style="color: var(--text-primary);">LIGHT</span>
+              <div class="mode-toggle-track"><div class="mode-toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">Rules</div>
+        <ul style="font-family: var(--font-body); font-size: 14px; font-weight: 300; color: var(--text-secondary); line-height: 1.7; padding-left: 18px; max-width: 720px;">
+          <li>Brand wordmark left · 48px right margin · ALL CAPS Doto.</li>
+          <li>Nav links Space Mono 11px ALL CAPS, 0.08em tracking — text-only, no icons.</li>
+          <li>Default link state uses <code class="t-mono">--text-disabled</code> (still clears 4.6:1).</li>
+          <li>Active = text flips to <code class="t-mono">--text-display</code> + 2px solid underline.</li>
+          <li>Mode toggle pinned to <code class="t-mono">margin-left: auto</code>. Label reads <em>current</em> mode, not target.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

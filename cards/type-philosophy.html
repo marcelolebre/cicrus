@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Three families — Cicrus</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); margin-bottom: 4px; }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .fam {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px 24px;
+      background: var(--surface);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .fam .role { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .fam .name { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+    .fam .specimen { color: var(--text-display); line-height: 1.0; padding: 8px 0 12px; border-bottom: 1px solid var(--border); }
+    .fam .doto { font-family: var(--font-display); font-size: 56px; letter-spacing: -0.02em; }
+    .fam .grotesk { font-family: var(--font-body); font-size: 40px; font-weight: 300; letter-spacing: -0.02em; }
+    .fam .mono { font-family: var(--font-mono); font-size: 28px; letter-spacing: 0.04em; }
+    .fam .alpha {
+      font-family: inherit;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+    .fam .desc { font-family: var(--font-body); font-size: 13px; font-weight: 300; color: var(--text-secondary); line-height: 1.5; }
+    .fam .weights {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-disabled);
+    }
+    .fam .weights span { padding: 3px 8px; border: 1px solid var(--border-visible); border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Three families, one voice</div>
+    <div class="sub">DISPLAY · BODY · DATA — Colophon DNA</div>
+  </div>
+
+  <div class="row">
+    <div class="fam">
+      <div class="role">Display</div>
+      <div class="name">Doto</div>
+      <div class="specimen doto">36GB/s</div>
+      <div class="alpha" style="font-family: var(--font-display); font-size: 22px;">ABCabc 0123456789</div>
+      <div class="desc">Variable dot-matrix, 36px+ only. Hero numbers, brand wordmark, one moment per screen. Dot-size variable axis is the signature.</div>
+      <div class="weights"><span>400</span><span>500</span><span>700</span></div>
+    </div>
+
+    <div class="fam">
+      <div class="role">Body / UI</div>
+      <div class="name">Space Grotesk</div>
+      <div class="specimen grotesk">Operator</div>
+      <div class="alpha" style="font-family: var(--font-body); font-size: 22px;">ABCabc 0123456789</div>
+      <div class="desc">Body copy, card titles, tile labels, descriptions. Weight 300 for paragraph blocks; 400 default; 500 for service names.</div>
+      <div class="weights"><span>300</span><span>400</span><span>500</span><span>700</span></div>
+    </div>
+
+    <div class="fam">
+      <div class="role">Data / Labels</div>
+      <div class="name">Space Mono</div>
+      <div class="specimen mono">2025-04-07</div>
+      <div class="alpha" style="font-family: var(--font-mono); font-size: 18px;">ABCabc 0123456789</div>
+      <div class="desc">Instrument labels, timestamps, badges, code chips, ALL CAPS at 0.06–0.10em tracking. Imagine the stencil on a hardware panel.</div>
+      <div class="weights"><span>400</span><span>700</span></div>
+    </div>
+  </div>
+</body>
+</html>

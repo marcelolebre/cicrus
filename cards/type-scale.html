@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Type scale — Cicrus</title>
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    body { padding: 48px; }
+    .card-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-head .ttl {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      color: var(--text-display);
+    }
+    .card-head .meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-disabled);
+    }
+    .scale-row {
+      display: grid;
+      grid-template-columns: 96px 1fr 200px;
+      gap: 24px;
+      align-items: baseline;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .scale-row:last-child { border-bottom: 0; }
+    .scale-row .tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-disabled);
+    }
+    .scale-row .specimen { line-height: 1.0; }
+    .scale-row .spec {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--text-disabled);
+      text-align: right;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="card-head">
+    <div class="ttl">Type scale</div>
+    <div class="meta">10 STEPS · DOTO · SPACE GROTESK · SPACE MONO</div>
+  </div>
+
+  <div class="scale-row">
+    <div class="tag">DISPLAY-XL</div>
+    <div class="specimen t-display-xl">36GB/s</div>
+    <div class="spec">Doto · 72 / 1.0 / -0.03em</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">DISPLAY-LG</div>
+    <div class="specimen t-display-lg">Knowledge</div>
+    <div class="spec">Doto · 48 / 1.05 / -0.02em</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">DISPLAY-MD</div>
+    <div class="specimen t-display-md">Dashboard</div>
+    <div class="spec">Doto · 36 / 1.1 / -0.02em</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">HEADING</div>
+    <div class="specimen t-heading">Recent failures</div>
+    <div class="spec">Space Grotesk · 24 / 1.2</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">SUBHEADING</div>
+    <div class="specimen t-subheading">Active sessions</div>
+    <div class="spec">Space Grotesk 500 · 18 / 1.3</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">BODY</div>
+    <div class="specimen t-body">The operator console as the big top: disciplined performers, bare stage, one spotlight at a time.</div>
+    <div class="spec">Space Grotesk · 16 / 1.5</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">BODY-SM</div>
+    <div class="specimen t-body-sm">OpenClaw Gateway returned 502 on warmup ping; retrying in 4s.</div>
+    <div class="spec">Space Grotesk · 14 / 1.5</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">CAPTION</div>
+    <div class="specimen t-caption">last_check: 4s ago · ERROR</div>
+    <div class="spec">Space Mono · 12 / 1.4 / 0.04em</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">LABEL</div>
+    <div class="specimen t-label">SESSION_PROCESS · STATUS_CHANGE</div>
+    <div class="spec">Space Mono CAPS · 11 / 0.08em</div>
+  </div>
+  <div class="scale-row">
+    <div class="tag">LABEL-XS</div>
+    <div class="specimen t-label-xs">DKR · LR:58 · IDLE</div>
+    <div class="spec">Space Mono CAPS · 10 / 0.08em</div>
+  </div>
+</body>
+</html>
