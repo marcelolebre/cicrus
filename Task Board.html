@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Task Board · Cicrus</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="cicrus.css" />
+<style>
+  /* ============================================================
+     Page-local styles (.tb-*) — task board screen
+     Built on Cicrus tokens. Coexists with .c-* component classes.
+     ============================================================ */
+
+  body {
+    background: var(--black);
+    overflow-x: hidden;
+  }
+
+  .tb-shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ── Top bar ─────────────────────────────────────────── */
+  .tb-topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-xl);
+    border-bottom: 1px solid var(--border);
+  }
+  .tb-tabs {
+    display: flex;
+    gap: var(--space-lg);
+  }
+  .tb-tab {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    text-decoration: none;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tb-tab:hover { color: var(--text-secondary); }
+  .tb-tab--active {
+    color: var(--text-display);
+    border-bottom-color: var(--text-display);
+  }
+  .tb-brand {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .tb-mode {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .tb-mode button {
+    background: transparent;
+    border: 0;
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    cursor: pointer;
+  }
+  .tb-mode button.is-active {
+    background: var(--text-display);
+    color: var(--black);
+  }
+
+  /* ── Layout regions ──────────────────────────────────── */
+  .tb-side {
+    border-right: 1px solid var(--border);
+    padding: var(--space-xl) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+  .tb-main {
+    padding: var(--space-xl) var(--space-xl) var(--space-3xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    min-width: 0;
+  }
+
+  /* ── Sidebar ─────────────────────────────────────────── */
+  .tb-side-section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    margin-bottom: var(--space-md);
+  }
+  .tb-side-list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+  }
+  .tb-side-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px var(--space-sm);
+    margin: 0 calc(-1 * var(--space-sm));
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-tech);
+    transition: color 0.15s, background 0.15s;
+  }
+  .tb-side-item:hover { color: var(--text-primary); }
+  .tb-side-item--active {
+    color: var(--text-display);
+    background: var(--surface-raised);
+  }
+  .tb-side-item--add {
+    color: var(--text-disabled);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .tb-side-item--add:hover { color: var(--text-primary); }
+  .tb-side-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .tb-side-item--active .tb-side-count { color: var(--text-secondary); }
+
+  .tb-side-foot {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+  .tb-side-archive {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    padding: 0;
+  }
+  .tb-side-archive:hover { color: var(--text-primary); }
+
+  /* ── Header ──────────────────────────────────────────── */
+  .tb-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+  .tb-head-title {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--text-display);
+    line-height: 1;
+  }
+  .tb-head-sub {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+  }
+  .tb-head-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    text-align: right;
+  }
+  .tb-head-meta b {
+    color: var(--text-display);
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  /* ── Toolbar ─────────────────────────────────────────── */
+  .tb-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  .tb-toolbar-spacer { flex: 1; }
+  .tb-toolbar .c-input-pill { flex: 1; min-width: 320px; max-width: 520px; }
+
+  /* ── Stats strip ─────────────────────────────────────── */
+  .tb-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .tb-stat {
+    background: var(--black);
+    padding: var(--space-md) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .tb-stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .tb-stat-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--text-display);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-stat-value--danger { color: var(--accent); }
+  .tb-stat-value--success { color: var(--success); }
+  .tb-stat-value--warning { color: var(--warning); }
+  .tb-stat-bar {
+    display: flex;
+    gap: 2px;
+    height: 3px;
+    margin-top: var(--space-xs);
+  }
+  .tb-stat-bar span {
+    flex: 1;
+    background: var(--border-visible);
+    opacity: 0.4;
+  }
+  .tb-stat-bar span.on { background: var(--text-display); opacity: 1; }
+  .tb-stat-bar span.danger { background: var(--accent); opacity: 1; }
+  .tb-stat-bar span.success { background: var(--success); opacity: 1; }
+  .tb-stat-bar span.warning { background: var(--warning); opacity: 1; }
+
+  /* ── Kanban ──────────────────────────────────────────── */
+  .tb-kanban {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    align-items: start;
+  }
+  @media (max-width: 1280px) {
+    .tb-kanban { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 720px) {
+    .tb-kanban { grid-template-columns: 1fr; }
+  }
+  .tb-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    animation: c-fade-in 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+    min-height: 360px;
+  }
+  .tb-kanban > .tb-col:nth-child(1) { animation-delay: 0.03s; }
+  .tb-kanban > .tb-col:nth-child(2) { animation-delay: 0.08s; }
+  .tb-kanban > .tb-col:nth-child(3) { animation-delay: 0.13s; }
+  .tb-kanban > .tb-col:nth-child(4) { animation-delay: 0.18s; }
+  .tb-kanban > .tb-col:nth-child(5) { animation-delay: 0.23s; }
+
+  .tb-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-xs);
+  }
+  .tb-col-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .tb-col-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Task card ───────────────────────────────────────── */
+  .tb-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .tb-card:hover {
+    border-color: var(--border-visible);
+  }
+  .tb-card-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .tb-card-title {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--text-primary);
+    text-wrap: pretty;
+  }
+  .tb-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-top: var(--space-xs);
+  }
+  .tb-card-time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-disabled);
+  }
+  .tb-card-progress {
+    display: flex;
+    gap: 2px;
+    height: 2px;
+    margin-top: var(--space-xs);
+  }
+  .tb-card-progress span {
+    flex: 1;
+    background: var(--border);
+  }
+  .tb-card-progress span.on { background: var(--text-secondary); }
+  .tb-card-progress span.warn { background: var(--warning); }
+  .tb-card-progress span.success { background: var(--success); }
+
+  /* ── Running card: pointer-following border glow ──────
+     Adapted from reactbits.dev Border Glow. A radial halo painted
+     in a ::before layer follows the cursor; ::after holds the inner
+     surface so the glow reads as a luminous border.            */
+  .tb-card--running {
+    position: relative;
+    border-color: transparent;
+    --tb-glow-x: 50%;
+    --tb-glow-y: 0%;
+    --tb-glow-color: var(--warning);
+    isolation: isolate;
+  }
+  .tb-card--running::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background:
+      radial-gradient(160px 120px at var(--tb-glow-x) var(--tb-glow-y),
+        var(--tb-glow-color) 0%,
+        rgba(217,142,90,0.55) 35%,
+        transparent 70%),
+      var(--border);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+    animation: tb-glow-orbit 4.2s linear infinite;
+  }
+  .tb-card--running::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+      0 0 24px -4px rgba(217,142,90,0.35),
+      0 0 0 1px rgba(217,142,90,0.18) inset;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes tb-glow-orbit {
+    0%   { --tb-glow-x: 0%;   --tb-glow-y: 0%; }
+    25%  { --tb-glow-x: 100%; --tb-glow-y: 0%; }
+    50%  { --tb-glow-x: 100%; --tb-glow-y: 100%; }
+    75%  { --tb-glow-x: 0%;   --tb-glow-y: 100%; }
+    100% { --tb-glow-x: 0%;   --tb-glow-y: 0%; }
+  }
+  @property --tb-glow-x {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+  }
+  @property --tb-glow-y {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+  }
+  .tb-card--done {
+    opacity: 0.7;
+  }
+  .tb-card--done .tb-card-title {
+    color: var(--text-secondary);
+  }
+
+  .tb-col-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-disabled);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-tech);
+    padding: var(--space-xl);
+    min-height: 120px;
+  }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  .tb-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .tb-foot-stats {
+    display: flex;
+    gap: var(--space-lg);
+  }
+  .tb-foot-stats b {
+    color: var(--text-primary);
+    font-weight: 400;
+    margin-left: var(--space-xs);
+  }
+
+  /* ── Dot status legend ──────────────────────────────── */
+  .tb-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tb-status-dot--todo    { background: var(--text-disabled); }
+  .tb-status-dot--running { background: var(--warning); animation: c-pulse 2s infinite; }
+  .tb-status-dot--review  { background: var(--interactive); }
+  .tb-status-dot--done    { background: var(--success); }
+  .tb-status-dot--failed  { background: var(--accent); }
+
+  /* ── New task input override ─────────────────────────── */
+  .tb-new-task .c-input-pill-prefix {
+    color: var(--text-secondary);
+  }
+</style>
+</head>
+<body>
+
+<div class="tb-shell">
+
+  <!-- ── Top bar ─────────────────────────────────────── -->
+  <header class="tb-topbar">
+    <nav class="tb-tabs" aria-label="Primary">
+      <a href="#" class="tb-tab tb-tab--active">Tasks</a>
+      <a href="#" class="tb-tab">Schedules</a>
+      <a href="#" class="tb-tab">Timeline</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap: var(--space-md);">
+      <span class="tb-brand">Console · v2.4</span>
+      <div class="tb-mode" role="group" aria-label="Theme">
+        <button type="button" data-mode="dark" class="is-active">Dark</button>
+        <button type="button" data-mode="light">Light</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Sidebar ─────────────────────────────────────── -->
+  <aside class="tb-side">
+    <div>
+      <div class="tb-side-section-title">Projects</div>
+      <ul class="tb-side-list">
+        <li class="tb-side-item tb-side-item--add">+ new project</li>
+        <li class="tb-side-item tb-side-item--active">
+          <span>Admin</span><span class="tb-side-count">6</span>
+        </li>
+        <li class="tb-side-item">
+          <span>Personal</span><span class="tb-side-count">1</span>
+        </li>
+        <li class="tb-side-item">
+          <span>Scheduled</span><span class="tb-side-count">14</span>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="tb-side-section-title">Filters</div>
+      <ul class="tb-side-list">
+        <li class="tb-side-item">
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            <span class="tb-status-dot tb-status-dot--running"></span>Active
+          </span>
+          <span class="tb-side-count">2</span>
+        </li>
+        <li class="tb-side-item">
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            <span class="tb-status-dot tb-status-dot--failed"></span>Failed
+          </span>
+          <span class="tb-side-count">0</span>
+        </li>
+        <li class="tb-side-item">
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            <span class="tb-status-dot tb-status-dot--done"></span>Completed
+          </span>
+          <span class="tb-side-count">23</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tb-side-foot">
+      <button type="button" class="tb-side-archive">Archived →</button>
+      <button type="button" class="tb-side-archive">Settings →</button>
+    </div>
+  </aside>
+
+  <!-- ── Main column ─────────────────────────────────── -->
+  <main class="tb-main">
+
+    <!-- Header -->
+    <header class="tb-head">
+      <div>
+        <h1 class="tb-head-title">Admin</h1>
+        <p class="tb-head-sub">Default project for system administration tasks</p>
+      </div>
+      <div class="tb-head-meta">
+        <span>Last sync · 14:02:17</span>
+        <span>Avg run <b>13m</b> · Fail rate <b>6.3%</b></span>
+      </div>
+    </header>
+
+    <!-- Stats strip -->
+    <section class="tb-stats" aria-label="Project stats">
+      <div class="tb-stat">
+        <span class="tb-stat-label">Open</span>
+        <span class="tb-stat-value">5</span>
+        <div class="tb-stat-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-label">Running</span>
+        <span class="tb-stat-value tb-stat-value--warning">2</span>
+        <div class="tb-stat-bar"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-label">In review</span>
+        <span class="tb-stat-value">5</span>
+        <div class="tb-stat-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-label">Done · today</span>
+        <span class="tb-stat-value tb-stat-value--success">1</span>
+        <div class="tb-stat-bar"><span class="success"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="tb-stat">
+        <span class="tb-stat-label">Failed</span>
+        <span class="tb-stat-value">0</span>
+        <div class="tb-stat-bar"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="tb-toolbar">
+      <button type="button" class="c-filter-btn">All types
+        <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button type="button" class="c-filter-btn">All executors
+        <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button type="button" class="c-filter-btn">Sort · Newest
+        <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <div class="c-input-pill tb-new-task">
+        <span class="c-input-pill-prefix">+ Task</span>
+        <input type="text" placeholder="Describe a new task and press Enter" />
+        <span class="c-caps c-muted">⌘ K</span>
+      </div>
+    </section>
+
+    <!-- Kanban -->
+    <section class="tb-kanban" aria-label="Task board">
+
+      <!-- TODO -->
+      <div class="tb-col">
+        <header class="tb-col-head">
+          <span class="tb-col-title">
+            <span class="tb-status-dot tb-status-dot--todo"></span>Todo
+          </span>
+          <span class="tb-col-count">0</span>
+        </header>
+        <div class="tb-col-empty">— Empty</div>
+      </div>
+
+      <!-- RUNNING -->
+      <div class="tb-col">
+        <header class="tb-col-head">
+          <span class="tb-col-title">
+            <span class="tb-status-dot tb-status-dot--running"></span>Running
+          </span>
+          <span class="tb-col-count">2</span>
+        </header>
+
+        <article class="tb-card tb-card--running" data-glow>
+          <span class="tb-card-id">#A-209 · Onboarding</span>
+          <h3 class="tb-card-title">Draft Q3 contractor onboarding checklist for EU entities</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">running · step 7 / 12</span>
+          </div>
+          <div class="tb-card-progress">
+            <span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="warn"></span><span></span><span></span><span></span>
+            <span></span><span></span>
+          </div>
+        </article>
+
+        <article class="tb-card tb-card--running" data-glow>
+          <span class="tb-card-id">#A-210 · Compliance </span>
+          <h3 class="tb-card-title">Reconcile July benefits enrollment against payroll deductions</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">running · step 3 / 9</span>
+          </div>
+          <div class="tb-card-progress">
+            <span class="on"></span><span class="on"></span><span class="warn"></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </article>
+      </div>
+
+      <!-- REVIEW -->
+      <div class="tb-col">
+        <header class="tb-col-head">
+          <span class="tb-col-title">
+            <span class="tb-status-dot tb-status-dot--review"></span>Review
+          </span>
+          <span class="tb-col-count">5</span>
+        </header>
+
+        <article class="tb-card">
+          <span class="tb-card-id">#A-204 · Payroll</span>
+          <h3 class="tb-card-title">What's the total payroll cost this month?</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">3h · 14 steps</span>
+          </div>
+        </article>
+
+        <article class="tb-card">
+          <span class="tb-card-id">#A-205 · Forecast</span>
+          <h3 class="tb-card-title">Upcoming payroll &amp; invoice payment schedule (next 60 days)</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">4h · 22 steps</span>
+          </div>
+        </article>
+
+        <article class="tb-card">
+          <span class="tb-card-id">#A-206 · Time-off</span>
+          <h3 class="tb-card-title">Time-off liability and upcoming absences (next 30 days)</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">3h · 11 steps</span>
+          </div>
+        </article>
+
+        <article class="tb-card">
+          <span class="tb-card-id">#A-207 · Headcount</span>
+          <h3 class="tb-card-title">Employee headcount snapshot by country and employment type</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">3h · 9 steps</span>
+          </div>
+        </article>
+
+        <article class="tb-card">
+          <span class="tb-card-id">#A-208 · Contractors</span>
+          <h3 class="tb-card-title">Active contractor roster with rates and renewals</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-resource">Remote</span>
+            <span class="tb-card-time">3h · 16 steps</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- DONE -->
+      <div class="tb-col">
+        <header class="tb-col-head">
+          <span class="tb-col-title">
+            <span class="tb-status-dot tb-status-dot--done"></span>Done
+          </span>
+          <span class="tb-col-count">1</span>
+        </header>
+
+        <article class="tb-card tb-card--done">
+          <span class="tb-card-id">#A-203 · Payroll</span>
+          <h3 class="tb-card-title">Payroll cost breakdown by legal entity (last quarter)</h3>
+          <div class="tb-card-meta">
+            <span class="c-badge c-badge-success">Done</span>
+            <span class="tb-card-time">4h · 18 steps</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- FAILED -->
+      <div class="tb-col">
+        <header class="tb-col-head">
+          <span class="tb-col-title">
+            <span class="tb-status-dot tb-status-dot--failed"></span>Failed
+          </span>
+          <span class="tb-col-count">0</span>
+        </header>
+        <div class="tb-col-empty">— None</div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="tb-foot">
+      <div class="tb-foot-stats">
+        <span>Avg <b>13m</b></span>
+        <span>Fail <b>6.3%</b></span>
+        <span>Today <b>23</b></span>
+      </div>
+      <div>Tasks · Archived →</div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // ── Mode toggle (persists in localStorage) ──────────
+  (function () {
+    const KEY = 'cicrus.mode';
+    const body = document.body;
+    const saved = localStorage.getItem(KEY);
+    if (saved === 'light') body.classList.add('light');
+    document.querySelectorAll('.tb-mode button').forEach(btn => {
+      const isActive = (saved || 'dark') === btn.dataset.mode;
+      btn.classList.toggle('is-active', isActive);
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        body.classList.toggle('light', mode === 'light');
+        localStorage.setItem(KEY, mode);
+        document.querySelectorAll('.tb-mode button').forEach(b => {
+          b.classList.toggle('is-active', b.dataset.mode === mode);
+        });
+      });
+    });
+  })();
+
+  // ── Project switcher ───────────────────────────────
+  document.querySelectorAll('.tb-side-item').forEach(item => {
+    if (item.classList.contains('tb-side-item--add')) return;
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.tb-side-item').forEach(i => i.classList.remove('tb-side-item--active'));
+      item.classList.add('tb-side-item--active');
+    });
+  });
+
+  // ── Tabs ───────────────────────────────────────────
+  document.querySelectorAll('.tb-tab').forEach(tab => {
+    tab.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelectorAll('.tb-tab').forEach(t => t.classList.remove('tb-tab--active'));
+      tab.classList.add('tb-tab--active');
+    });
+  });
+</script>
+
+</body>
+</html>

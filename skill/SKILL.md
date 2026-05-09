@@ -196,3 +196,7 @@ For detailed token values, component specs, and platform-specific guidance:
 - **`references/glyphs.md`** — Animated state glyphs (idle, thinking, error). Pixel-grid canvas renderers for one "thinking object" entity in three states, with `mountGlyph` API and embed snippets.
 - **`references/glyphs-starter.html`** — Worked example showing the three glyphs side by side, loading the renderer module from `references/glyphs/cicrus-glyphs.js`.
 - **`references/starter.html`** — Copy-pasteable single-file starter with full dark+light token set, mode toggle, sample nav, and one worked screen.
+- **`/colors_and_type.css`** (repo root) — Drop-in token sheet. Imports Google Fonts, defines all design tokens (colors, type, spacing, radii) and a `body.light` override for light mode. Pair with `cicrus.css` (the component sheet, which expects these tokens in scope).
+- **`/cards/`** (repo root) — 16 single-topic preview cards, one per design subject (badges, buttons, inputs, color modes, type scale + philosophy, surfaces, status signals, state glyphs, timeline row, dot-matrix motif, brand wordmark, nav + mode toggle, spacing/radius). Visual quick-references when applying a specific token or component.
+- **`/ui_kits/operator-console.html`** (repo root) — Comprehensive UI kit demonstrating most components on a single page.
+- **`/Agent Chat.html`** and **`/Task Board.html`** (repo root) — Full-screen prototypes built from the system: an agent chat view with knowledge sidebar, and a task management board with running-task border-glow.
