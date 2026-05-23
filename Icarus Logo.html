@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Icarus · Identity</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  body { background: #141414; color: var(--text-primary); }
+
+  /* ── Stage backgrounds ───────────────────────────── */
+  .ls {
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    padding: var(--space-2xl);
+    background: var(--black);
+    color: var(--text-display);
+  }
+  .ls--surface { background: var(--surface-raised); }
+  .ls--light   { background: #F5F4EE; color: #0A0A0A; }
+  .ls--paper   { background: #ECE7DA; color: #0A0A0A; }
+
+  .col { display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+  .row { display: flex; align-items: center; gap: var(--space-lg); }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="icarus-logos.jsx"></script>
+<script type="text/babel">
+  const { DesignCanvas, DCSection, DCArtboard } = window;
+
+  function App() {
+    const {
+      PrimaryHero, StackedLockup, HorizontalLockup, CapsLockup,
+      AppIconLight, AppIconDark, StampPlate, PrimaryLight,
+      NavLockup, ScaleStudy, ConstructionDrawing, WordmarkMono,
+    } = window;
+
+    return (
+      <DesignCanvas title="Icarus · Identity">
+
+        <DCSection id="primary" title="Wordmark — primary">
+          <DCArtboard id="p-1" label="Wordmark · hero"          width={720} height={300}><PrimaryHero /></DCArtboard>
+          <DCArtboard id="p-2" label="Light · paper"            width={720} height={300}>
+            <div className="ls ls--paper">
+              <span style={{
+                fontFamily: 'var(--font-body)', fontWeight: 300,
+                fontSize: 144, letterSpacing: '0.04em', lineHeight: 1,
+                color: '#0A0A0A', display: 'inline-flex', alignItems: 'baseline',
+              }}>
+                <span style={{ position: 'relative', display: 'inline-block', letterSpacing: 0 }}>
+                  ı
+                  <span style={{
+                    position: 'absolute', left: '50%', bottom: '0.86em',
+                    width: 29, height: 29, borderRadius: '50%',
+                    background: '#0A0A0A', transform: 'translateX(-50%)',
+                  }} />
+                </span>
+                <span>carus</span>
+              </span>
+            </div>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="lockups" title="Lockups">
+          <DCArtboard id="l-1" label="Stacked · primary"       width={640} height={460}><StackedLockup /></DCArtboard>
+          <DCArtboard id="l-2" label="Horizontal · hairline"   width={640} height={300}><HorizontalLockup /></DCArtboard>
+          <DCArtboard id="l-3" label="Caps · tagline"          width={640} height={300}><CapsLockup /></DCArtboard>
+          <DCArtboard id="l-4" label="Light · paper · stacked" width={640} height={460}><PrimaryLight /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="applications" title="Applications">
+          <DCArtboard id="a-1" label="App icon · dark"         width={300} height={300}><AppIconDark /></DCArtboard>
+          <DCArtboard id="a-2" label="App icon · light"        width={300} height={300}><AppIconLight /></DCArtboard>
+          <DCArtboard id="a-3" label="Stamp plate"             width={520} height={420}><StampPlate /></DCArtboard>
+          <DCArtboard id="a-4" label="Nav pill"                width={520} height={200}><NavLockup /></DCArtboard>
+        </DCSection>
+
+        <DCSection id="system" title="System">
+          <DCArtboard id="s-1" label="Scale study"             width={900} height={340}><ScaleStudy /></DCArtboard>
+          <DCArtboard id="s-2" label="Construction"            width={640} height={300}><ConstructionDrawing /></DCArtboard>
+          <DCArtboard id="s-3" label="Alternate · Space Mono"  width={640} height={300}><WordmarkMono /></DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<App />);
+</script>
+
+</body>
+</html>

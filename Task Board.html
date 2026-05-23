@@ -349,26 +349,10 @@
 
   .tb-card-head {
     display: grid;
-    grid-template-columns: 14px 1fr auto;
+    grid-template-columns: 1fr auto;
     gap: 10px;
     align-items: start;
   }
-  .tb-card-drag {
-    margin-top: 6px;
-    display: grid;
-    grid-template-columns: repeat(2, 3px);
-    grid-template-rows: repeat(3, 3px);
-    gap: 2px;
-    cursor: grab;
-    opacity: 0.55;
-    transition: opacity 0.15s;
-  }
-  .tb-card-drag span {
-    width: 3px; height: 3px;
-    background: var(--text-disabled);
-    border-radius: 50%;
-  }
-  .tb-card:hover .tb-card-drag { opacity: 1; }
 
   .tb-card-heading { min-width: 0; }
   .tb-card-id {
@@ -412,11 +396,10 @@
   .tb-card-action--review  { color: var(--interactive); border-color: rgba(80,150,255,0.32); }
   .tb-card-action--done    { color: var(--success); border-color: rgba(78,160,116,0.32); }
 
-  /* Dashed progress — masked dashes over a 2-stop fill so the
-     filled vs unfilled portions split at --p cleanly. */
+  /* Fine-line progress — 2-stop fill splits filled vs unfilled at --p. */
   .tb-card-progress {
     --p: 0%;
-    height: 3px;
+    height: 1px;
     margin-top: var(--space-xs);
     background:
       linear-gradient(to right,
@@ -424,8 +407,6 @@
         var(--text-display) var(--p),
         var(--border-visible) var(--p),
         var(--border-visible) 100%);
-    -webkit-mask: repeating-linear-gradient(to right, #000 0 5px, transparent 5px 8px);
-            mask: repeating-linear-gradient(to right, #000 0 5px, transparent 5px 8px);
     transition: --p 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   @property --p {
@@ -462,20 +443,9 @@
   }
   .tb-card-meter b { color: var(--text-primary); font-weight: 400; }
 
-  /* Drawer — max-height transition (reliable inside flex column,
-     where the 0fr↔1fr grid trick collapses to 0). */
-  .tb-card-drawer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.42s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-  .tb-card.is-open .tb-card-drawer { max-height: 600px; }
-  .tb-card-drawer-inner {
-    border-top: 1px solid var(--border);
-    transition: opacity 0.28s ease 0.05s;
-    opacity: 0;
-  }
-  .tb-card.is-open .tb-card-drawer-inner { opacity: 1; }
+  /* Side panel detail list (also used inside cards as a data
+     source — cards never display this list themselves). */
+  .tb-card > .tb-card-detail-list { display: none; }
 
   .tb-card-detail-list {
     list-style: none;
@@ -517,37 +487,11 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Toggle row */
-  .tb-card-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background: transparent;
-    border: 0;
-    border-top: 1px solid var(--border);
-    padding: 10px var(--space-md);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    color: var(--text-secondary);
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.15s, color 0.15s;
+  /* Card open-state — subtle ring when its panel is active */
+  .tb-card.is-open {
+    border-color: var(--text-display);
+    box-shadow: 0 0 0 1px var(--text-display) inset;
   }
-  .tb-card-toggle:hover { background: var(--surface); color: var(--text-display); }
-  .tb-card-toggle-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .tb-card-toggle-chev {
-    width: 10px; height: 10px;
-    transition: transform 0.32s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-  .tb-card.is-open .tb-card-toggle-chev { transform: rotate(180deg); }
-  .tb-card-toggle-meta { color: var(--text-disabled); font-variant-numeric: tabular-nums; }
-  .tb-card-toggle-meta b { color: var(--text-primary); font-weight: 400; }
 
   /* ── Running card: pointer-following border glow ──────
      Adapted from reactbits.dev Border Glow. A radial halo painted
@@ -674,6 +618,330 @@
   /* ── New task input override ─────────────────────────── */
   .tb-new-task .c-input-pill-prefix {
     color: var(--text-secondary);
+  }
+
+  /* ── Side panel (task detail) ───────────────────────── */
+  .tb-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+    z-index: 90;
+  }
+  .tb-panel-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  body.light .tb-panel-backdrop { background: rgba(20, 20, 20, 0.28); }
+
+  .tb-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(640px, 94vw);
+    background: var(--black);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .tb-panel.is-open { transform: translateX(0); }
+
+  .tb-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-xl);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tb-panel-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-disabled);
+  }
+  .tb-panel-eyebrow b {
+    color: var(--text-display);
+    font-weight: 400;
+  }
+  .tb-panel-eyebrow span.sep { color: var(--border-visible); }
+  .tb-panel-close {
+    width: 28px; height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-tech);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .tb-panel-close:hover {
+    color: var(--text-display);
+    border-color: var(--border-visible);
+    background: var(--surface);
+  }
+  .tb-panel-close svg { width: 12px; height: 12px; }
+
+  .tb-panel-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+  .tb-panel-body::-webkit-scrollbar { width: 8px; }
+  .tb-panel-body::-webkit-scrollbar-thumb {
+    background: var(--border-visible);
+    border-radius: 4px;
+  }
+
+  .tb-panel-hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .tb-panel-statusrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  .tb-panel-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid currentColor;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .tb-panel-pill svg { width: 10px; height: 10px; }
+  .tb-panel-pill--running { color: var(--warning); }
+  .tb-panel-pill--review  { color: var(--text-display); }
+  .tb-panel-pill--done    { color: var(--success); }
+  .tb-panel-pill--neutral { color: var(--text-disabled); }
+
+  .tb-panel-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--text-display);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .tb-panel-progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+  .tb-panel-progress {
+    --p: 0%;
+    height: 1px;
+    background:
+      linear-gradient(to right,
+        var(--text-display) 0,
+        var(--text-display) var(--p),
+        var(--border-visible) var(--p),
+        var(--border-visible) 100%);
+    transition: --p 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .tb-panel-progress--warning {
+    background:
+      linear-gradient(to right,
+        var(--warning) 0,
+        var(--warning) var(--p),
+        var(--border-visible) var(--p),
+        var(--border-visible) 100%);
+  }
+  .tb-panel-progress--success {
+    background:
+      linear-gradient(to right,
+        var(--success) 0,
+        var(--success) var(--p),
+        var(--border-visible) var(--p),
+        var(--border-visible) 100%);
+  }
+  .tb-panel-meter {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text-disabled);
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-panel-meter b { color: var(--text-primary); font-weight: 400; }
+
+  .tb-panel-section h4 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    margin: 0 0 var(--space-md);
+  }
+
+  /* Run-log timeline */
+  .tb-panel-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .tb-panel-timeline li {
+    display: grid;
+    grid-template-columns: 56px 14px 1fr;
+    gap: var(--space-sm);
+    align-items: start;
+    position: relative;
+    padding-bottom: var(--space-md);
+  }
+  .tb-panel-timeline li:last-child { padding-bottom: 0; }
+  .tb-panel-time {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+    padding-top: 1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-panel-dot {
+    position: relative;
+    width: 14px;
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+  }
+  .tb-panel-dot::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 6px;
+    background: var(--text-disabled);
+    z-index: 1;
+  }
+  .tb-panel-dot::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: var(--border-visible);
+  }
+  .tb-panel-timeline li:last-child .tb-panel-dot::after { display: none; }
+  .tb-panel-timeline li.is-done .tb-panel-dot::before    { background: var(--success); }
+  .tb-panel-timeline li.is-active .tb-panel-dot::before  {
+    background: var(--warning);
+    box-shadow: 0 0 0 3px rgba(217,142,90,0.22);
+    animation: tb-pulse 1.6s ease-in-out infinite;
+  }
+  .tb-panel-timeline li.is-pending .tb-panel-time { opacity: 0.4; }
+  .tb-panel-timeline li.is-pending .tb-panel-step { color: var(--text-disabled); }
+  @keyframes tb-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(217,142,90,0.22); }
+    50%      { box-shadow: 0 0 0 6px rgba(217,142,90,0.08); }
+  }
+  .tb-panel-step {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  /* Reuse the existing detail-list inside panel — already styled */
+  .tb-panel .tb-card-detail-list { padding: 0; }
+
+  /* Output preview */
+  .tb-panel-output {
+    margin: 0;
+    padding: var(--space-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-tech);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* Action footer */
+  .tb-panel-foot {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
+    border-top: 1px solid var(--border);
+    background: var(--black);
+  }
+  .tb-panel-foot-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.04em;
+  }
+  .tb-panel-foot-meta b { color: var(--text-primary); font-weight: 400; }
+  .tb-panel-actions {
+    display: flex;
+    gap: var(--space-sm);
+  }
+  .tb-panel-btn {
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-visible);
+    background: transparent;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .tb-panel-btn:hover {
+    color: var(--text-display);
+    border-color: var(--text-display);
+  }
+  .tb-panel-btn--primary {
+    background: var(--text-display);
+    color: var(--black);
+    border-color: var(--text-display);
+  }
+  .tb-panel-btn--primary:hover {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+  }
+  .tb-panel-btn--danger:hover {
+    color: var(--accent);
+    border-color: var(--accent);
   }
 </style>
 </head>
@@ -833,7 +1101,6 @@
         <article class="tb-card tb-card--running" data-glow>
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-209 · Onboarding</span>
                 <h3 class="tb-card-title">Draft Q3 contractor onboarding checklist for EU entities</h3>
@@ -845,20 +1112,16 @@
             <div class="tb-card-progress tb-card-progress--warning" style="--p: 58%;"></div>
             <div class="tb-card-meter"><span><b>step 7</b> / 12</span><span>ETA 2m 14s</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>Claude Opus 4.6</b> <em>Executor</em></span><span>Streaming</span></li>
               <li><span><b>Workday + Greenhouse</b> <em>Sources</em></span><span>OAuth · live</span></li>
               <li><span><b>14 EU entities</b> <em>Scope</em></span><span>DE · FR · ES · NL …</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta"><b>3m 12s</b> · started 14:01</span></button>
         </article>
 
         <article class="tb-card tb-card--running" data-glow>
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-210 · Compliance</span>
                 <h3 class="tb-card-title">Reconcile July benefits enrollment against payroll deductions</h3>
@@ -870,14 +1133,11 @@
             <div class="tb-card-progress tb-card-progress--warning" style="--p: 33%;"></div>
             <div class="tb-card-meter"><span><b>step 3</b> / 9</span><span>ETA 4m 32s</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>Claude Sonnet 4.5</b> <em>Executor</em></span><span>Streaming</span></li>
               <li><span><b>Gusto · ADP</b> <em>Sources</em></span><span>OAuth · live</span></li>
               <li><span><b>248 employees</b> <em>Scope</em></span><span>July payroll cycle</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta"><b>1m 48s</b> · started 14:00</span></button>
         </article>
       </div>
 
@@ -893,7 +1153,6 @@
         <article class="tb-card">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-204 · Payroll</span>
                 <h3 class="tb-card-title">What's the total payroll cost this month?</h3>
@@ -905,20 +1164,16 @@
             <div class="tb-card-progress" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>14</b> steps</span><span>ran 3h 12m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>October 2026</b> <em>Period</em></span><span>$4.91M</span></li>
               <li><span><b>6 entities</b> <em>Scope</em></span><span>US · UK · DE · NL · BR · IN</span></li>
               <li><span><b>+1.2%</b> <em>Variance</em></span><span>vs Sep · within band</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">awaiting <b>Mira</b></span></button>
         </article>
 
         <article class="tb-card">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-205 · Forecast</span>
                 <h3 class="tb-card-title">Upcoming payroll &amp; invoice payment schedule (next 60 days)</h3>
@@ -930,20 +1185,16 @@
             <div class="tb-card-progress" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>22</b> steps</span><span>ran 4h 04m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>60-day window</b> <em>Horizon</em></span><span>through Jan 09</span></li>
               <li><span><b>412 payments</b> <em>Forecasted</em></span><span>$8.7M aggregate</span></li>
               <li><span><b>8 currencies</b> <em>FX</em></span><span>USD-base · live rate</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">awaiting <b>Finance</b></span></button>
         </article>
 
         <article class="tb-card">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-206 · Time-off</span>
                 <h3 class="tb-card-title">Time-off liability and upcoming absences (next 30 days)</h3>
@@ -955,20 +1206,16 @@
             <div class="tb-card-progress" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>11</b> steps</span><span>ran 2h 51m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>1,247 days</b> <em>Liability</em></span><span>$412k accrued</span></li>
               <li><span><b>30-day window</b> <em>Horizon</em></span><span>62 absences</span></li>
               <li><span><b>3 conflicts</b> <em>Flagged</em></span><span>Eng-Platform overlap</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">awaiting <b>People</b></span></button>
         </article>
 
         <article class="tb-card">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-207 · Headcount</span>
                 <h3 class="tb-card-title">Employee headcount snapshot by country and employment type</h3>
@@ -980,20 +1227,16 @@
             <div class="tb-card-progress" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>9</b> steps</span><span>ran 2h 38m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>312 FTE</b> <em>Full-time</em></span><span>+4 vs last week</span></li>
               <li><span><b>86 contractors</b> <em>Active</em></span><span>−2 vs last week</span></li>
               <li><span><b>24 countries</b> <em>Distribution</em></span><span>US 41% · EU 33%</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">awaiting <b>People</b></span></button>
         </article>
 
         <article class="tb-card">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-208 · Contractors</span>
                 <h3 class="tb-card-title">Active contractor roster with rates and renewals</h3>
@@ -1005,14 +1248,11 @@
             <div class="tb-card-progress" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>16</b> steps</span><span>ran 3h 22m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>86 contractors</b> <em>Active</em></span><span>14 jurisdictions</span></li>
               <li><span><b>9 renewals</b> <em>Next 30 days</em></span><span>3 above market</span></li>
               <li><span><b>$87 / hr</b> <em>Avg rate</em></span><span>+$4 vs last quarter</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Details<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">awaiting <b>Ops</b></span></button>
         </article>
       </div>
 
@@ -1028,7 +1268,6 @@
         <article class="tb-card tb-card--done">
           <div class="tb-card-body">
             <div class="tb-card-head">
-              <span class="tb-card-drag" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
               <div class="tb-card-heading">
                 <span class="tb-card-id">#A-203 · Payroll</span>
                 <h3 class="tb-card-title">Payroll cost breakdown by legal entity (last quarter)</h3>
@@ -1040,14 +1279,11 @@
             <div class="tb-card-progress tb-card-progress--success" style="--p: 100%;"></div>
             <div class="tb-card-meter"><span><b>18</b> steps</span><span>ran 4h 11m</span></div>
           </div>
-          <div class="tb-card-drawer"><div class="tb-card-drawer-inner">
-            <ul class="tb-card-detail-list">
+          <ul class="tb-card-detail-list">
               <li><span><b>Q3 2026</b> <em>Period</em></span><span>$13.4M total</span></li>
               <li><span><b>Mira Chen</b> <em>Approved</em></span><span>Nov 02 · 09:41</span></li>
               <li><span><b>−0.4%</b> <em>Variance</em></span><span>vs Q2 · in band</span></li>
             </ul>
-          </div></div>
-          <button type="button" class="tb-card-toggle" data-toggle><span class="tb-card-toggle-label">Summary<svg class="tb-card-toggle-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4 L6 8 L10 4"></path></svg></span><span class="tb-card-toggle-meta">archived <b>2d ago</b></span></button>
         </article>
       </div>
 
@@ -1076,6 +1312,52 @@
 
   </main>
 </div>
+
+<!-- ── Detail side panel ────────────────────────────── -->
+<div class="tb-panel-backdrop" id="tb-backdrop"></div>
+<aside class="tb-panel" id="tb-panel" aria-hidden="true" role="dialog" aria-labelledby="tb-panel-title">
+  <header class="tb-panel-head">
+    <div class="tb-panel-eyebrow">
+      <b id="tb-panel-id">#A-000</b>
+      <span class="sep">/</span>
+      <span id="tb-panel-project">Project</span>
+    </div>
+    <button type="button" class="tb-panel-close" id="tb-panel-close" aria-label="Close">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3 L9 9 M9 3 L3 9"></path></svg>
+    </button>
+  </header>
+
+  <div class="tb-panel-body">
+    <div class="tb-panel-hero">
+      <div class="tb-panel-statusrow" id="tb-panel-statusrow"></div>
+      <h2 class="tb-panel-title" id="tb-panel-title">Task title</h2>
+      <div class="tb-panel-progress-wrap">
+        <div class="tb-panel-progress" id="tb-panel-progress"></div>
+        <div class="tb-panel-meter" id="tb-panel-meter"></div>
+      </div>
+    </div>
+
+    <section class="tb-panel-section">
+      <h4>Run log</h4>
+      <ol class="tb-panel-timeline" id="tb-panel-timeline"></ol>
+    </section>
+
+    <section class="tb-panel-section">
+      <h4>Details</h4>
+      <ul class="tb-card-detail-list" id="tb-panel-details"></ul>
+    </section>
+
+    <section class="tb-panel-section" id="tb-panel-output-section">
+      <h4>Output preview</h4>
+      <pre class="tb-panel-output" id="tb-panel-output"></pre>
+    </section>
+  </div>
+
+  <footer class="tb-panel-foot">
+    <div class="tb-panel-foot-meta" id="tb-panel-foot-meta"></div>
+    <div class="tb-panel-actions" id="tb-panel-actions"></div>
+  </footer>
+</aside>
 
 <script>
   // ── Mode toggle (persists in localStorage) ──────────
@@ -1107,15 +1389,6 @@
     });
   });
 
-  // ── Card drawer toggle ────────────────────────────
-  document.addEventListener('click', e => {
-    const t = e.target.closest('[data-toggle]');
-    if (!t) return;
-    const card = t.closest('.tb-card');
-    if (!card) return;
-    card.classList.toggle('is-open');
-  });
-
   // ── Tabs ───────────────────────────────────────────
   document.querySelectorAll('.tb-tab').forEach(tab => {
     tab.addEventListener('click', e => {
@@ -1124,6 +1397,314 @@
       tab.classList.add('tb-tab--active');
     });
   });
+
+  // ── Task detail panel ──────────────────────────────
+  (function () {
+    // Rich data — timeline, output preview, footer meta — keyed by task id.
+    // Other fields (title, status, progress, details) are read live from the card.
+    const TASKS = {
+      'A-209': {
+        footMeta: 'Started <b>14:01</b> · running <b>3m 12s</b>',
+        timeline: [
+          ['14:01:02', 'Task queued', 'done'],
+          ['14:01:08', 'Resolved 14 EU entities from Workday', 'done'],
+          ['14:02:14', 'Pulled 247 active contractor records', 'done'],
+          ['14:03:48', 'Mapped local statutory requirements (DE · FR · ES · NL)', 'done'],
+          ['14:04:11', 'Drafting checklist — section 7 of 12', 'active'],
+          ['—',        'Compile & format output', 'pending'],
+          ['—',        'Submit for review', 'pending'],
+        ],
+        output:
+`SECTION 7 — Probationary periods
+
+  DE   6 months max (statutory)
+  FR   4 months (cadre) / 2 months (non-cadre)
+  ES   2 months (CDI) / 3 months (técnicos)
+  NL   2 months max (contracts > 24 months)
+
+  ⚠  France 'cadre' classification needs job-level
+     mapping before this draft is finalized.`,
+      },
+      'A-210': {
+        footMeta: 'Started <b>14:00</b> · running <b>1m 48s</b>',
+        timeline: [
+          ['14:00:11', 'Task queued', 'done'],
+          ['14:00:24', 'Connected Gusto and ADP via OAuth', 'done'],
+          ['14:01:02', 'Loaded July benefits enrollment (248 employees)', 'done'],
+          ['14:01:48', 'Cross-checking deductions — record 82 of 248', 'active'],
+          ['—',        'Flag mismatches', 'pending'],
+          ['—',        'Compile reconciliation report', 'pending'],
+        ],
+        output:
+`RUNNING DIFF — 82 / 248 records
+
+  Match    78
+  Off-by-cents  3   (<$1 rounding)
+  Missing  1        Workday id 38291 enrolled
+                    but no deduction line
+  Awaiting 166
+
+  Will flag the 'missing' case for review.`,
+      },
+      'A-204': {
+        footMeta: 'Awaiting review · <b>Mira Chen</b>',
+        timeline: [
+          ['11:02', 'Task queued', 'done'],
+          ['11:14', 'Pulled October payroll runs across 6 entities', 'done'],
+          ['12:43', 'Normalized currencies to USD (live FX)', 'done'],
+          ['13:01', 'Computed cost breakdown by entity and team', 'done'],
+          ['14:14', 'Variance check vs Sep — within band', 'done'],
+          ['14:14', 'Output ready for review', 'done'],
+        ],
+        output:
+`PAYROLL — October 2026 (USD)
+
+  Total           $4.91M    +1.2% vs Sep
+  US (Inc.)       $2.86M    +0.8%
+  UK (Ltd.)       $0.81M    +2.4%
+  DE (GmbH)       $0.49M    +1.1%
+  NL (B.V.)       $0.31M    +0.6%
+  BR (Ltda.)      $0.27M    +3.9%   ← FX
+  IN (Pvt. Ltd.)  $0.17M    −0.4%`,
+      },
+      'A-205': {
+        footMeta: 'Awaiting review · <b>Finance</b>',
+        timeline: [
+          ['09:48', 'Task queued', 'done'],
+          ['10:02', 'Aggregated upcoming payroll cycles (60-day horizon)', 'done'],
+          ['11:30', 'Pulled scheduled invoice payments from Bill', 'done'],
+          ['13:14', 'Live FX rates locked across 8 currencies', 'done'],
+          ['13:52', 'Forecast compiled — 412 payments · $8.7M', 'done'],
+          ['13:52', 'Output ready for review', 'done'],
+        ],
+        output:
+`60-DAY FORECAST  (Nov 10 → Jan 09)
+
+  Week 1   $1.42M    payroll runs + 38 invoices
+  Week 2   $0.86M    contractor cycle
+  Week 3   $1.71M    end-of-month payroll
+  ...
+  Total    $8.71M    across 8 currencies
+
+  Tight week: W6 — $2.1M against $1.6M float.`,
+      },
+      'A-206': {
+        footMeta: 'Awaiting review · <b>People</b>',
+        timeline: [
+          ['10:09', 'Task queued', 'done'],
+          ['10:22', 'Pulled accrual balances (1,247 days)', 'done'],
+          ['11:48', 'Loaded approved + pending absences', 'done'],
+          ['12:31', 'Overlap detection across teams', 'done'],
+          ['13:00', '3 conflicts flagged · Eng-Platform', 'done'],
+          ['13:00', 'Output ready for review', 'done'],
+        ],
+        output:
+`TIME-OFF — next 30 days
+
+  Liability     1,247 days   ($412k accrued)
+  Absences         62        across all teams
+  Conflicts         3        Eng-Platform
+
+  Conflict 1   Dec 12–16  4 engineers, on-call rota
+  Conflict 2   Dec 19–22  Team lead + delegate
+  Conflict 3   Jan 02–05  Release week`,
+      },
+      'A-207': {
+        footMeta: 'Awaiting review · <b>People</b>',
+        timeline: [
+          ['08:51', 'Task queued', 'done'],
+          ['09:02', 'Pulled HRIS snapshot', 'done'],
+          ['10:14', 'Reconciled active vs terminated', 'done'],
+          ['11:01', 'Grouped by country and employment type', 'done'],
+          ['11:29', 'Output ready for review', 'done'],
+        ],
+        output:
+`HEADCOUNT — snapshot Nov 14
+
+  Full-time         312   +4 vs last week
+  Contractors        86   −2 vs last week
+  Interns             9    no change
+
+  Top countries
+    US  163   41%
+    DE   42   11%
+    UK   38   10%
+    BR   22    6%
+    IN   18    5%
+    +19 more`,
+      },
+      'A-208': {
+        footMeta: 'Awaiting review · <b>Ops</b>',
+        timeline: [
+          ['07:32', 'Task queued', 'done'],
+          ['07:48', 'Pulled active contractor roster (86)', 'done'],
+          ['09:11', 'Joined rate cards and renewal dates', 'done'],
+          ['10:14', 'Market rate benchmark · 3 above band', 'done'],
+          ['10:54', 'Output ready for review', 'done'],
+        ],
+        output:
+`CONTRACTORS — active roster
+
+  Active           86      14 jurisdictions
+  Avg rate     $87/hr      +$4 vs Q2
+  Renewals      9 (30d)    3 above market
+
+  Flagged renewals
+    Diego R.    $145/hr  → benchmark $115
+    Priya N.    $135/hr  → benchmark $110
+    Tomás L.    $128/hr  → benchmark $105`,
+      },
+      'A-203': {
+        footMeta: 'Approved <b>Nov 02 09:41</b> · archived 2d ago',
+        timeline: [
+          ['Oct 28', 'Task queued', 'done'],
+          ['Oct 28', 'Pulled Q3 payroll across 6 entities', 'done'],
+          ['Oct 29', 'Variance analysis vs Q2', 'done'],
+          ['Oct 30', 'Submitted for review', 'done'],
+          ['Nov 02', 'Approved by Mira Chen', 'done'],
+        ],
+        output:
+`Q3 2026 — payroll by legal entity
+
+  Total           $13.4M    −0.4% vs Q2
+
+  US (Inc.)        $7.82M
+  UK (Ltd.)        $2.31M
+  DE (GmbH)        $1.42M
+  NL (B.V.)        $0.91M
+  BR (Ltda.)       $0.62M
+  IN (Pvt. Ltd.)   $0.32M
+
+  Variance within ±1% band — sign-off complete.`,
+      },
+    };
+
+    const ACTIONS = {
+      running: [
+        { label: 'Pause',  cls: 'tb-panel-btn' },
+        { label: 'Cancel', cls: 'tb-panel-btn tb-panel-btn--danger' },
+      ],
+      review: [
+        { label: 'Reject',         cls: 'tb-panel-btn tb-panel-btn--danger' },
+        { label: 'Approve & ship', cls: 'tb-panel-btn tb-panel-btn--primary' },
+      ],
+      done: [
+        { label: 'Re-run',  cls: 'tb-panel-btn' },
+        { label: 'Archive', cls: 'tb-panel-btn' },
+      ],
+    };
+
+    const STATUS_ICON = {
+      running: '<svg viewBox="0 0 12 12" fill="currentColor"><rect x="3" y="2" width="2" height="8" rx="0.4"/><rect x="7" y="2" width="2" height="8" rx="0.4"/></svg>',
+      review:  '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 6 L9 6 M6 3 L9 6 L6 9"/></svg>',
+      done:    '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6 L5 8 L9 4"/></svg>',
+    };
+
+    const panel    = document.getElementById('tb-panel');
+    const backdrop = document.getElementById('tb-backdrop');
+    let openCard = null;
+
+    function statusFromCard(card) {
+      const a = card.querySelector('.tb-card-action');
+      if (!a) return 'review';
+      if (a.classList.contains('tb-card-action--running')) return 'running';
+      if (a.classList.contains('tb-card-action--done'))    return 'done';
+      return 'review';
+    }
+    function progressVariant(card) {
+      const p = card.querySelector('.tb-card-progress');
+      if (!p) return '';
+      if (p.classList.contains('tb-card-progress--warning')) return 'tb-panel-progress--warning';
+      if (p.classList.contains('tb-card-progress--success')) return 'tb-panel-progress--success';
+      return '';
+    }
+
+    function openPanel(card) {
+      if (openCard) openCard.classList.remove('is-open');
+      openCard = card;
+      card.classList.add('is-open');
+
+      const rawId   = card.querySelector('.tb-card-id')?.textContent || '';
+      const [idTok, project] = rawId.split('·').map(s => s.trim());
+      const id      = idTok.replace(/^#/, '');
+      const title   = card.querySelector('.tb-card-title')?.textContent || '';
+      const status  = statusFromCard(card);
+      const statusLabel = card.querySelector('.tb-card-action')?.firstChild?.textContent?.trim() || status;
+      const progress = card.querySelector('.tb-card-progress');
+      const meterHTML = card.querySelector('.tb-card-meter')?.innerHTML || '';
+      const detailsHTML = card.querySelector('.tb-card-detail-list')?.innerHTML || '';
+      const data = TASKS[id] || { footMeta: '', timeline: [], output: '' };
+
+      document.getElementById('tb-panel-id').textContent = '#' + id;
+      document.getElementById('tb-panel-project').textContent = project || '';
+      document.getElementById('tb-panel-title').textContent = title;
+
+      // Status row
+      const sr = document.getElementById('tb-panel-statusrow');
+      sr.innerHTML =
+        `<span class="tb-panel-pill tb-panel-pill--${status}">${STATUS_ICON[status] || ''}${statusLabel}</span>`
+        + `<span class="tb-panel-pill tb-panel-pill--neutral">${project || 'Task'}</span>`;
+
+      // Progress
+      const prog = document.getElementById('tb-panel-progress');
+      prog.className = 'tb-panel-progress ' + progressVariant(card);
+      prog.style.setProperty('--p', progress?.style.getPropertyValue('--p') || '0%');
+
+      // Meter
+      document.getElementById('tb-panel-meter').innerHTML = meterHTML;
+
+      // Timeline
+      const tl = document.getElementById('tb-panel-timeline');
+      tl.innerHTML = data.timeline.map(([t, step, state]) =>
+        `<li class="is-${state}"><span class="tb-panel-time">${t}</span><span class="tb-panel-dot"></span><span class="tb-panel-step">${step}</span></li>`
+      ).join('');
+
+      // Details
+      document.getElementById('tb-panel-details').innerHTML = detailsHTML;
+
+      // Output
+      const outSec = document.getElementById('tb-panel-output-section');
+      if (data.output) {
+        outSec.style.display = '';
+        document.getElementById('tb-panel-output').textContent = data.output;
+      } else {
+        outSec.style.display = 'none';
+      }
+
+      // Footer meta + actions
+      document.getElementById('tb-panel-foot-meta').innerHTML = data.footMeta || '';
+      const actionsEl = document.getElementById('tb-panel-actions');
+      actionsEl.innerHTML = (ACTIONS[status] || []).map(a =>
+        `<button type="button" class="${a.cls}">${a.label}</button>`
+      ).join('');
+
+      panel.classList.add('is-open');
+      backdrop.classList.add('is-open');
+      panel.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePanel() {
+      panel.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+      if (openCard) openCard.classList.remove('is-open');
+      openCard = null;
+    }
+
+    document.querySelectorAll('.tb-card').forEach(card => {
+      card.addEventListener('click', e => {
+        // Don't open if user clicked the status action button
+        if (e.target.closest('.tb-card-action')) return;
+        openPanel(card);
+      });
+    });
+
+    document.getElementById('tb-panel-close').addEventListener('click', closePanel);
+    backdrop.addEventListener('click', closePanel);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
+    });
+  })();
 </script>
 
 </body>
