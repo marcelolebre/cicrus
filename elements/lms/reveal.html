@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Reveal · LMS · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../lms.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div class="lms-reveal">
+  <button type="button" class="lms-reveal-toggle" data-reveal>
+    <span>Reveal answer</span>
+    <svg class="lms-reveal-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M2 4 L6 8 L10 4"></path>
+    </svg>
+  </button>
+  <div class="lms-reveal-content">
+    <div class="lms-reveal-inner">
+      <p>The full path is:</p>
+      <p><code>api.gateway → router.entity → payroll.sync → ledger.commit → store.primary</code></p>
+      <p>Five cards across three layers.</p>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelector('[data-reveal]')?.addEventListener('click', e =>
+  e.target.closest('.lms-reveal').classList.toggle('is-open'));
+</script>
+</body>
+</html>

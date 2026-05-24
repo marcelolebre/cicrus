@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Sparkline · LMS · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../lms.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div style="display: flex; align-items: center; gap: 12px; color: var(--text-primary); font-family: var(--font-body); font-size: 15px;">
+  <span>Load profile, last 30 min</span>
+  <svg class="spark" viewBox="0 0 80 16" width="80" height="16" preserveAspectRatio="none">
+    <polyline points="0,12 6,11 12,13 18,8 24,9 30,5 36,7 42,3 48,4 54,2 60,4 66,3 72,2 80,1" fill="none" stroke="currentColor" stroke-width="1" />
+    <circle cx="80" cy="1" r="1.6" fill="currentColor" />
+  </svg>
+  <span style="font-family: var(--font-mono); color: var(--text-display);">+24%</span>
+</div>
+
+</body>
+</html>

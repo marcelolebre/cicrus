@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Code · LMS · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../lms.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div class="lms-code">
+  <div class="lms-code-head">
+    <b>icarus/payroll/sync.ex</b>
+    <button type="button" class="lms-code-copy" data-copy>Copy</button>
+  </div>
+  <pre><div class="lms-code-line"><span class="ln">1</span><span><span class="tok-com"># entry point for the worker</span></span></div><div class="lms-code-line"><span class="ln">2</span><span><span class="tok-key">defmodule</span> <span class="tok-fn">Icarus.Payroll.Sync</span> <span class="tok-key">do</span></span></div><div class="lms-code-line"><span class="ln">3</span><span>  <span class="tok-key">use</span> Icarus.Worker, queue: <span class="tok-str">"payroll.sync"</span></span></div><div class="lms-code-line"><span class="ln">4</span><span></span></div><div class="lms-code-line"><span class="ln">5</span><span>  <span class="tok-key">def</span> <span class="tok-fn">perform</span>(%{<span class="tok-str">"entity_id"</span> => id, <span class="tok-str">"cycle"</span> => cycle}) <span class="tok-key">do</span></span></div><div class="lms-code-line"><span class="ln">6</span><span>    {:ok, runs} = Payroll.<span class="tok-fn">load_runs</span>(id, cycle)</span></div><div class="lms-code-line"><span class="ln">7</span><span>    runs</span></div><div class="lms-code-line"><span class="ln">8</span><span>    |&gt; Enum.<span class="tok-fn">map</span>(&amp;FX.<span class="tok-fn">normalize</span>/<span class="tok-num">1</span>)</span></div><div class="lms-code-line"><span class="ln">9</span><span>    |&gt; Ledger.<span class="tok-fn">commit!</span>()</span></div><div class="lms-code-line"><span class="ln">10</span><span>  <span class="tok-key">end</span></span></div><div class="lms-code-line"><span class="ln">11</span><span><span class="tok-key">end</span></span></div></pre>
+</div>
+<script>
+document.querySelector('[data-copy]')?.addEventListener('click', e => {
+  const pre = e.target.closest('.lms-code').querySelector('pre');
+  navigator.clipboard?.writeText(pre.innerText);
+  const o = e.target.textContent; e.target.textContent = 'Copied';
+  setTimeout(() => { e.target.textContent = o; }, 1400);
+});
+</script>
+</body>
+</html>

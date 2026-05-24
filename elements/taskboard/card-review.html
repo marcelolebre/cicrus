@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Card · review · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<article class="tb-card" style="max-width: 320px;">
+  <div class="tb-card-body">
+    <div class="tb-card-head">
+      <div class="tb-card-heading">
+        <span class="tb-card-id">#A-204 · Payroll</span>
+        <h3 class="tb-card-title">What's the total payroll cost this month?</h3>
+      </div>
+      <button type="button" class="tb-card-action tb-card-action--review">Review
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 6 L9 6 M6 3 L9 6 L6 9"></path></svg>
+      </button>
+    </div>
+    <div class="tb-card-progress" style="--p: 100%;"></div>
+    <div class="tb-card-meter"><span><b>14</b> steps</span><span>ran 3h 12m</span></div>
+  </div>
+</article>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Steps · LMS · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../lms.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div class="lms-steps">
+  <div class="lms-step"><div class="lms-step-num"></div><div class="lms-step-body">
+    <h4>Find the top-most card</h4>
+    <p>The system's true entry point. Usually an API gateway, a queue consumer, or a scheduled job runner.</p>
+  </div></div>
+  <div class="lms-step"><div class="lms-step-num"></div><div class="lms-step-body">
+    <h4>Trace one path downward</h4>
+    <p>Follow a single trace from top card to bottom. Pick one and finish it before starting another.</p>
+  </div></div>
+  <div class="lms-step"><div class="lms-step-num"></div><div class="lms-step-body">
+    <h4>Note every fork</h4>
+    <p>A card that fans out to multiple downstream cards is a decision point. List them as you go.</p>
+  </div></div>
+  <div class="lms-step"><div class="lms-step-num"></div><div class="lms-step-body">
+    <h4>Look for the missing card</h4>
+    <p>An experienced reader spots what is not drawn. A worker layer with no queue feeding it tells you a queue exists somewhere.</p>
+  </div></div>
+</div>
+
+</body>
+</html>

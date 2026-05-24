@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Top bar · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 0; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<header class="tb-topbar">
+  <nav class="tb-tabs" aria-label="Primary">
+    <a href="#" class="tb-tab tb-tab--active">Tasks</a>
+    <a href="#" class="tb-tab">Schedules</a>
+    <a href="#" class="tb-tab">Timeline</a>
+  </nav>
+  <div style="display:flex; align-items:center; gap: var(--space-md);">
+    <span class="tb-brand">Console · v2.4</span>
+    <div class="tb-mode" role="group" aria-label="Theme">
+      <button type="button" data-mode="dark" class="is-active">Dark</button>
+      <button type="button" data-mode="light">Light</button>
+    </div>
+  </div>
+</header>
+</body>
+</html>

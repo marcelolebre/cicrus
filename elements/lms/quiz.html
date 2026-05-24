@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz · LMS · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../lms.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<section class="lms-quiz" data-quiz>
+  <div class="lms-quiz-tag">Question · 1 of 1</div>
+  <p class="lms-quiz-q">You see a Cicrus schematic with four rows and a single trace that goes <em>up</em> from row 3 to row 1. What does that almost certainly indicate?</p>
+  <ul class="lms-quiz-opts">
+    <li class="lms-quiz-opt" data-correct="false">
+      <span class="letter">A</span><span>The diagram is wrong — flow only goes downward.</span><span class="check"></span>
+    </li>
+    <li class="lms-quiz-opt" data-correct="true">
+      <span class="letter">B</span><span>An explicit feedback path — a callback, an ack, or a push notification back to the entry point.</span><span class="check"></span>
+    </li>
+    <li class="lms-quiz-opt" data-correct="false">
+      <span class="letter">C</span><span>The author drew the rows in the wrong order.</span><span class="check"></span>
+    </li>
+    <li class="lms-quiz-opt" data-correct="false">
+      <span class="letter">D</span><span>A bug — data is flowing in the wrong direction in production.</span><span class="check"></span>
+    </li>
+  </ul>
+  <div class="lms-quiz-actions">
+    <span data-status>Select one answer.</span>
+    <button class="lms-quiz-submit" data-submit disabled>Submit</button>
+  </div>
+</section>
+<script>
+document.querySelectorAll('[data-quiz]').forEach(quiz => {
+  const opts = [...quiz.querySelectorAll('.lms-quiz-opt')];
+  const submit = quiz.querySelector('[data-submit]');
+  const status = quiz.querySelector('[data-status]');
+  let chosen = null, locked = false;
+  opts.forEach(o => o.addEventListener('click', () => {
+    if (locked) return;
+    opts.forEach(x => x.classList.remove('is-selected'));
+    o.classList.add('is-selected'); chosen = o;
+    submit.disabled = false; status.textContent = 'Ready to submit.';
+  }));
+  submit.addEventListener('click', () => {
+    if (!chosen || locked) return;
+    locked = true;
+    const correct = chosen.dataset.correct === 'true';
+    chosen.classList.remove('is-selected');
+    chosen.classList.add(correct ? 'is-correct' : 'is-wrong');
+    if (!correct) {
+      const right = opts.find(o => o.dataset.correct === 'true');
+      if (right) right.classList.add('is-correct');
+    }
+    submit.disabled = true;
+    status.textContent = correct ? 'Correct.' : 'Not quite — highlighted answer is correct.';
+  });
+});
+</script>
+</body>
+</html>

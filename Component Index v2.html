@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cicrus — Component Index</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  body { background: var(--surface); color: var(--text-primary); }
+
+  /* ── Page shell ───────────────────────────────────────── */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 80px 48px 160px;
+  }
+
+  /* ── Document masthead ────────────────────────────────── */
+  .masthead {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--text-primary);
+    margin-bottom: 64px;
+  }
+  .masthead h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 72px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text-display);
+  }
+  .masthead .kicker {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    margin-bottom: 14px;
+  }
+  .masthead .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    text-align: right;
+    line-height: 1.8;
+    white-space: nowrap;
+  }
+  .masthead .meta b {
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  /* ── Group box ────────────────────────────────────────── */
+  .group {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .group-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 24px;
+    background: var(--surface-raised);
+    border-bottom: 1px solid var(--border);
+  }
+  .group-header .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .group-header .label .pre {
+    color: var(--text-disabled);
+    margin-right: 10px;
+  }
+  .group-header .count {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--text-display);
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .group-header .count .of {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-disabled);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 4px;
+    vertical-align: 3px;
+  }
+  .group-header .tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    padding: 3px 8px;
+    border: 1px solid var(--border-visible);
+    border-radius: 999px;
+  }
+
+  /* ── Entry row ────────────────────────────────────────── */
+  .entry {
+    display: grid;
+    grid-template-columns: 56px 240px 1fr;
+    gap: 24px;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s cubic-bezier(0.25,0.1,0.25,1);
+  }
+  .entry:last-child { border-bottom: 0; }
+  .entry:hover { background: var(--surface-raised); }
+
+  .entry .id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-disabled);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 4px;
+  }
+  .entry .name {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--text-display);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+  .entry .name .sub {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 10px;
+    color: var(--text-disabled);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .entry .desc {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.65;
+    max-width: 64ch;
+    text-wrap: pretty;
+  }
+  .entry .desc code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-display);
+    background: var(--surface-raised);
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--border);
+  }
+  .entry:hover .desc code {
+    background: var(--surface);
+  }
+
+  /* Inline status dot in descriptions */
+  .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    vertical-align: 1px;
+    margin-right: 6px;
+  }
+
+  /* ── Mode toggle ──────────────────────────────────────── */
+  .mode {
+    position: fixed;
+    top: 24px; right: 24px;
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    background: var(--surface);
+    z-index: 10;
+  }
+  .mode button {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--text-disabled);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .mode button.on {
+    background: var(--text-display);
+    color: var(--black);
+  }
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media (max-width: 820px) {
+    .page { padding: 48px 20px 120px; }
+    .masthead { grid-template-columns: 1fr; align-items: start; }
+    .masthead h1 { font-size: 48px; }
+    .masthead .meta { text-align: left; }
+    .entry { grid-template-columns: 48px 1fr; gap: 16px; }
+    .entry .desc { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body class="light">
+  <div class="mode" role="group" aria-label="Theme">
+    <button id="m-light" class="on" type="button">Light</button>
+    <button id="m-dark"  type="button">Dark</button>
+  </div>
+
+  <main class="page">
+
+    <!-- ── MASTHEAD ───────────────────────────────────────── -->
+    <header class="masthead">
+      <div>
+        <p class="kicker">Cicrus · v1.0 · Reference</p>
+        <h1>Component<br/>Index</h1>
+      </div>
+      <p class="meta">
+        Groups <b>09</b><br/>
+        Entries <b>32</b><br/>
+        Updated <b>2026·05·24</b>
+      </p>
+    </header>
+
+    <!-- ── 01 SURFACES ────────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">01</span>Surfaces &amp; Layout</span>
+        <span class="tag">Foundation</span>
+        <span class="count">06<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">01·01</span>
+        <span class="name">View shell<span class="sub">.c-view</span></span>
+        <p class="desc">The page wrapper. Caps width at 1280<code>px</code>, centres, and fades content in on mount. Use at the root of any LiveView; the <code>--wide</code> and <code>--full</code> modifiers loosen the cap when a kanban or graph needs the room.</p>
+      </div>
+      <div class="entry">
+        <span class="id">01·02</span>
+        <span class="name">View header<span class="sub">.c-view-header</span></span>
+        <p class="desc">Baseline-aligned hero row that pairs a display-font title with a mono meta string. Wraps gracefully on narrow viewports. Best for top-of-page identity — never inside a card.</p>
+      </div>
+      <div class="entry">
+        <span class="id">01·03</span>
+        <span class="name">Card<span class="sub">.c-card</span></span>
+        <p class="desc">The default surface for grouped content. One-pixel border, six-pixel radius, sixteen-pixel padding. <code>--raised</code> swaps to the raised surface token; <code>--clickable</code> tightens the hover border.</p>
+      </div>
+      <div class="entry">
+        <span class="id">01·04</span>
+        <span class="name">Section<span class="sub">.c-section</span></span>
+        <p class="desc">Vertical rhythm primitive. A mono-caps title over content, with forty-eight pixels of breathing room beneath. The simplest way to keep a long page legible without inventing new dividers.</p>
+      </div>
+      <div class="entry">
+        <span class="id">01·05</span>
+        <span class="name">Toolbar<span class="sub">.c-toolbar</span></span>
+        <p class="desc">Horizontal flex row for filter buttons, search, and primary actions above a data view. The <code>--spread</code> modifier pushes <code>.c-toolbar-left</code> and <code>.c-toolbar-right</code> to opposing edges.</p>
+      </div>
+      <div class="entry">
+        <span class="id">01·06</span>
+        <span class="name">Dot-grid motif<span class="sub">.c-dot-grid</span></span>
+        <p class="desc">A radial-gradient background built on the border token, sixteen-pixel cadence. Use sparingly: empty states, hero panels, schedule canvases. <code>.dot-grid-strong</code> bumps the dot to a visible pixel for emphasis surfaces.</p>
+      </div>
+    </section>
+
+    <!-- ── 02 TYPOGRAPHY ──────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">02</span>Typography</span>
+        <span class="tag">Foundation</span>
+        <span class="count">05<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">02·01</span>
+        <span class="name">Display<span class="sub">Doto · 36–72px</span></span>
+        <p class="desc">Dot-matrix display face. Reserved for hero numbers, the clock, the home page wordmark, and stat values. Never use display type for paragraphs — the matrix legibility falls apart below twenty-four pixels.</p>
+      </div>
+      <div class="entry">
+        <span class="id">02·02</span>
+        <span class="name">Heading + Subheading<span class="sub">Space Grotesk · 24 / 18</span></span>
+        <p class="desc">The everyday header pair for cards, modals, and section heroes. Weight 500 on heading, 400 on subheading; tightened tracking on both to recover bulk that Grotesk's neutral letterforms can mask.</p>
+      </div>
+      <div class="entry">
+        <span class="id">02·03</span>
+        <span class="name">Body + Body-sm<span class="sub">Space Grotesk · 16 / 14</span></span>
+        <p class="desc">The default running-text styles, 1.5 line-height. <code>body-sm</code> earns its place inside dense surfaces — table rows, card descriptions, drawer panels — where sixteen would feel loud.</p>
+      </div>
+      <div class="entry">
+        <span class="id">02·04</span>
+        <span class="name">Label + Label-xs<span class="sub">Space Mono · 11 / 10 · UPPER</span></span>
+        <p class="desc">The voice of metadata — timestamps, counts, status, kbd hints. If a string repeats across screens and isn't editorial, it probably wants this. Tracked to eight percent.</p>
+      </div>
+      <div class="entry">
+        <span class="id">02·05</span>
+        <span class="name">Section title<span class="sub">.c-section-title</span></span>
+        <p class="desc">The mono caps eyebrow above any section. Same metrics as label but reserved positionally: one per section, sixteen pixels above the content, never beside another label.</p>
+      </div>
+    </section>
+
+    <!-- ── 03 BUTTONS ─────────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">03</span>Buttons</span>
+        <span class="tag">Interactive</span>
+        <span class="count">05<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">03·01</span>
+        <span class="name">Primary<span class="sub">.c-btn-primary</span></span>
+        <p class="desc">Solid display-coloured pill with a black label. The single highest-weight action on any screen — only one per view, and only when a commitment is being asked for.</p>
+      </div>
+      <div class="entry">
+        <span class="id">03·02</span>
+        <span class="name">Secondary<span class="sub">.c-btn-secondary</span></span>
+        <p class="desc">Transparent pill with the visible-border token and primary text. Used for the supporting action beside a primary, and as the default for top-of-page filter rows.</p>
+      </div>
+      <div class="entry">
+        <span class="id">03·03</span>
+        <span class="name">Ghost<span class="sub">.c-btn-ghost</span></span>
+        <p class="desc">No border, no background, secondary text. The lightest possible affordance — table-row actions, dismiss links, inline navigation. Pair it with hover-only colour shifts.</p>
+      </div>
+      <div class="entry">
+        <span class="id">03·04</span>
+        <span class="name">Danger<span class="sub">.c-btn-danger</span></span>
+        <p class="desc">Outlined accent-red pill. Destructive actions only: delete, force-kill, abandon. The subtle accent tint on hover keeps it from shouting unless engaged.</p>
+      </div>
+      <div class="entry">
+        <span class="id">03·05</span>
+        <span class="name">Filter button<span class="sub">.c-filter-btn</span></span>
+        <p class="desc">Mono caps pill with an optional chevron. Sits in toolbars to expose filter, sort, and grouping dropdowns. Smaller than a true button; reads as a control, not a commitment.</p>
+      </div>
+    </section>
+
+    <!-- ── 04 INPUTS ──────────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">04</span>Inputs</span>
+        <span class="tag">Interactive</span>
+        <span class="count">02<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">04·01</span>
+        <span class="name">Underline input<span class="sub">.c-input</span></span>
+        <p class="desc">The default. A single hairline border below transparent text, with a mono caps placeholder. Drops into forms, modals, and inline edits without inventing chrome.</p>
+      </div>
+      <div class="entry">
+        <span class="id">04·02</span>
+        <span class="name">Pill input<span class="sub">.c-input-pill</span></span>
+        <p class="desc">Full-pill surfaced input for prominent search bars and command rows. Carries an optional mono prefix slot — e.g. <code>FIND</code> or <code>:</code> — to telegraph what the field accepts.</p>
+      </div>
+    </section>
+
+    <!-- ── 05 BADGES ──────────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">05</span>Badges</span>
+        <span class="tag">Taxonomy</span>
+        <span class="count">03<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">05·01</span>
+        <span class="name">Type badges<span class="sub">.c-badge-process · resource · monitor · …</span></span>
+        <p class="desc">The taxonomy of objects in the workspace — used on cards, in timeline rows, in headers. Mono caps, ten-pixel, hairline border tinted by role.</p>
+      </div>
+      <div class="entry">
+        <span class="id">05·02</span>
+        <span class="name">Status badges<span class="sub">.c-badge-success · warning · accent</span></span>
+        <p class="desc">The same pill chassis driven by lifecycle: ok, pending, failed. Used on lanes, alerts, and inline beside a process name.</p>
+      </div>
+      <div class="entry">
+        <span class="id">05·03</span>
+        <span class="name">Generic badge<span class="sub">.c-badge</span></span>
+        <p class="desc">The unstyled base. Reach for this when adding a new taxonomy that doesn't match an existing role — and consider promoting it to a token if it appears twice.</p>
+      </div>
+    </section>
+
+    <!-- ── 06 STATUS & SIGNALS ────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">06</span>Status &amp; Signals</span>
+        <span class="tag">Feedback</span>
+        <span class="count">04<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">06·01</span>
+        <span class="name">Status dot<span class="sub">.c-dot</span></span>
+        <p class="desc">Eight-pixel circle with four variants: <span class="dot" style="background:#4A9E5C"></span>up, <span class="dot" style="background:#D71921"></span>down (pulses), <span class="dot" style="background:#D4A843"></span>warning, <span class="dot" style="background:#8F8F8F"></span>idle. Pair with a service name for the smallest possible status read.</p>
+      </div>
+      <div class="entry">
+        <span class="id">06·02</span>
+        <span class="name">Alert banner<span class="sub">.c-alert</span></span>
+        <p class="desc">Full-width tinted bar above a view to surface a failed dependency, a degraded surface, or an informational note. Accent, warning, and info variants share one chassis — the colour does the talking.</p>
+      </div>
+      <div class="entry">
+        <span class="id">06·03</span>
+        <span class="name">Failure item<span class="sub">.c-failure</span></span>
+        <p class="desc">The row used to log an individual failure: bold title in body type, mono accent-red detail string. Wraps long stack traces with <code>word-break: break-all</code> so a console paste never blows out the layout.</p>
+      </div>
+      <div class="entry">
+        <span class="id">06·04</span>
+        <span class="name">State glyphs<span class="sub">cicrus-glyphs.js</span></span>
+        <p class="desc">The dot-matrix iconography — built from the same Doto vocabulary as the wordmark. Used at small sizes to mark loading, success, fail, and pending states where a dot alone is too quiet.</p>
+      </div>
+    </section>
+
+    <!-- ── 07 DATA DISPLAY ────────────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">07</span>Data Display</span>
+        <span class="tag">Composite</span>
+        <span class="count">04<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">07·01</span>
+        <span class="name">Stat grid + Stat<span class="sub">.c-stat-grid · .c-stat</span></span>
+        <p class="desc">Six- or four-column grid of stat cards. Each card stacks a display-font value over a mono caps label, with an optional four-pixel segmented bar at the foot for ratios. Value variants tint for danger, success, warning.</p>
+      </div>
+      <div class="entry">
+        <span class="id">07·02</span>
+        <span class="name">Service card<span class="sub">.c-service</span></span>
+        <p class="desc">The unit of the <code>/status</code> view. Status dot + name + detail block in a single card. Fits four to a row on desktop, collapses to one on mobile.</p>
+      </div>
+      <div class="entry">
+        <span class="id">07·03</span>
+        <span class="name">Key-value list<span class="sub">.c-kv</span></span>
+        <p class="desc">A two-column <code>&lt;dl&gt;</code> with a 160-pixel mono caps term and a body-mono value. The right shape for metadata blocks — environment, version, started-at, owner — where alignment matters more than density.</p>
+      </div>
+      <div class="entry">
+        <span class="id">07·04</span>
+        <span class="name">Timeline row<span class="sub">.c-timeline-row</span></span>
+        <p class="desc">Three-column grid: time, badges, content. Whole row tints on hover and bleeds into the gutter so the affordance reads at a glance. The native unit of <code>/timeline</code>.</p>
+      </div>
+    </section>
+
+    <!-- ── 08 KANBAN & KNOWLEDGE ──────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">08</span>Kanban &amp; Knowledge</span>
+        <span class="tag">Composite</span>
+        <span class="count">02<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">08·01</span>
+        <span class="name">Kanban column<span class="sub">.c-kanban · .c-kanban-col</span></span>
+        <p class="desc">Four-column grid (two on tablet, one on mobile) of stacked task cards. Each column header carries a mono caps title and a muted count, with the column itself fading in on mount on a staggered delay.</p>
+      </div>
+      <div class="entry">
+        <span class="id">08·02</span>
+        <span class="name">Knowledge columns<span class="sub">.c-knowledge-cols</span></span>
+        <p class="desc">Three-column reading layout for the wiki. Each column has a bordered title, optional sub-label, and a list of <code>.c-knowledge-item</code> entries that promote to display-coloured text on hover.</p>
+      </div>
+    </section>
+
+    <!-- ── 09 EMPTY / UTILITIES ───────────────────────────── -->
+    <section class="group">
+      <div class="group-header">
+        <span class="label"><span class="pre">09</span>Empty, Loading &amp; Utilities</span>
+        <span class="tag">Atomic</span>
+        <span class="count">04<span class="of">/ENT</span></span>
+      </div>
+
+      <div class="entry">
+        <span class="id">09·01</span>
+        <span class="name">Empty state<span class="sub">.c-empty</span></span>
+        <p class="desc">Center-aligned heading-light line over a mono caps tagline, padded by ninety-six pixels top and bottom. The shape every list collapses to when there's nothing to show.</p>
+      </div>
+      <div class="entry">
+        <span class="id">09·02</span>
+        <span class="name">Loading + Not-implemented<span class="sub">.c-loading · .c-not-impl</span></span>
+        <p class="desc">Two mono caps placeholders that print <code>[ LOADING... ]</code> and <code>[NOT YET IMPLEMENTED]</code> via <code>::before</code>. Never ship them unannotated — they're scaffolding, not UI.</p>
+      </div>
+      <div class="entry">
+        <span class="id">09·03</span>
+        <span class="name">Divider<span class="sub">.c-divider</span></span>
+        <p class="desc">A one-pixel border-token hairline with twenty-four pixels of margin above and below. The only horizontal rule you should need.</p>
+      </div>
+      <div class="entry">
+        <span class="id">09·04</span>
+        <span class="name">Type + tone utilities<span class="sub">.c-mono · .c-caps · .c-muted · …</span></span>
+        <p class="desc"><code>.c-mono</code>, <code>.c-display</code>, <code>.c-caps</code>, plus the tone helpers <code>.c-muted</code>, <code>.c-secondary</code>, <code>.c-primary</code>, <code>.c-danger</code>, <code>.c-success</code>, <code>.c-warning</code>. Atomic, single-axis, never composed into new components.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const body  = document.body;
+    const light = document.getElementById('m-light');
+    const dark  = document.getElementById('m-dark');
+    function set(mode){
+      body.classList.toggle('light', mode === 'light');
+      light.classList.toggle('on', mode === 'light');
+      dark .classList.toggle('on', mode === 'dark');
+    }
+    light.addEventListener('click', () => set('light'));
+    dark .addEventListener('click', () => set('dark'));
+  </script>
+</body>
+</html>

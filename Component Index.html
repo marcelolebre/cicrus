@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cicrus — Component Index</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  body { background: var(--surface); color: var(--text-primary); }
+  body.light { background: var(--surface); }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 96px 48px 160px;
+  }
+
+  /* Document header — small, quiet */
+  .doc-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 64px;
+  }
+  .doc-head h1 {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .doc-head .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+
+  /* Top-level group */
+  .group { margin-top: 56px; }
+  .group:first-of-type { margin-top: 0; }
+
+  .group-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-disabled);
+    margin-bottom: 28px;
+  }
+
+  /* Definition list */
+  .dl { margin: 0; }
+  .dl dt {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-top: 22px;
+    letter-spacing: -0.005em;
+  }
+  .dl dt:first-of-type { margin-top: 0; }
+  .dl dd {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--text-primary);
+    line-height: 1.7;
+    margin: 4px 0 0 0;
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+  .dl dd .swatch {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    vertical-align: 1px;
+    margin-right: 6px;
+    border: 1px solid var(--border-visible);
+  }
+  .dl dd code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--surface-raised);
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Toggle */
+  .mode {
+    position: fixed;
+    top: 24px; right: 24px;
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    background: var(--surface);
+    z-index: 10;
+  }
+  .mode button {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--text-disabled);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .mode button.on {
+    background: var(--text-display);
+    color: var(--black);
+  }
+</style>
+</head>
+<body class="light">
+  <div class="mode" role="group" aria-label="Theme">
+    <button id="m-light" class="on" type="button">Light</button>
+    <button id="m-dark" type="button">Dark</button>
+  </div>
+
+  <main class="page">
+    <header class="doc-head">
+      <h1>Component Index</h1>
+      <span class="meta">Cicrus · 9 groups · 47 entries</span>
+    </header>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Surfaces &amp; Layout</p>
+      <dl class="dl">
+        <dt>View shell</dt>
+        <dd>The page wrapper. Caps width at 1280px, centres, and fades content in on mount. Use <code>.c-view</code> at the root of any LiveView; the <code>--wide</code> and <code>--full</code> modifiers loosen the cap when a kanban or graph needs the room.</dd>
+
+        <dt>View header</dt>
+        <dd>Baseline-aligned hero row that pairs a display-font title with a mono meta string. Wraps gracefully on narrow viewports. Best for top-of-page identity — never use it inside a card.</dd>
+
+        <dt>Card</dt>
+        <dd>The default surface for grouped content. One-pixel border on the page surface, six-pixel radius, sixteen-pixel padding. <code>--raised</code> swaps to the raised surface token for nested or modal contexts; <code>--clickable</code> tightens the hover border.</dd>
+
+        <dt>Section</dt>
+        <dd>Vertical rhythm primitive. A section title (mono caps, eleven-pixel) over content, with forty-eight pixels of breathing room beneath. The simplest way to keep a long page legible without inventing new dividers.</dd>
+
+        <dt>Toolbar</dt>
+        <dd>Horizontal flex row for filter buttons, search, and primary actions above a data view. The <code>--spread</code> modifier pushes <code>.c-toolbar-left</code> and <code>.c-toolbar-right</code> to opposing edges.</dd>
+
+        <dt>Dot-grid motif</dt>
+        <dd>A radial-gradient background built on the border token, sixteen-pixel cadence. Use sparingly: empty states, hero panels, schedule canvases. <code>.dot-grid-strong</code> bumps the dot to a visible pixel for emphasis surfaces.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Typography</p>
+      <dl class="dl">
+        <dt>Display</dt>
+        <dd>Doto, dot-matrix. Reserved for hero numbers, the clock, the home page wordmark, and stat values. Never use display type for paragraphs — the matrix legibility falls apart below twenty-four pixels.</dd>
+
+        <dt>Heading &amp; Subheading</dt>
+        <dd>Space Grotesk at twenty-four and eighteen pixels. The everyday header pair for cards, modals, and section heroes. Weight is five hundred on heading, four hundred on subheading; tightened tracking on both.</dd>
+
+        <dt>Body &amp; Body-sm</dt>
+        <dd>Space Grotesk at sixteen and fourteen pixels with 1.5 line-height. The default running-text style. Body-sm earns its place inside dense surfaces — table rows, card descriptions, drawer panels — where sixteen would feel loud.</dd>
+
+        <dt>Label &amp; Label-xs</dt>
+        <dd>Space Mono, ALL CAPS, eleven and ten pixels with eight-percent tracking. The voice of metadata — timestamps, counts, status, kbd hints. If a string repeats across screens and isn't editorial, it probably wants this.</dd>
+
+        <dt>Section title</dt>
+        <dd>The mono caps eyebrow above any section. Same metrics as label but reserved positionally: one per section, sixteen pixels above the content, never beside another label.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Buttons</p>
+      <dl class="dl">
+        <dt>Primary</dt>
+        <dd>Solid display-coloured pill with a black label. The single highest-weight action on any screen — only one per view, and only when a commitment is being asked for.</dd>
+
+        <dt>Secondary</dt>
+        <dd>Transparent pill with the visible-border token and primary text. Used for the supporting action beside a primary, and as the default for top-of-page filter rows.</dd>
+
+        <dt>Ghost</dt>
+        <dd>No border, no background, secondary text. The lightest possible affordance — table-row actions, dismiss links, inline navigation. Pair it with hover-only colour shifts.</dd>
+
+        <dt>Danger</dt>
+        <dd>Outlined accent-red pill. Destructive actions only: delete, force-kill, abandon. The subtle accent tint on hover keeps it from shouting unless engaged.</dd>
+
+        <dt>Filter button</dt>
+        <dd>Mono caps pill with an optional chevron. Sits in toolbars to expose filter, sort, and grouping dropdowns. Smaller than a true button; reads as a control, not a commitment.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Inputs</p>
+      <dl class="dl">
+        <dt>Underline input</dt>
+        <dd>The default. A single hairline border below transparent text, with a mono caps placeholder. Drops into forms, modals, and inline edits without inventing chrome.</dd>
+
+        <dt>Pill input</dt>
+        <dd>Full-pill surfaced input for prominent search bars and command rows. Carries an optional mono prefix slot — e.g. <code>FIND</code> or <code>:</code> — to telegraph what the field accepts.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Badges</p>
+      <dl class="dl">
+        <dt>Type badges</dt>
+        <dd>Process, resource, monitor, steps, system, recurring. The taxonomy of objects in the workspace — used on cards, in timeline rows, in headers. Mono caps, ten-pixel, hairline border tinted by role.</dd>
+
+        <dt>Status badges</dt>
+        <dd>Success, warning, accent. The same pill chassis but driven by lifecycle: ok, pending, failed. Used on lanes, alerts, and inline beside a process name.</dd>
+
+        <dt>Generic badge</dt>
+        <dd>The unstyled base. Reach for this when adding a new taxonomy that doesn't match an existing role — and consider promoting it to a token if it appears twice.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Status &amp; Signals</p>
+      <dl class="dl">
+        <dt>Status dot</dt>
+        <dd>Eight-pixel circle with four variants: <span class="swatch" style="background:#4A9E5C;border-color:#4A9E5C"></span>up, <span class="swatch" style="background:#D71921;border-color:#D71921"></span>down (pulses), <span class="swatch" style="background:#D4A843;border-color:#D4A843"></span>warning, <span class="swatch" style="background:#8F8F8F;border-color:#8F8F8F"></span>idle. Pair with a service name for the smallest possible status read.</dd>
+
+        <dt>Alert banner</dt>
+        <dd>Full-width tinted bar above a view to surface a failed dependency, a degraded surface, or an informational note. Accent, warning, and info variants share one chassis — the colour does the talking.</dd>
+
+        <dt>Failure item</dt>
+        <dd>The row used to log an individual failure: bold title in body type, mono accent-red detail string. Wraps long stack traces with <code>word-break: break-all</code> so a console paste never blows out the layout.</dd>
+
+        <dt>State glyphs</dt>
+        <dd>The dot-matrix iconography — built from the same Doto vocabulary as the wordmark. Used at small sizes to mark loading, success, fail, and pending states where a dot alone is too quiet.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Data Display</p>
+      <dl class="dl">
+        <dt>Stat grid &amp; Stat</dt>
+        <dd>Six- or four-column grid of stat cards. Each card stacks a display-font value over a mono caps label, with an optional four-pixel segmented bar at the foot for ratios. Value variants tint for danger, success, warning.</dd>
+
+        <dt>Service card</dt>
+        <dd>The unit of the <code>/status</code> view. Status dot + name + detail block in a single card. Fits four to a row on desktop, collapses to one on mobile.</dd>
+
+        <dt>Key-value list</dt>
+        <dd>A two-column <code>&lt;dl&gt;</code> with a 160-pixel mono caps term and a body-mono value. The right shape for metadata blocks — environment, version, started-at, owner — where alignment matters more than density.</dd>
+
+        <dt>Timeline row</dt>
+        <dd>Three-column grid: time, badges, content. Whole row tints on hover and bleeds into the gutter so the affordance reads at a glance. The native unit of <code>/timeline</code>.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Kanban &amp; Knowledge</p>
+      <dl class="dl">
+        <dt>Kanban column</dt>
+        <dd>Four-column grid (two on tablet, one on mobile) of stacked task cards. Each column header carries a mono caps title and a muted count, with the column itself fading in on mount on a staggered delay.</dd>
+
+        <dt>Knowledge columns</dt>
+        <dd>Three-column reading layout for the wiki. Each column has a bordered title, optional sub-label, and a list of <code>.c-knowledge-item</code> entries that promote to display-coloured text on hover.</dd>
+      </dl>
+    </section>
+
+    <!-- ───────────────────────── -->
+    <section class="group">
+      <p class="group-label">Empty, Loading &amp; Utilities</p>
+      <dl class="dl">
+        <dt>Empty state</dt>
+        <dd>Center-aligned heading-light line over a mono caps tagline, padded by ninety-six pixels top and bottom. The shape every list collapses to when there's nothing to show.</dd>
+
+        <dt>Loading &amp; Not-implemented</dt>
+        <dd>Two mono caps placeholders that print <code>[ LOADING... ]</code> and <code>[NOT YET IMPLEMENTED]</code> via <code>::before</code>. Never ship them unannotated — they're scaffolding, not UI.</dd>
+
+        <dt>Divider</dt>
+        <dd>A one-pixel border-token hairline with twenty-four pixels of margin above and below. The only horizontal rule you should need.</dd>
+
+        <dt>Type utilities</dt>
+        <dd><code>.c-mono</code>, <code>.c-display</code>, <code>.c-caps</code>, plus the tone helpers <code>.c-muted</code>, <code>.c-secondary</code>, <code>.c-primary</code>, <code>.c-danger</code>, <code>.c-success</code>, <code>.c-warning</code>. Atomic, single-axis, never composed into new components.</dd>
+      </dl>
+    </section>
+
+  </main>
+
+  <script>
+    const body = document.body;
+    const light = document.getElementById('m-light');
+    const dark  = document.getElementById('m-dark');
+    function set(mode){
+      body.classList.toggle('light', mode === 'light');
+      light.classList.toggle('on', mode === 'light');
+      dark.classList.toggle('on',  mode === 'dark');
+    }
+    light.addEventListener('click', () => set('light'));
+    dark .addEventListener('click', () => set('dark'));
+  </script>
+</body>
+</html>

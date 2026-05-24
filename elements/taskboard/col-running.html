@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Running column · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div class="tb-col" style="max-width: 280px;">
+  <header class="tb-col-head">
+    <span class="tb-col-title"><span class="tb-status-dot tb-status-dot--running"></span>Running</span>
+    <span class="tb-col-count">2</span>
+  </header>
+  <article class="tb-card tb-card--running">
+    <div class="tb-card-body">
+      <div class="tb-card-head">
+        <div class="tb-card-heading">
+          <span class="tb-card-id">#A-209 · Onboarding</span>
+          <h3 class="tb-card-title">Draft Q3 contractor onboarding checklist for EU entities</h3>
+        </div>
+        <button type="button" class="tb-card-action tb-card-action--running">Running
+          <svg viewBox="0 0 12 12" fill="currentColor"><rect x="3" y="2" width="2" height="8" rx="0.4"></rect><rect x="7" y="2" width="2" height="8" rx="0.4"></rect></svg>
+        </button>
+      </div>
+      <div class="tb-card-progress tb-card-progress--warning" style="--p: 58%;"></div>
+      <div class="tb-card-meter"><span><b>step 7</b> / 12</span><span>ETA 2m 14s</span></div>
+    </div>
+  </article>
+  <article class="tb-card tb-card--running">
+    <div class="tb-card-body">
+      <div class="tb-card-head">
+        <div class="tb-card-heading">
+          <span class="tb-card-id">#A-210 · Compliance</span>
+          <h3 class="tb-card-title">Reconcile July benefits enrollment against payroll deductions</h3>
+        </div>
+        <button type="button" class="tb-card-action tb-card-action--running">Running
+          <svg viewBox="0 0 12 12" fill="currentColor"><rect x="3" y="2" width="2" height="8" rx="0.4"></rect><rect x="7" y="2" width="2" height="8" rx="0.4"></rect></svg>
+        </button>
+      </div>
+      <div class="tb-card-progress tb-card-progress--warning" style="--p: 33%;"></div>
+      <div class="tb-card-meter"><span><b>step 3</b> / 9</span><span>ETA 4m 32s</span></div>
+    </div>
+  </article>
+</div>
+</body>
+</html>

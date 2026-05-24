@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LMS · Components · Cicrus</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<style>
+  body { background: #141414; color: var(--text-primary); }
+  .frm {
+    width: 100%; height: 100%; border: 0;
+    display: block; background: var(--black);
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+  const { DesignCanvas, DCSection, DCArtboard } = window;
+
+  // Each artboard embeds one element via iframe. Source files live in
+  // elements/lms/ — they're standalone HTMLs that can be opened
+  // directly, edited, or composed into a larger page.
+  const F = ({ src, title }) =>
+    <iframe className="frm" src={src} title={title} loading="lazy" />;
+
+  function App() {
+    return (
+      <DesignCanvas title="LMS · Components">
+
+        <DCSection id="chrome" title="Page chrome">
+          <DCArtboard id="topbar"   label="Top bar · brand + breadcrumb + mode"  width={1280} height={80}>
+            <F src="elements/lms/topbar.html" title="Top bar" />
+          </DCArtboard>
+          <DCArtboard id="progress" label="Bottom progress bar"                  width={1280} height={64}>
+            <F src="elements/lms/progress.html" title="Progress bar" />
+          </DCArtboard>
+          <DCArtboard id="toc"      label="Table of contents"                     width={320} height={380}>
+            <F src="elements/lms/toc.html" title="TOC" />
+          </DCArtboard>
+          <DCArtboard id="margin"   label="Margin note"                           width={320} height={240}>
+            <F src="elements/lms/margin-note.html" title="Margin note" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="opening" title="Opening & prose">
+          <DCArtboard id="hero"     label="Lesson hero"                           width={760} height={420}>
+            <F src="elements/lms/hero.html" title="Hero" />
+          </DCArtboard>
+          <DCArtboard id="prose"    label="Prose with inline elements"            width={760} height={360}>
+            <F src="elements/lms/prose.html" title="Prose" />
+          </DCArtboard>
+          <DCArtboard id="quote"    label="Pull quote"                            width={760} height={280}>
+            <F src="elements/lms/quote.html" title="Quote" />
+          </DCArtboard>
+          <DCArtboard id="spark"    label="Sparkline (inline)"                    width={520} height={140}>
+            <F src="elements/lms/sparkline.html" title="Sparkline" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="callouts" title="Callouts">
+          <DCArtboard id="note"     label="Note"      width={760} height={200}>
+            <F src="elements/lms/callout-note.html" title="Note" />
+          </DCArtboard>
+          <DCArtboard id="tip"      label="Tip"       width={760} height={200}>
+            <F src="elements/lms/callout-tip.html" title="Tip" />
+          </DCArtboard>
+          <DCArtboard id="warn"     label="Warning"   width={760} height={200}>
+            <F src="elements/lms/callout-warn.html" title="Warning" />
+          </DCArtboard>
+          <DCArtboard id="danger"   label="Danger"    width={760} height={200}>
+            <F src="elements/lms/callout-danger.html" title="Danger" />
+          </DCArtboard>
+          <DCArtboard id="example"  label="Example"   width={760} height={220}>
+            <F src="elements/lms/callout-example.html" title="Example" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="reference" title="Reference blocks">
+          <DCArtboard id="defs"     label="Definition list"   width={760} height={420}>
+            <F src="elements/lms/definitions.html" title="Definitions" />
+          </DCArtboard>
+          <DCArtboard id="table"    label="Data table"        width={760} height={380}>
+            <F src="elements/lms/table.html" title="Table" />
+          </DCArtboard>
+          <DCArtboard id="figure"   label="Figure + caption"  width={760} height={520}>
+            <F src="elements/lms/figure.html" title="Figure" />
+          </DCArtboard>
+          <DCArtboard id="footnotes" label="Footnotes"        width={760} height={220}>
+            <F src="elements/lms/footnotes.html" title="Footnotes" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="instructional" title="Instructional blocks">
+          <DCArtboard id="steps"    label="Numbered steps"    width={760} height={620}>
+            <F src="elements/lms/steps.html" title="Steps" />
+          </DCArtboard>
+          <DCArtboard id="compare"  label="Do / Don't"        width={760} height={240}>
+            <F src="elements/lms/compare.html" title="Compare" />
+          </DCArtboard>
+          <DCArtboard id="code"     label="Code block"        width={760} height={440}>
+            <F src="elements/lms/code.html" title="Code" />
+          </DCArtboard>
+          <DCArtboard id="reveal"   label="Reveal / spoiler"  width={760} height={300}>
+            <F src="elements/lms/reveal.html" title="Reveal" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="practice" title="Practice & check-ins">
+          <DCArtboard id="quiz"     label="Quiz (MCQ)"        width={760} height={520}>
+            <F src="elements/lms/quiz.html" title="Quiz" />
+          </DCArtboard>
+          <DCArtboard id="lab"      label="Lab exercise"      width={760} height={360}>
+            <F src="elements/lms/lab.html" title="Lab" />
+          </DCArtboard>
+          <DCArtboard id="reflect"  label="Reflection prompt" width={760} height={300}>
+            <F src="elements/lms/reflect.html" title="Reflect" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="closing" title="Closing">
+          <DCArtboard id="summary"  label="Takeaways summary" width={860} height={680}>
+            <F src="elements/lms/summary.html" title="Summary" />
+          </DCArtboard>
+          <DCArtboard id="modnav"   label="Module nav (prev / next)" width={760} height={180}>
+            <F src="elements/lms/modnav.html" title="Module nav" />
+          </DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>

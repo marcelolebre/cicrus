@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Status dots · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; gap: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);">
+  <div style="display:flex; align-items:center; gap:10px;"><span class="tb-status-dot tb-status-dot--todo"></span>Todo</div>
+  <div style="display:flex; align-items:center; gap:10px;"><span class="tb-status-dot tb-status-dot--running"></span>Running</div>
+  <div style="display:flex; align-items:center; gap:10px;"><span class="tb-status-dot tb-status-dot--review"></span>Review</div>
+  <div style="display:flex; align-items:center; gap:10px;"><span class="tb-status-dot tb-status-dot--done"></span>Done</div>
+  <div style="display:flex; align-items:center; gap:10px;"><span class="tb-status-dot tb-status-dot--failed"></span>Failed</div>
+</div>
+</body>
+</html>

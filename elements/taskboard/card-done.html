@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Card · done · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<article class="tb-card tb-card--done" style="max-width: 320px;">
+  <div class="tb-card-body">
+    <div class="tb-card-head">
+      <div class="tb-card-heading">
+        <span class="tb-card-id">#A-203 · Payroll</span>
+        <h3 class="tb-card-title">Payroll cost breakdown by legal entity (last quarter)</h3>
+      </div>
+      <button type="button" class="tb-card-action tb-card-action--done">Done
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6 L5 8 L9 4"></path></svg>
+      </button>
+    </div>
+    <div class="tb-card-progress tb-card-progress--success" style="--p: 100%;"></div>
+    <div class="tb-card-meter"><span><b>18</b> steps</span><span>ran 4h 11m</span></div>
+  </div>
+</article>
+</body>
+</html>

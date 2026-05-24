@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Side panel · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<aside class="tb-panel" style="position: relative; transform: none; width: 640px;" aria-hidden="false" role="dialog">
+  <header class="tb-panel-head">
+    <div class="tb-panel-eyebrow"><b>#A-209</b><span class="sep">/</span><span>Onboarding</span></div>
+    <button type="button" class="tb-panel-close" aria-label="Close">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3 L9 9 M9 3 L3 9"></path></svg>
+    </button>
+  </header>
+  <div class="tb-panel-body">
+    <div class="tb-panel-hero">
+      <div class="tb-panel-statusrow">
+        <span class="tb-panel-pill tb-panel-pill--running">
+          <svg viewBox="0 0 12 12" fill="currentColor"><rect x="3" y="2" width="2" height="8" rx="0.4"></rect><rect x="7" y="2" width="2" height="8" rx="0.4"></rect></svg>
+          Running
+        </span>
+        <span class="tb-panel-pill tb-panel-pill--neutral">Onboarding</span>
+      </div>
+      <h2 class="tb-panel-title">Draft Q3 contractor onboarding checklist for EU entities</h2>
+      <div class="tb-panel-progress-wrap">
+        <div class="tb-panel-progress tb-panel-progress--warning" style="--p: 58%;"></div>
+        <div class="tb-panel-meter"><span><b>step 7</b> / 12</span><span>ETA 2m 14s</span></div>
+      </div>
+    </div>
+    <section class="tb-panel-section">
+      <h4>Run log</h4>
+      <ol class="tb-panel-timeline">
+        <li class="is-done"><span class="tb-panel-time">14:01:02</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Task queued</span></li>
+        <li class="is-done"><span class="tb-panel-time">14:01:08</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Resolved 14 EU entities from Workday</span></li>
+        <li class="is-done"><span class="tb-panel-time">14:02:14</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Pulled 247 active contractor records</span></li>
+        <li class="is-active"><span class="tb-panel-time">14:04:11</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Drafting checklist — section 7 of 12</span></li>
+        <li class="is-pending"><span class="tb-panel-time">—</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Compile and format output</span></li>
+        <li class="is-pending"><span class="tb-panel-time">—</span><span class="tb-panel-dot"></span><span class="tb-panel-step">Submit for review</span></li>
+      </ol>
+    </section>
+    <section class="tb-panel-section">
+      <h4>Details</h4>
+      <ul class="tb-card-detail-list">
+        <li><span><b>Claude Opus 4.6</b> <em>Executor</em></span><span>Streaming</span></li>
+        <li><span><b>Workday + Greenhouse</b> <em>Sources</em></span><span>OAuth · live</span></li>
+        <li><span><b>14 EU entities</b> <em>Scope</em></span><span>DE · FR · ES · NL …</span></li>
+      </ul>
+    </section>
+  </div>
+  <footer class="tb-panel-foot">
+    <div class="tb-panel-foot-meta">Started <b>14:01</b> · running <b>3m 12s</b></div>
+    <div class="tb-panel-actions">
+      <button type="button" class="tb-panel-btn tb-panel-btn--danger">Cancel</button>
+      <button type="button" class="tb-panel-btn">Pause</button>
+    </div>
+  </footer>
+</aside>
+</body>
+</html>

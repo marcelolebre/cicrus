@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Stats strip · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 0; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<section class="tb-stats" aria-label="Project stats">
+  <div class="tb-stat">
+    <span class="tb-stat-label">Open</span>
+    <span class="tb-stat-value">5</span>
+    <div class="tb-stat-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="tb-stat">
+    <span class="tb-stat-label">Running</span>
+    <span class="tb-stat-value tb-stat-value--warning">2</span>
+    <div class="tb-stat-bar"><span class="warning"></span><span class="warning"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="tb-stat">
+    <span class="tb-stat-label">In review</span>
+    <span class="tb-stat-value">5</span>
+    <div class="tb-stat-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="tb-stat">
+    <span class="tb-stat-label">Done · today</span>
+    <span class="tb-stat-value tb-stat-value--success">1</span>
+    <div class="tb-stat-bar"><span class="success"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="tb-stat">
+    <span class="tb-stat-label">Failed</span>
+    <span class="tb-stat-value">0</span>
+    <div class="tb-stat-bar"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Sidebar · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<aside class="tb-side" style="border-right: 1px solid var(--border); height: 100%;">
+  <div>
+    <div class="tb-side-section-title">Projects</div>
+    <ul class="tb-side-list">
+      <li class="tb-side-item tb-side-item--add">+ new project</li>
+      <li class="tb-side-item tb-side-item--active"><span>Admin</span><span class="tb-side-count">6</span></li>
+      <li class="tb-side-item"><span>Personal</span><span class="tb-side-count">1</span></li>
+      <li class="tb-side-item"><span>Scheduled</span><span class="tb-side-count">14</span></li>
+    </ul>
+  </div>
+  <div>
+    <div class="tb-side-section-title">Filters</div>
+    <ul class="tb-side-list">
+      <li class="tb-side-item">
+        <span style="display:inline-flex; align-items:center; gap:8px;"><span class="tb-status-dot tb-status-dot--running"></span>Active</span>
+        <span class="tb-side-count">2</span>
+      </li>
+      <li class="tb-side-item">
+        <span style="display:inline-flex; align-items:center; gap:8px;"><span class="tb-status-dot tb-status-dot--failed"></span>Failed</span>
+        <span class="tb-side-count">0</span>
+      </li>
+      <li class="tb-side-item">
+        <span style="display:inline-flex; align-items:center; gap:8px;"><span class="tb-status-dot tb-status-dot--done"></span>Completed</span>
+        <span class="tb-side-count">23</span>
+      </li>
+    </ul>
+  </div>
+  <div class="tb-side-foot">
+    <button type="button" class="tb-side-archive">Archived →</button>
+    <button type="button" class="tb-side-archive">Settings →</button>
+  </div>
+</aside>
+</body>
+</html>

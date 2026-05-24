@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Toolbar · Task Board · Cicrus</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../taskboard.css" />
+<style>
+  body { padding: 32px; background: var(--black); }
+  
+</style>
+</head>
+<body>
+
+<section class="tb-toolbar">
+  <button type="button" class="c-filter-btn">All types
+    <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+  </button>
+  <button type="button" class="c-filter-btn">All executors
+    <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+  </button>
+  <button type="button" class="c-filter-btn">Sort · Newest
+    <svg viewBox="0 0 12 12"><path d="M2 4 L6 8 L10 4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+  </button>
+  <div class="c-input-pill">
+    <span class="c-input-pill-prefix">+ Task</span>
+    <input type="text" placeholder="Describe a new task and press Enter" />
+    <span class="c-caps c-muted">⌘ K</span>
+  </div>
+</section>
+</body>
+</html>
