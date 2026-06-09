@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Code block · Cicrus</title>
+<link rel="stylesheet" href="../../../src/cicrus.css" />
+<style>body { padding: 32px; }</style>
+</head>
+<body>
+<div class="doc-code">
+  <div class="doc-code-head">
+    <b>example.css</b>
+    <button type="button" class="doc-code-copy" data-copy>Copy</button>
+  </div>
+  <pre><div class="doc-code-line"><span class="ln">1</span><span><span class="tok-com">/* one declaration per line */</span></span></div><div class="doc-code-line"><span class="ln">2</span><span><span class="tok-key">.doc-body</span> {</span></div><div class="doc-code-line"><span class="ln">3</span><span>  font-family: <span class="tok-str">var(--font-body)</span>;</span></div><div class="doc-code-line"><span class="ln">4</span><span>  color: <span class="tok-str">var(--text-primary)</span>;</span></div><div class="doc-code-line"><span class="ln">5</span><span>  line-height: <span class="tok-num">1.65</span>;</span></div><div class="doc-code-line"><span class="ln">6</span><span>}</span></div></pre>
+</div>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.closest('.doc-code').querySelector('pre');
+    navigator.clipboard?.writeText(pre.textContent).catch(()=>{});
+    const orig = btn.textContent; btn.textContent = 'Copied';
+    setTimeout(()=>btn.textContent = orig, 1200);
+  });
+});
+</script>
+</body>
+</html>

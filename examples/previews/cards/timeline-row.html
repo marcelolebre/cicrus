@@ -1,0 +1,133 @@
+<!-- @dsCard group="Components" name="Timeline & detail" subtitle="Event rows + slide-in panel" viewport="900x760" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Timeline & list rows — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .group { margin-bottom: 40px; }
+    .group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .knowledge { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Timeline &amp; list rows</div>
+    <div class="sub">3-COL GRID · ISO TIME · CAPS SUB-LABEL</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Timeline rows · 160 / auto / 1fr grid</div>
+    <div>
+      <div class="c-timeline-row">
+        <span class="c-timeline-time">2026-04-21 17:32:14</span>
+        <div class="c-timeline-badges">
+          <span class="c-badge c-badge--neutral">STATUS_CHANGE</span>
+          <span class="c-badge c-badge--muted">DKR</span>
+        </div>
+        <div class="c-timeline-content">
+          <span class="c-timeline-text">Task #2079: running → in_progress</span>
+          <span class="c-timeline-sub">Make Monitor</span>
+        </div>
+      </div>
+      <div class="c-timeline-row">
+        <span class="c-timeline-time">2026-04-21 17:32:14</span>
+        <div class="c-timeline-badges">
+          <span class="c-badge c-badge--neutral">STATUS_CHANGE</span>
+          <span class="c-badge c-badge--muted">DKR</span>
+        </div>
+        <div class="c-timeline-content">
+          <span class="c-timeline-text">Task #2080: queued → running</span>
+          <span class="c-timeline-sub">Session Process</span>
+        </div>
+      </div>
+      <div class="c-timeline-row">
+        <span class="c-timeline-time">2026-04-21 17:31:58</span>
+        <div class="c-timeline-badges">
+          <span class="c-badge c-badge--info">SESSION_RESOURCE</span>
+        </div>
+        <div class="c-timeline-content">
+          <span class="c-timeline-text">PostgreSQL · checkpoint completed in 412ms</span>
+          <span class="c-timeline-sub">Resource Heartbeat</span>
+        </div>
+      </div>
+      <div class="c-timeline-row">
+        <span class="c-timeline-time">2026-04-21 17:31:42</span>
+        <div class="c-timeline-badges">
+          <span class="c-badge c-badge-accent">FAILED</span>
+        </div>
+        <div class="c-timeline-content">
+          <span class="c-timeline-text">API Gateway · http 502 from upstream</span>
+          <span class="c-timeline-sub">3 retries exhausted</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Knowledge column · 3-up index · slug rows</div>
+    <div class="knowledge">
+      <div>
+        <div class="c-index-col-title">Concepts</div>
+        <div class="c-index-col-sub">139 LISTING</div>
+        <a class="c-index-item" href="#">gateway-scale-socket-loop</a>
+        <a class="c-index-item" href="#">supervisor-mailbox-pressure</a>
+        <a class="c-index-item" href="#">push-vs-poll-healthcheck</a>
+        <a class="c-index-item" href="#">cold-start-storm</a>
+        <a class="c-index-item" href="#">heartbeat-envelope</a>
+      </div>
+      <div>
+        <div class="c-index-col-title">Decisions</div>
+        <div class="c-index-col-sub">88 LISTING</div>
+        <a class="c-index-item" href="#">migrate-postgres-to-17-4</a>
+        <a class="c-index-item" href="#">drop-skeleton-loaders</a>
+        <a class="c-index-item" href="#">adopt-cicrus-tokens</a>
+        <a class="c-index-item" href="#">deprecate-toast-popups</a>
+        <a class="c-index-item" href="#">retire-ic-namespace</a>
+      </div>
+      <div>
+        <div class="c-index-col-title">Entities</div>
+        <div class="c-index-col-sub">258 LISTING</div>
+        <a class="c-index-item" href="#">api-gateway</a>
+        <a class="c-index-item" href="#">model-host-cluster</a>
+        <a class="c-index-item" href="#">scheduler-b</a>
+        <a class="c-index-item" href="#">deploy-agent-b</a>
+        <a class="c-index-item" href="#">postgres-primary</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Failure item · title + red mono detail</div>
+    <div>
+      <div class="c-errorrow">
+        <div class="c-errorrow-title">API Gateway · pool exhausted</div>
+        <div class="c-errorrow-detail">DBConnection.ConnectionError - tcp recv: closed (the connection was closed by the pool, possibly due to a timeout or because the pool has been terminated) at GatewayCore.Repo.Pool.checkout/2</div>
+      </div>
+      <div class="c-errorrow">
+        <div class="c-errorrow-title">Model Host · stream interrupted</div>
+        <div class="c-errorrow-detail">httpx.ReadError: connection reset by peer · model=model-v3-70b host=10.0.0.4:11434 stream_pos=2148b</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Key-value list · metadata blocks</div>
+    <dl class="c-kv">
+      <dt>STATUS</dt><dd>UP</dd>
+      <dt>VERSION</dt><dd>17.4 (Homebrew)</dd>
+      <dt>HOST</dt><dd>0.0.0.0:5432</dd>
+      <dt>OPEN CONNECTIONS</dt><dd>14 / 100</dd>
+      <dt>LAST CHECK</dt><dd>2s ago</dd>
+    </dl>
+  </div>
+</body>
+</html>

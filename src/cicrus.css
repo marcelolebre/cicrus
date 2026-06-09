@@ -1,0 +1,20 @@
+/* ============================================================
+   Cicrus Design System — single-import entry point
+   ------------------------------------------------------------
+   <link rel="stylesheet" href="src/cicrus.css">
+   <body>            ← dark mode (default)
+   <body class="light">  ← light mode
+
+   Imports in ITCSS order (low → high specificity):
+     1. tokens      — design tokens (settings)
+     2. base        — reset + element defaults (generic)
+     3. components  — .c-* UI components
+     4. content     — .doc-* long-form content
+     5. utilities   — single-purpose helpers (trumps)
+   Repo: https://github.com/marcelolebre/cicrus
+   ============================================================ */
+@import url('./tokens.css');
+@import url('./base.css');
+@import url('./components.css');
+@import url('./content.css');
+@import url('./utilities.css');

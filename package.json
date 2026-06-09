@@ -1,0 +1,64 @@
+{
+  "name": "cicrus",
+  "version": "1.0.0",
+  "description": "A monochromatic, typography-first CSS design system for operator consoles, dashboards, and internal tools. Plain CSS + design tokens — no build step, no framework. Dark and light modes both first-class.",
+  "keywords": [
+    "design-system",
+    "css",
+    "design-tokens",
+    "dark-mode",
+    "monochrome",
+    "dashboard",
+    "operator-console",
+    "ui",
+    "typography",
+    "no-build"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/marcelolebre/cicrus#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelolebre/cicrus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marcelolebre/cicrus/issues"
+  },
+  "type": "module",
+  "style": "src/cicrus.css",
+  "main": "src/glyphs.js",
+  "module": "src/glyphs.js",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "style": "./src/cicrus.css",
+      "import": "./src/glyphs.js"
+    },
+    "./css": "./src/cicrus.css",
+    "./tokens.css": "./src/tokens.css",
+    "./base.css": "./src/base.css",
+    "./components.css": "./src/components.css",
+    "./content.css": "./src/content.css",
+    "./utilities.css": "./src/utilities.css",
+    "./glyphs": "./src/glyphs.js",
+    "./tokens": "./tokens.json",
+    "./components": "./cicrus.components.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "tokens.json",
+    "cicrus.components.json",
+    "docs",
+    "examples",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "cat src/tokens.css src/base.css src/components.css src/content.css src/utilities.css > cicrus.bundle.css && echo 'Wrote cicrus.bundle.css'"
+  }
+}

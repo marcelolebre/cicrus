@@ -1,0 +1,155 @@
+<!-- @dsCard group="Components" name="Status signals" subtitle="Health lights, state dots, alerts" viewport="900x560" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Status signals — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .group { margin-bottom: 40px; }
+    .group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .dots {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .dot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .dot-card .dot-row { display: flex; align-items: center; gap: 12px; }
+    .dot-card .name { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .dot-card .meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-disabled); line-height: 1.6; }
+    .dot-card .class-name { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); align-self: stretch; }
+
+    .alerts > * + * { margin-top: 16px; }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px;
+      gap: 16px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-row:last-child { border-bottom: 0; }
+    .progress-row .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .progress-row .num { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); text-align: right; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Status signals</div>
+    <div class="sub">DOTS · BARS · BANNERS — INSTRUMENT-PANEL VOCABULARY</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Status dots — 8×8 signal lights</div>
+    <div class="dots">
+      <div class="dot-card">
+        <div class="dot-row"><span class="c-dot c-dot-up"></span><span class="name">PostgreSQL</span></div>
+        <span class="meta">UP · last_check 2s ago</span>
+        <span class="class-name">.c-dot-up</span>
+      </div>
+      <div class="dot-card">
+        <div class="dot-row"><span class="c-dot c-dot-down"></span><span class="name">API Gateway</span></div>
+        <span class="meta">DOWN · pulses 2s · last_check 4s ago</span>
+        <span class="class-name">.c-dot-down</span>
+      </div>
+      <div class="dot-card">
+        <div class="dot-row"><span class="c-dot c-dot-warn"></span><span class="name">Model Host</span></div>
+        <span class="meta">DEGRADED · 1 of 3 nodes responsive</span>
+        <span class="class-name">.c-dot-warn</span>
+      </div>
+      <div class="dot-card">
+        <div class="dot-row"><span class="c-dot c-dot-idle"></span><span class="name">Scheduler.b</span></div>
+        <span class="meta">IDLE · 0 workers, 0 queued</span>
+        <span class="class-name">.c-dot-idle</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Alert banners — bracket prefix · middle-dot separator</div>
+    <div class="alerts">
+      <div class="c-alert">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M8 2L14.5 14H1.5L8 2z"/>
+          <circle cx="8" cy="11.5" r="0.5" fill="currentColor"/>
+          <line x1="8" y1="6.5" x2="8" y2="9.5"/>
+        </svg>
+        [ERROR] 2 ISSUES DETECTED: API GATEWAY DOWN · MODEL HOST DOWN
+      </div>
+      <div class="c-alert c-alert--warning">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M8 2L14.5 14H1.5L8 2z"/>
+          <circle cx="8" cy="11.5" r="0.5" fill="currentColor"/>
+          <line x1="8" y1="6.5" x2="8" y2="9.5"/>
+        </svg>
+        [WARN] DEPLOY-AGENT.B QUEUE DEPTH 124 · BACKPRESSURE THRESHOLD 100
+      </div>
+      <div class="c-alert c-alert--info">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+          <circle cx="8" cy="8" r="6"/>
+          <line x1="8" y1="6" x2="8" y2="11"/>
+          <circle cx="8" cy="4.5" r="0.5" fill="currentColor"/>
+        </svg>
+        [INFO] SCHEDULED MAINTENANCE 2026-04-22 02:00 UTC · ETA 30M
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Segmented progress — discrete · square ends</div>
+    <div class="progress-row">
+      <span class="lbl">FILLED</span>
+      <div class="c-stat-bar" style="height: 8px;">
+        <div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div><div class="seg"></div><div class="seg"></div>
+      </div>
+      <span class="num">3 / 5</span>
+    </div>
+    <div class="progress-row">
+      <span class="lbl">SUCCESS</span>
+      <div class="c-stat-bar" style="height: 8px;">
+        <div class="seg success"></div><div class="seg success"></div><div class="seg success"></div><div class="seg success"></div><div class="seg"></div>
+      </div>
+      <span class="num">4 / 5</span>
+    </div>
+    <div class="progress-row">
+      <span class="lbl">WARNING</span>
+      <div class="c-stat-bar" style="height: 8px;">
+        <div class="seg warning"></div><div class="seg warning"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+      </div>
+      <span class="num">2 / 5</span>
+    </div>
+    <div class="progress-row">
+      <span class="lbl">DANGER</span>
+      <div class="c-stat-bar" style="height: 8px;">
+        <div class="seg danger"></div><div class="seg danger"></div><div class="seg danger"></div><div class="seg danger"></div><div class="seg danger"></div>
+      </div>
+      <span class="num c-danger">5 / 5</span>
+    </div>
+    <div class="progress-row">
+      <span class="lbl">HERO</span>
+      <div class="c-stat-bar" style="height: 16px;">
+        <div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div>
+        <div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div><div class="seg"></div>
+      </div>
+      <span class="num">7 / 8</span>
+    </div>
+  </div>
+</body>
+</html>

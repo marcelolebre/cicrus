@@ -1,0 +1,907 @@
+{
+  "name": "cicrus",
+  "description": "Machine-readable index of Cicrus components. Each entry's `preview` is a self-contained, copy-pasteable HTML snippet that links src/cicrus.css. Class semantics: docs/components.md. Tokens: tokens.json.",
+  "css": "src/cicrus.css",
+  "tokens": "tokens.json",
+  "docs": {
+    "components": "docs/components.md",
+    "brief": "docs/SKILL.md",
+    "integration": "docs/integration.md"
+  },
+  "groups": {
+    "cards": {
+      "about": "Design-system showcase cards (brand, color, type, spacing, component overviews).",
+      "components": [
+        {
+          "id": "badges",
+          "title": "Badges",
+          "classes": [
+            "c-badge",
+            "c-badge--info",
+            "c-badge--muted",
+            "c-badge--neutral",
+            "c-badge--strong",
+            "c-badge--subtle",
+            "c-badge--success",
+            "c-badge--warning",
+            "c-badge-accent"
+          ],
+          "preview": "examples/previews/cards/badges.html"
+        },
+        {
+          "id": "brand-wordmark",
+          "title": "Brand wordmark",
+          "classes": [],
+          "preview": "examples/previews/cards/brand-wordmark.html"
+        },
+        {
+          "id": "buttons",
+          "title": "Buttons",
+          "classes": [
+            "c-btn",
+            "c-btn-danger",
+            "c-btn-ghost",
+            "c-btn-primary",
+            "c-btn-secondary",
+            "c-btn-sm",
+            "c-filter-btn"
+          ],
+          "preview": "examples/previews/cards/buttons.html"
+        },
+        {
+          "id": "color-dark",
+          "title": "Color — Dark mode",
+          "classes": [],
+          "preview": "examples/previews/cards/color-dark.html"
+        },
+        {
+          "id": "color-light",
+          "title": "Color — Light mode",
+          "classes": [],
+          "preview": "examples/previews/cards/color-light.html"
+        },
+        {
+          "id": "color-status",
+          "title": "Status colors",
+          "classes": [],
+          "preview": "examples/previews/cards/color-status.html"
+        },
+        {
+          "id": "dot-matrix-motif",
+          "title": "Dot-matrix motif",
+          "classes": [],
+          "preview": "examples/previews/cards/dot-matrix-motif.html"
+        },
+        {
+          "id": "inputs",
+          "title": "Inputs",
+          "classes": [
+            "c-input",
+            "c-input--error",
+            "c-input-pill",
+            "c-input-pill-prefix"
+          ],
+          "preview": "examples/previews/cards/inputs.html"
+        },
+        {
+          "id": "nav-and-mode-toggle",
+          "title": "Nav & mode toggle",
+          "classes": [],
+          "preview": "examples/previews/cards/nav-and-mode-toggle.html"
+        },
+        {
+          "id": "spacing-radius",
+          "title": "Spacing & radii",
+          "classes": [],
+          "preview": "examples/previews/cards/spacing-radius.html"
+        },
+        {
+          "id": "state-glyphs",
+          "title": "State glyphs",
+          "classes": [],
+          "preview": "examples/previews/cards/state-glyphs.html"
+        },
+        {
+          "id": "status-signals",
+          "title": "Status signals",
+          "classes": [
+            "c-alert",
+            "c-alert--info",
+            "c-alert--warning",
+            "c-danger",
+            "c-dot",
+            "c-dot-down",
+            "c-dot-idle",
+            "c-dot-up",
+            "c-dot-warn",
+            "c-stat-bar"
+          ],
+          "preview": "examples/previews/cards/status-signals.html"
+        },
+        {
+          "id": "surfaces-cards",
+          "title": "Surfaces & cards",
+          "classes": [
+            "c-badge",
+            "c-badge--strong",
+            "c-badge--subtle",
+            "c-badge--success",
+            "c-badge--warning",
+            "c-card",
+            "c-card--clickable",
+            "c-card--raised",
+            "c-card-desc",
+            "c-card-meta",
+            "c-card-title",
+            "c-dot",
+            "c-dot-down",
+            "c-dot-up",
+            "c-dot-warn",
+            "c-stat",
+            "c-stat-bar",
+            "c-stat-label",
+            "c-stat-value",
+            "c-stat-value--danger",
+            "c-stat-value--success",
+            "c-statuscard",
+            "c-statuscard-detail",
+            "c-statuscard-head",
+            "c-statuscard-name"
+          ],
+          "preview": "examples/previews/cards/surfaces-cards.html"
+        },
+        {
+          "id": "timeline-row",
+          "title": "Timeline & list rows",
+          "classes": [
+            "c-badge",
+            "c-badge--info",
+            "c-badge--muted",
+            "c-badge--neutral",
+            "c-badge-accent",
+            "c-errorrow",
+            "c-errorrow-detail",
+            "c-errorrow-title",
+            "c-index-col-sub",
+            "c-index-col-title",
+            "c-index-item",
+            "c-kv",
+            "c-timeline-badges",
+            "c-timeline-content",
+            "c-timeline-row",
+            "c-timeline-sub",
+            "c-timeline-text",
+            "c-timeline-time"
+          ],
+          "preview": "examples/previews/cards/timeline-row.html"
+        },
+        {
+          "id": "type-philosophy",
+          "title": "Three families",
+          "classes": [],
+          "preview": "examples/previews/cards/type-philosophy.html"
+        },
+        {
+          "id": "type-scale",
+          "title": "Type scale",
+          "classes": [],
+          "preview": "examples/previews/cards/type-scale.html"
+        }
+      ]
+    },
+    "ui": {
+      "about": "Atomic application-UI primitives (.c-*) — nav, cards, panels, stats, status.",
+      "components": [
+        {
+          "id": "card-done",
+          "title": "Card · done",
+          "classes": [
+            "c-item",
+            "c-item--done",
+            "c-item-action",
+            "c-item-action--done",
+            "c-item-body",
+            "c-item-head",
+            "c-item-heading",
+            "c-item-id",
+            "c-item-meter",
+            "c-item-progress",
+            "c-item-progress--success",
+            "c-item-title"
+          ],
+          "preview": "examples/previews/ui/card-done.html"
+        },
+        {
+          "id": "card-review",
+          "title": "Card · review",
+          "classes": [
+            "c-item",
+            "c-item-action",
+            "c-item-action--review",
+            "c-item-body",
+            "c-item-head",
+            "c-item-heading",
+            "c-item-id",
+            "c-item-meter",
+            "c-item-progress",
+            "c-item-title"
+          ],
+          "preview": "examples/previews/ui/card-review.html"
+        },
+        {
+          "id": "card-running",
+          "title": "Card · running",
+          "classes": [
+            "c-item",
+            "c-item--running",
+            "c-item-action",
+            "c-item-action--running",
+            "c-item-body",
+            "c-item-head",
+            "c-item-heading",
+            "c-item-id",
+            "c-item-meter",
+            "c-item-progress",
+            "c-item-progress--warning",
+            "c-item-title"
+          ],
+          "preview": "examples/previews/ui/card-running.html"
+        },
+        {
+          "id": "card-todo",
+          "title": "Card · todo",
+          "classes": [
+            "c-item",
+            "c-item-action",
+            "c-item-body",
+            "c-item-head",
+            "c-item-heading",
+            "c-item-id",
+            "c-item-meter",
+            "c-item-title"
+          ],
+          "preview": "examples/previews/ui/card-todo.html"
+        },
+        {
+          "id": "column-empty",
+          "title": "Column · empty",
+          "classes": [
+            "c-col",
+            "c-col-count",
+            "c-col-empty",
+            "c-col-head",
+            "c-col-title",
+            "c-status-dot",
+            "c-status-dot--todo"
+          ],
+          "preview": "examples/previews/ui/column-empty.html"
+        },
+        {
+          "id": "column-header",
+          "title": "Column header",
+          "classes": [
+            "c-col",
+            "c-col-count",
+            "c-col-head",
+            "c-col-title",
+            "c-status-dot",
+            "c-status-dot--running"
+          ],
+          "preview": "examples/previews/ui/column-header.html"
+        },
+        {
+          "id": "detail-row",
+          "title": "Detail row",
+          "classes": [
+            "c-item-detail-list"
+          ],
+          "preview": "examples/previews/ui/detail-row.html"
+        },
+        {
+          "id": "filter-button",
+          "title": "Filter button",
+          "classes": [
+            "c-filter-btn"
+          ],
+          "preview": "examples/previews/ui/filter-button.html"
+        },
+        {
+          "id": "footer-stat",
+          "title": "Footer stat",
+          "classes": [
+            "c-foot",
+            "c-foot-stats"
+          ],
+          "preview": "examples/previews/ui/footer-stat.html"
+        },
+        {
+          "id": "nav-archive",
+          "title": "Archive button",
+          "classes": [
+            "c-side-archive"
+          ],
+          "preview": "examples/previews/ui/nav-archive.html"
+        },
+        {
+          "id": "nav-item",
+          "title": "Nav item",
+          "classes": [
+            "c-side",
+            "c-side-count",
+            "c-side-item",
+            "c-side-item--active",
+            "c-side-list"
+          ],
+          "preview": "examples/previews/ui/nav-item.html"
+        },
+        {
+          "id": "nav-section-title",
+          "title": "Nav section title",
+          "classes": [
+            "c-side",
+            "c-side-section-title"
+          ],
+          "preview": "examples/previews/ui/nav-section-title.html"
+        },
+        {
+          "id": "output-block",
+          "title": "Output block",
+          "classes": [
+            "c-panel-output"
+          ],
+          "preview": "examples/previews/ui/output-block.html"
+        },
+        {
+          "id": "page-meta",
+          "title": "Page meta",
+          "classes": [
+            "c-head-meta"
+          ],
+          "preview": "examples/previews/ui/page-meta.html"
+        },
+        {
+          "id": "page-title",
+          "title": "Page title",
+          "classes": [
+            "c-head-sub",
+            "c-head-title"
+          ],
+          "preview": "examples/previews/ui/page-title.html"
+        },
+        {
+          "id": "panel-button",
+          "title": "Panel button",
+          "classes": [
+            "c-panel-btn",
+            "c-panel-btn--primary"
+          ],
+          "preview": "examples/previews/ui/panel-button.html"
+        },
+        {
+          "id": "panel-header",
+          "title": "Panel header",
+          "classes": [
+            "c-panel",
+            "c-panel-close",
+            "c-panel-eyebrow",
+            "c-panel-head"
+          ],
+          "preview": "examples/previews/ui/panel-header.html"
+        },
+        {
+          "id": "panel-progress",
+          "title": "Panel progress",
+          "classes": [
+            "c-panel-meter",
+            "c-panel-progress",
+            "c-panel-progress--warning",
+            "c-panel-progress-wrap"
+          ],
+          "preview": "examples/previews/ui/panel-progress.html"
+        },
+        {
+          "id": "panel-section-title",
+          "title": "Panel section title",
+          "classes": [
+            "c-panel-section"
+          ],
+          "preview": "examples/previews/ui/panel-section-title.html"
+        },
+        {
+          "id": "panel-status-pill",
+          "title": "Status pill",
+          "classes": [
+            "c-panel-pill",
+            "c-panel-pill--neutral",
+            "c-panel-pill--running"
+          ],
+          "preview": "examples/previews/ui/panel-status-pill.html"
+        },
+        {
+          "id": "panel-title",
+          "title": "Panel title",
+          "classes": [
+            "c-panel-title"
+          ],
+          "preview": "examples/previews/ui/panel-title.html"
+        },
+        {
+          "id": "search-pill",
+          "title": "Search pill",
+          "classes": [
+            "c-caps",
+            "c-input-pill",
+            "c-input-pill-prefix",
+            "c-muted"
+          ],
+          "preview": "examples/previews/ui/search-pill.html"
+        },
+        {
+          "id": "stat-tile",
+          "title": "Stat tile",
+          "classes": [
+            "c-stat",
+            "c-stat-bar",
+            "c-stat-label",
+            "c-stat-value",
+            "c-stat-value--warning",
+            "c-stats"
+          ],
+          "preview": "examples/previews/ui/stat-tile.html"
+        },
+        {
+          "id": "status-dot",
+          "title": "Status dot",
+          "classes": [
+            "c-status-dot",
+            "c-status-dot--running"
+          ],
+          "preview": "examples/previews/ui/status-dot.html"
+        },
+        {
+          "id": "tab-link",
+          "title": "Tab link",
+          "classes": [
+            "c-tab",
+            "c-tab--active",
+            "c-tabs"
+          ],
+          "preview": "examples/previews/ui/tab-link.html"
+        },
+        {
+          "id": "theme-toggle",
+          "title": "Theme toggle",
+          "classes": [
+            "c-mode"
+          ],
+          "preview": "examples/previews/ui/theme-toggle.html"
+        },
+        {
+          "id": "timeline-item",
+          "title": "Timeline item",
+          "classes": [
+            "c-panel-dot",
+            "c-panel-step",
+            "c-panel-time",
+            "c-panel-timeline"
+          ],
+          "preview": "examples/previews/ui/timeline-item.html"
+        },
+        {
+          "id": "version-tag",
+          "title": "Version tag",
+          "classes": [
+            "c-brand"
+          ],
+          "preview": "examples/previews/ui/version-tag.html"
+        }
+      ]
+    },
+    "content": {
+      "about": "Atomic long-form content primitives (.doc-*) — prose, callouts, tables, prompts.",
+      "components": [
+        {
+          "id": "brand-mark",
+          "title": "Brand mark",
+          "classes": [
+            "doc-brand"
+          ],
+          "preview": "examples/previews/content/brand-mark.html"
+        },
+        {
+          "id": "breadcrumb",
+          "title": "Breadcrumb",
+          "classes": [
+            "doc-crumb"
+          ],
+          "preview": "examples/previews/content/breadcrumb.html"
+        },
+        {
+          "id": "bullet-list",
+          "title": "Bullet list",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/bullet-list.html"
+        },
+        {
+          "id": "callout-danger",
+          "title": "Danger",
+          "classes": [
+            "doc-callout",
+            "doc-callout--danger",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/content/callout-danger.html"
+        },
+        {
+          "id": "callout-example",
+          "title": "Example",
+          "classes": [
+            "doc-callout",
+            "doc-callout--example",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/content/callout-example.html"
+        },
+        {
+          "id": "callout-note",
+          "title": "Note",
+          "classes": [
+            "doc-callout",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/content/callout-note.html"
+        },
+        {
+          "id": "callout-tip",
+          "title": "Tip",
+          "classes": [
+            "doc-callout",
+            "doc-callout--tip",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/content/callout-tip.html"
+        },
+        {
+          "id": "callout-warn",
+          "title": "Warning",
+          "classes": [
+            "doc-callout",
+            "doc-callout--warn",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/content/callout-warn.html"
+        },
+        {
+          "id": "choice-option",
+          "title": "Choice option",
+          "classes": [
+            "doc-quiz-opt",
+            "doc-quiz-opts"
+          ],
+          "preview": "examples/previews/content/choice-option.html"
+        },
+        {
+          "id": "code-block",
+          "title": "Code block",
+          "classes": [
+            "doc-code",
+            "doc-code-copy",
+            "doc-code-head",
+            "doc-code-line"
+          ],
+          "preview": "examples/previews/content/code-block.html"
+        },
+        {
+          "id": "definition-row",
+          "title": "Definition row",
+          "classes": [
+            "doc-defs"
+          ],
+          "preview": "examples/previews/content/definition-row.html"
+        },
+        {
+          "id": "disclosure",
+          "title": "Disclosure",
+          "classes": [
+            "doc-reveal",
+            "doc-reveal-chev",
+            "doc-reveal-content",
+            "doc-reveal-inner",
+            "doc-reveal-toggle"
+          ],
+          "preview": "examples/previews/content/disclosure.html"
+        },
+        {
+          "id": "display-heading",
+          "title": "Display heading",
+          "classes": [
+            "doc-title"
+          ],
+          "preview": "examples/previews/content/display-heading.html"
+        },
+        {
+          "id": "eyebrow",
+          "title": "Eyebrow",
+          "classes": [
+            "doc-eyebrow"
+          ],
+          "preview": "examples/previews/content/eyebrow.html"
+        },
+        {
+          "id": "figure",
+          "title": "Figure",
+          "classes": [
+            "doc-figure",
+            "doc-figure-frame"
+          ],
+          "preview": "examples/previews/content/figure.html"
+        },
+        {
+          "id": "footnote-item",
+          "title": "Footnote item",
+          "classes": [
+            "doc-footnotes"
+          ],
+          "preview": "examples/previews/content/footnote-item.html"
+        },
+        {
+          "id": "footnote-ref",
+          "title": "Footnote reference",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/footnote-ref.html"
+        },
+        {
+          "id": "glossary-row",
+          "title": "Glossary row",
+          "classes": [
+            "doc-glossary"
+          ],
+          "preview": "examples/previews/content/glossary-row.html"
+        },
+        {
+          "id": "inline-code",
+          "title": "Inline code",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/inline-code.html"
+        },
+        {
+          "id": "kbd",
+          "title": "Keyboard",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/kbd.html"
+        },
+        {
+          "id": "keylist",
+          "title": "Key list",
+          "classes": [
+            "doc-keylist",
+            "doc-keylist-label",
+            "doc-keylist-list"
+          ],
+          "preview": "examples/previews/content/keylist.html"
+        },
+        {
+          "id": "lead-paragraph",
+          "title": "Lead paragraph",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/lead-paragraph.html"
+        },
+        {
+          "id": "lede",
+          "title": "Lede",
+          "classes": [
+            "doc-deck"
+          ],
+          "preview": "examples/previews/content/lede.html"
+        },
+        {
+          "id": "margin-note",
+          "title": "Margin note",
+          "classes": [
+            "margin-note"
+          ],
+          "preview": "examples/previews/content/margin-note.html"
+        },
+        {
+          "id": "meta-row",
+          "title": "Meta row",
+          "classes": [
+            "doc-meta"
+          ],
+          "preview": "examples/previews/content/meta-row.html"
+        },
+        {
+          "id": "nav-item",
+          "title": "Nav item",
+          "classes": [
+            "doc-toc",
+            "doc-toc-list"
+          ],
+          "preview": "examples/previews/content/nav-item.html"
+        },
+        {
+          "id": "numbered-list",
+          "title": "Numbered list",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/numbered-list.html"
+        },
+        {
+          "id": "pager-link",
+          "title": "Pager link",
+          "classes": [
+            "doc-modnav"
+          ],
+          "preview": "examples/previews/content/pager-link.html"
+        },
+        {
+          "id": "panel-bad",
+          "title": "Comparison panel · bad",
+          "classes": [
+            "doc-compare",
+            "doc-compare--dont"
+          ],
+          "preview": "examples/previews/content/panel-bad.html"
+        },
+        {
+          "id": "panel-good",
+          "title": "Comparison panel · good",
+          "classes": [
+            "doc-compare",
+            "doc-compare--do"
+          ],
+          "preview": "examples/previews/content/panel-good.html"
+        },
+        {
+          "id": "paragraph",
+          "title": "Paragraph",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/paragraph.html"
+        },
+        {
+          "id": "progress-rail",
+          "title": "Progress rail",
+          "classes": [
+            "doc-progress",
+            "doc-progress-rail"
+          ],
+          "preview": "examples/previews/content/progress-rail.html"
+        },
+        {
+          "id": "prompt-block",
+          "title": "Prompt block",
+          "classes": [
+            "doc-prompt",
+            "doc-prompt-body",
+            "doc-prompt-copy",
+            "doc-prompt-head",
+            "doc-prompt-tag"
+          ],
+          "preview": "examples/previews/content/prompt-block.html"
+        },
+        {
+          "id": "pull-quote",
+          "title": "Pull quote",
+          "classes": [
+            "doc-quote"
+          ],
+          "preview": "examples/previews/content/pull-quote.html"
+        },
+        {
+          "id": "question-prompt",
+          "title": "Question prompt",
+          "classes": [
+            "doc-quiz-q",
+            "doc-quiz-tag"
+          ],
+          "preview": "examples/previews/content/question-prompt.html"
+        },
+        {
+          "id": "response-prompt",
+          "title": "Response prompt",
+          "classes": [
+            "doc-reflect",
+            "doc-reflect-q",
+            "doc-reflect-tag"
+          ],
+          "preview": "examples/previews/content/response-prompt.html"
+        },
+        {
+          "id": "section-heading",
+          "title": "Section heading",
+          "classes": [],
+          "preview": "examples/previews/content/section-heading.html"
+        },
+        {
+          "id": "sparkline",
+          "title": "Sparkline",
+          "classes": [],
+          "preview": "examples/previews/content/sparkline.html"
+        },
+        {
+          "id": "step-item",
+          "title": "Step item",
+          "classes": [
+            "doc-step",
+            "doc-step-body",
+            "doc-step-num",
+            "doc-steps"
+          ],
+          "preview": "examples/previews/content/step-item.html"
+        },
+        {
+          "id": "subheading",
+          "title": "Subheading",
+          "classes": [],
+          "preview": "examples/previews/content/subheading.html"
+        },
+        {
+          "id": "table",
+          "title": "Data table",
+          "classes": [
+            "doc-table",
+            "doc-table-wrap"
+          ],
+          "preview": "examples/previews/content/table.html"
+        },
+        {
+          "id": "takeaway-item",
+          "title": "Takeaway item",
+          "classes": [
+            "doc-summary",
+            "doc-summary-body",
+            "doc-summary-headline"
+          ],
+          "preview": "examples/previews/content/takeaway-item.html"
+        },
+        {
+          "id": "task-input",
+          "title": "Task input",
+          "classes": [
+            "doc-lab",
+            "doc-lab-body",
+            "doc-lab-head",
+            "doc-lab-input",
+            "doc-lab-meta",
+            "doc-lab-title"
+          ],
+          "preview": "examples/previews/content/task-input.html"
+        },
+        {
+          "id": "term-mark",
+          "title": "Term",
+          "classes": [
+            "doc-body"
+          ],
+          "preview": "examples/previews/content/term-mark.html"
+        },
+        {
+          "id": "theme-toggle",
+          "title": "Theme toggle",
+          "classes": [
+            "doc-mode-switch"
+          ],
+          "preview": "examples/previews/content/theme-toggle.html"
+        }
+      ]
+    }
+  }
+}

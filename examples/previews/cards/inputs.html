@@ -1,0 +1,161 @@
+<!-- @dsCard group="Components" name="Inputs" subtitle="Underline fields & search pill" viewport="900x480" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Inputs — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .group { margin-bottom: 40px; }
+    .group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px 32px;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .field-row:last-of-type { border-bottom: 0; }
+    .field-row .lbl { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); letter-spacing: 0.04em; }
+    .field-row .spec { font-family: var(--font-mono); font-size: 10px; color: var(--text-disabled); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-top: 4px; }
+    .field-row .field { max-width: 380px; }
+
+    .err-msg { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.04em; margin-top: 6px; }
+
+    .toggles { display: flex; gap: 32px; align-items: center; }
+    .toggle-pair { display: flex; align-items: center; gap: 12px; }
+    .toggle-pair .lbl-text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+
+    .seg-control {
+      display: inline-flex;
+      border: 1px solid var(--border-visible);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .seg-control button {
+      background: transparent;
+      border: 0;
+      padding: 10px 22px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+    .seg-control button:hover:not(.active) { color: var(--text-primary); }
+    .seg-control button.active {
+      background: var(--text-display);
+      color: var(--black);
+    }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Inputs</div>
+    <div class="sub">UNDERLINE PRIMARY · CAPS PLACEHOLDERS · NO BORDER BOXES</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Underline input — default</div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">.c-input</span>
+        <span class="spec">DEFAULT · BORDER --border-visible</span>
+      </div>
+      <div class="field">
+        <input class="c-input" type="text" placeholder="SEARCH TASKS...">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">.c-input — focus</span>
+        <span class="spec">UNDERLINE PROMOTES TO --text-primary</span>
+      </div>
+      <div class="field">
+        <input class="c-input" type="text" value="gateway-scale" autofocus>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">.c-input--error</span>
+        <span class="spec">UNDERLINE → --accent</span>
+      </div>
+      <div class="field">
+        <input class="c-input c-input--error" type="text" value="invalid-slug-#">
+        <div class="err-msg">[ERROR] SLUGS MUST BE KEBAB-CASE, A–Z 0–9 ONLY</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Pill input — prominent search bars</div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">.c-input-pill</span>
+        <span class="spec">PREFIX LABEL + INPUT · ROUNDED 999</span>
+      </div>
+      <div class="field">
+        <div class="c-input-pill">
+          <span class="c-input-pill-prefix">FILTER</span>
+          <input type="text" placeholder="ENTITY OR DECISION...">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Toggle switch — pill track, circle thumb</div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">toggle</span>
+        <span class="spec">SAME LANGUAGE AS MODE TOGGLE</span>
+      </div>
+      <div class="toggles">
+        <div class="toggle-pair">
+          <span class="lbl-text">OFF</span>
+          <div class="mode-toggle-track" style="width: 36px; height: 20px; border-radius: 999px; border: 1px solid var(--border-visible); position: relative;">
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: var(--text-disabled); position: absolute; top: 2px; left: 2px;"></div>
+          </div>
+        </div>
+        <div class="toggle-pair">
+          <span class="lbl-text">ON</span>
+          <div class="mode-toggle-track" style="width: 36px; height: 20px; border-radius: 999px; border: 1px solid var(--text-primary); position: relative;">
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: var(--text-primary); position: absolute; top: 2px; left: 18px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Segmented control — 2–4 options · pill</div>
+
+    <div class="field-row">
+      <div>
+        <span class="lbl">segmented control</span>
+        <span class="spec">ACTIVE: --text-display BG · --black TEXT</span>
+      </div>
+      <div class="seg-control">
+        <button class="active">All</button>
+        <button>Open</button>
+        <button>Archived</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

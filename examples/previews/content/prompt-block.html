@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Prompt block · Cicrus</title>
+<link rel="stylesheet" href="../../../src/cicrus.css" />
+<style>body { padding: 32px; }</style>
+</head>
+<body>
+<aside class="doc-prompt" data-prompt>
+  <header class="doc-prompt-head">
+    <span class="doc-prompt-tag">
+      Prompt
+      <span class="meta">paste into model</span>
+    </span>
+    <button type="button" class="doc-prompt-copy" data-copy>
+      <span class="icon-idle" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+          <rect x="4.5" y="4.5" width="8" height="9" rx="1"></rect>
+          <path d="M6.5 4.5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v8.5"></path>
+        </svg>
+      </span>
+      <span class="icon-done" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 8.5 L7 12 L13 4.5"></path>
+        </svg>
+      </span>
+      <span class="label-idle">Copy</span>
+      <span class="label-done">Copied</span>
+      <span class="label-fail">Press ⌘C</span>
+    </button>
+  </header>
+  <pre class="doc-prompt-body">Summarise this document in 3 bullets and flag any open questions.
+Use plain language. No preamble.</pre>
+</aside>
+
+<script>
+  document.querySelectorAll('[data-prompt]').forEach((root) => {
+    const btn  = root.querySelector('[data-copy]');
+    const body = root.querySelector('.doc-prompt-body');
+    if (!btn || !body) return;
+    let resetTimer = null;
+    function execFallback(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      return ok;
+    }
+    async function copy() {
+      const text = body.textContent;
+      let ok = false;
+      try {
+        if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); ok = true; }
+      } catch(e){}
+      if (!ok) ok = execFallback(text);
+      btn.classList.remove('is-copied','is-failed');
+      btn.classList.add(ok ? 'is-copied' : 'is-failed');
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => btn.classList.remove('is-copied','is-failed'), 2000);
+    }
+    btn.addEventListener('click', copy);
+  });
+</script>
+</body>
+</html>

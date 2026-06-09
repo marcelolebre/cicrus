@@ -1,0 +1,113 @@
+<!-- @dsCard group="Brand" name="Dot-matrix motif" subtitle="Pixel-grid background texture" viewport="900x520" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dot-matrix motif — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 240px;
+    }
+    .panel-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+    .panel-spec { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-disabled); margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    .swatch { flex: 1; border-radius: 4px; min-height: 140px; }
+    .swatch.s1 {
+      background-image: radial-gradient(circle, var(--border) 0.5px, transparent 0.5px);
+      background-size: 16px 16px;
+      background-color: var(--black);
+    }
+    .swatch.s2 {
+      background-image: radial-gradient(circle, var(--border-visible) 1px, transparent 1px);
+      background-size: 16px 16px;
+      background-color: var(--black);
+    }
+    .swatch.s3 {
+      background-image: radial-gradient(circle, var(--text-disabled) 1.25px, transparent 1.25px);
+      background-size: 12px 12px;
+      background-color: var(--surface);
+    }
+    .swatch.s4 {
+      background-image: radial-gradient(circle, var(--text-secondary) 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+      background-color: var(--surface);
+    }
+
+    .full {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 64px 32px;
+      text-align: center;
+      background-image: radial-gradient(circle, var(--border-visible) 0.5px, transparent 0.5px);
+      background-size: 14px 14px;
+    }
+    .full .num {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 96px;
+      letter-spacing: -0.02em;
+      color: var(--text-display);
+      line-height: 1;
+    }
+    .full .lbl { margin-top: 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .doctrine { margin-top: 24px; font-family: var(--font-body); font-size: 14px; font-weight: 300; color: var(--text-secondary); line-height: 1.7; max-width: 720px; }
+    .doctrine code { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Dot-matrix motif</div>
+    <div class="sub">RADIAL-GRADIENT GRID · 0.5–2PX · 12–20PX SPACING</div>
+  </div>
+
+  <div class="row">
+    <div class="panel">
+      <span class="panel-title">Faint background — section dividers</span>
+      <div class="swatch s1"></div>
+      <span class="panel-spec">DOT 0.5PX · GRID 16PX · COLOR --BORDER</span>
+    </div>
+    <div class="panel">
+      <span class="panel-title">Visible background — empty states</span>
+      <div class="swatch s2"></div>
+      <span class="panel-spec">DOT 1PX · GRID 16PX · COLOR --BORDER-VISIBLE</span>
+    </div>
+    <div class="panel">
+      <span class="panel-title">Data viz — tight grid</span>
+      <div class="swatch s3"></div>
+      <span class="panel-spec">DOT 1.25PX · GRID 12PX · COLOR --TEXT-DISABLED</span>
+    </div>
+    <div class="panel">
+      <span class="panel-title">Strong texture — rare</span>
+      <div class="swatch s4"></div>
+      <span class="panel-spec">DOT 1.5PX · GRID 20PX · COLOR --TEXT-SECONDARY</span>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="num">37</div>
+    <div class="lbl">ACTIVE TASKS · MOTIF AS HERO BACKING</div>
+  </div>
+
+  <p class="doctrine">
+    Dots only — never as a container border, never as a button style. The grid is uniform <code>12–16px</code>, dots <code>0.5–2px</code>, opacity 0.1–0.2 for backgrounds and full-strength only for data. The motif is the residue of the dot-matrix typography — the same vocabulary, scaled down. Reach for it sparingly: hero backings, empty states, the occasional data-viz floor. If everything has dots, nothing does.
+  </p>
+</body>
+</html>

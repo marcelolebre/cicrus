@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cicrus Starter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Doto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --space-2xs: 2px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+      --space-4xl: 96px;
+    }
+
+    /* ── Dark (default) ── */
+    body {
+      --black: #000000;
+      --surface: #111111;
+      --surface-raised: #1A1A1A;
+      --border: #2E2E2E;
+      --border-visible: #555555;
+      --text-disabled: #8F8F8F;
+      --text-secondary: #B8B8B8;
+      --text-primary: #E8E8E8;
+      --text-display: #FFFFFF;
+      --accent: #D71921;
+      --accent-subtle: rgba(215,25,33,0.15);
+      --success: #4A9E5C;
+      --warning: #D4A843;
+      --error: #D71921;
+      --interactive: #5B9BF6;
+      --font-body: 'Space Grotesk', system-ui, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Doto', 'Space Mono', monospace;
+      --heading-weight: 300;
+      --heading-ls: -0.02em;
+      --card-shadow: none;
+
+      font-family: var(--font-body);
+      background: var(--black);
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                  color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    /* ── Light ── */
+    body.light {
+      --black: #F5F5F5;
+      --surface: #FFFFFF;
+      --surface-raised: #F0F0F0;
+      --border: #D9D9D9;
+      --border-visible: #9E9E9E;
+      --text-disabled: #737373;
+      --text-secondary: #595959;
+      --text-primary: #1A1A1A;
+      --text-display: #000000;
+      --accent-subtle: rgba(215,25,33,0.08);
+      --interactive: #007AFF;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-xl);
+      height: 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--black);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                  border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--text-display);
+      margin-right: var(--space-2xl);
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .nav-links { display: flex; gap: 0; height: 100%; flex: 1; }
+    .nav-link {
+      display: flex; align-items: center;
+      padding: 0 var(--space-md);
+      height: 100%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-disabled);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+      cursor: pointer;
+    }
+    .nav-link:hover { color: var(--text-secondary); }
+    .nav-link.active {
+      color: var(--text-display);
+      border-bottom-color: var(--text-display);
+    }
+
+    /* ── Mode toggle ── */
+    .mode-toggle { display: flex; align-items: center; gap: var(--space-sm); margin-left: auto; cursor: pointer; user-select: none; }
+    .mode-toggle-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); transition: color 0.2s ease-out; }
+    .mode-toggle-track { width: 36px; height: 20px; border-radius: 999px; border: 1px solid var(--border-visible); background: transparent; position: relative; transition: border-color 0.2s ease-out; }
+    .mode-toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text-disabled); position: absolute; top: 2px; left: 2px; transition: transform 0.2s ease-out, background 0.2s ease-out; }
+    .light .mode-toggle-track { border-color: var(--text-primary); }
+    .light .mode-toggle-thumb { transform: translateX(16px); background: var(--text-primary); }
+
+    /* ── View ── */
+    .view { padding: var(--space-xl) var(--space-xl) var(--space-4xl); max-width: 1280px; }
+    .view-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: var(--space-lg);
+    }
+    .view-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: var(--heading-weight);
+      letter-spacing: var(--heading-ls);
+      color: var(--text-display);
+      line-height: 1.1;
+    }
+    .view-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--text-disabled);
+      text-transform: uppercase;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-md);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap;
+      border: 1px solid var(--border-visible);
+      color: var(--text-secondary);
+      background: transparent;
+    }
+    .badge-process   { color: var(--text-primary);   border-color: var(--text-secondary); }
+    .badge-resource  { color: var(--interactive);    border-color: rgba(91,155,246,0.3); }
+    .badge-monitor   { color: var(--warning);        border-color: rgba(212,168,67,0.3); }
+    .badge-system    { color: var(--text-disabled);  border-color: var(--border-visible); }
+    .badge-recurring { color: var(--text-disabled);  border-color: var(--border); }
+    .badge-steps     { color: var(--success);        border-color: rgba(74,158,92,0.3); }
+    .badge-type      { color: var(--text-secondary); border-color: var(--border-visible); }
+
+    /* ── Status dot ── */
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.up   { background: var(--success); }
+    .status-dot.down { background: var(--accent); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ── Alert banner ── */
+    .alert-banner {
+      display: flex; align-items: center; gap: var(--space-sm);
+      padding: 12px var(--space-md);
+      border-radius: 4px;
+      border: 1px solid var(--accent);
+      background: var(--accent-subtle);
+      margin-bottom: var(--space-xl);
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--accent); letter-spacing: 0.02em;
+    }
+    .alert-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ── Service grid ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: var(--space-md);
+      box-shadow: var(--card-shadow);
+      transition: border-color 0.2s ease-out, background 0.3s ease-out;
+    }
+    .service-card:hover { border-color: var(--border-visible); }
+    .service-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+    .service-name { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .service-detail { font-family: var(--font-mono); font-size: 11px; color: var(--text-disabled); line-height: 1.6; }
+
+    /* ── Stats grid ── */
+    .task-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+    .stat-card {
+      padding: var(--space-md) var(--space-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--text-display);
+      line-height: 1;
+      margin-bottom: var(--space-xs);
+    }
+    .stat-value.danger { color: var(--accent); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-disabled);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .stat-bar { display: flex; gap: 2px; margin-top: var(--space-sm); height: 4px; }
+    .stat-bar .seg { flex: 1; background: var(--border); }
+    .stat-bar .seg.filled { background: var(--text-display); }
+    .stat-bar .seg.danger { background: var(--accent); }
+    .stat-bar .seg.success { background: var(--success); }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-visible); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-disabled); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">cicrus</div>
+  <div class="nav-links">
+    <a class="nav-link active" href="#">Dashboard</a>
+    <a class="nav-link" href="#">Status</a>
+    <a class="nav-link" href="#">Timeline</a>
+    <a class="nav-link" href="#">Tasks</a>
+  </div>
+  <div class="mode-toggle" id="mode-toggle">
+    <span class="mode-toggle-label">DARK</span>
+    <div class="mode-toggle-track"><div class="mode-toggle-thumb"></div></div>
+  </div>
+</nav>
+
+<div class="view">
+  <div class="view-header">
+    <div class="view-title">Dashboard</div>
+    <div class="view-meta">LR:58</div>
+  </div>
+
+  <div class="alert-banner">
+    <svg class="alert-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+      <path d="M8 2L14.5 14H1.5L8 2z"/>
+      <circle cx="8" cy="11.5" r="0.5" fill="currentColor"/>
+      <line x1="8" y1="6.5" x2="8" y2="9.5"/>
+    </svg>
+    [ERROR] 2 ISSUES DETECTED: API GATEWAY DOWN &middot; MODEL HOST DOWN
+  </div>
+
+  <div class="section-title">TASK OVERVIEW</div>
+  <div class="task-stats">
+    <div class="stat-card">
+      <div class="stat-value">37</div>
+      <div class="stat-label">TODO</div>
+      <div class="stat-bar">
+        <div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div>
+        <div class="seg"></div><div class="seg"></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">7</div>
+      <div class="stat-label">IN PROGRESS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">11</div>
+      <div class="stat-label">DONE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value danger">2</div>
+      <div class="stat-label">FAILED</div>
+    </div>
+  </div>
+
+  <div class="section-title">SERVICES</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-header">
+        <div class="status-dot down"></div>
+        <div class="service-name">API Gateway</div>
+      </div>
+      <div class="service-detail">
+        3 failed_requests, 12 total_requests<br>
+        0.0.0.0:11435, 0 open<br>
+        last_check: 4s ago, ERROR
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="status-dot up"></div>
+        <div class="service-name">PostgreSQL</div>
+      </div>
+      <div class="service-detail">
+        v17.4 (Homebrew)<br>
+        UP<br>
+        last_check: 2s ago
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="status-dot down"></div>
+        <div class="service-name">Model Host</div>
+      </div>
+      <div class="service-detail">
+        connection refused<br>
+        DOWN<br>
+        last_check: 11s ago
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="status-dot up"></div>
+        <div class="service-name">Scheduler</div>
+      </div>
+      <div class="service-detail">
+        4 workers, 0 queued<br>
+        UP<br>
+        last_check: 1s ago
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">BADGE TAXONOMY</div>
+  <div style="display:flex; gap: var(--space-xs); flex-wrap: wrap;">
+    <span class="badge badge-process">SESSION_PROCESS</span>
+    <span class="badge badge-resource">SESSION_RESOURCE</span>
+    <span class="badge badge-monitor">MAKE_MONITOR</span>
+    <span class="badge badge-system">SYSTEM</span>
+    <span class="badge badge-recurring">RECURRING</span>
+    <span class="badge badge-steps">2 STEPS</span>
+    <span class="badge badge-type">STATUS_CHANGE</span>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('mode-toggle');
+  const modeLabel = toggle.querySelector('.mode-toggle-label');
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    modeLabel.textContent = document.body.classList.contains('light') ? 'LIGHT' : 'DARK';
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!-- @dsCard group="Colors" name="Color · dark mode" subtitle="OLED-black canvas, layered greys" viewport="900x680" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Color — Dark mode — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display:flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .group {
+      margin-bottom: 32px;
+    }
+    .group-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .sw {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .sw .chip {
+      height: 110px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px;
+    }
+    .sw .chip .label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-display);
+      mix-blend-mode: difference;
+    }
+    .sw .meta {
+      padding: 10px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sw .meta .name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+    }
+    .sw .meta .hex {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-disabled);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .sw .meta .role {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-disabled);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Outline-only chips for true black so they're visible */
+    .chip-outline { box-shadow: inset 0 0 0 1px var(--border-visible); }
+
+    .demo {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .demo .stack { display: flex; flex-direction: column; gap: 4px; }
+    .demo .stack .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .demo .stack .val { font-family: var(--font-body); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Color · Dark</div>
+    <div class="sub">OLED INSTRUMENT PANEL · WCAG AA</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Surfaces</div>
+    <div class="swatches">
+      <div class="sw">
+        <div class="chip chip-outline" style="background:#000"><span class="label">BLACK</span></div>
+        <div class="meta"><span class="name">--black</span><span class="hex">#000000</span><span class="role">page bg · OLED anchor</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#111"><span class="label">SURFACE</span></div>
+        <div class="meta"><span class="name">--surface</span><span class="hex">#111111</span><span class="role">cards · nav · service</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#1A1A1A"><span class="label">RAISED</span></div>
+        <div class="meta"><span class="name">--surface-raised</span><span class="hex">#1A1A1A</span><span class="role">task cards · dropdowns</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#2E2E2E"><span class="label">BORDER</span></div>
+        <div class="meta"><span class="name">--border</span><span class="hex">#2E2E2E</span><span class="role">subtle dividers</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#555"><span class="label">VISIBLE</span></div>
+        <div class="meta"><span class="name">--border-visible</span><span class="hex">#555555</span><span class="role">3.0:1 · hover · focus</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Foreground · WCAG ratio on --black</div>
+    <div class="swatches">
+      <div class="sw">
+        <div class="chip" style="background:#8F8F8F"><span class="label">DISABLED</span></div>
+        <div class="meta"><span class="name">--text-disabled</span><span class="hex">#8F8F8F · 4.6:1</span><span class="role">timestamps · placeholders</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#B8B8B8"><span class="label">SECONDARY</span></div>
+        <div class="meta"><span class="name">--text-secondary</span><span class="hex">#B8B8B8 · 7.5:1</span><span class="role">labels · descriptions</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#E8E8E8"><span class="label">PRIMARY</span></div>
+        <div class="meta"><span class="name">--text-primary</span><span class="hex">#E8E8E8 · 16.5:1</span><span class="role">body · values</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FFFFFF"><span class="label">DISPLAY</span></div>
+        <div class="meta"><span class="name">--text-display</span><span class="hex">#FFFFFF · 21:1</span><span class="role">hero · headlines</span></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#5B9BF6"><span class="label">INTERACTIVE</span></div>
+        <div class="meta"><span class="name">--interactive</span><span class="hex">#5B9BF6</span><span class="role">links · resource badges</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="stack"><span class="lab">DISPLAY</span><span class="val fg-strong">36GB/s</span></div>
+    <div class="stack"><span class="lab">PRIMARY</span><span class="val fg">Body text reads here.</span></div>
+    <div class="stack"><span class="lab">SECONDARY</span><span class="val fg-muted">Supporting label.</span></div>
+    <div class="stack"><span class="lab">DISABLED</span><span class="val fg-faint">timestamps + meta</span></div>
+  </div>
+</body>
+</html>

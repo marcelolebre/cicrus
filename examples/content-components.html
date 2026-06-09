@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Content Components · Cicrus</title>
+<link rel="stylesheet" href="../src/cicrus.css" />
+<style>
+  body { background: #141414; color: var(--text-primary); }
+  .frm {
+    width: 100%; height: 100%; border: 0;
+    display: block; background: var(--black);
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+  const { DesignCanvas, DCSection, DCArtboard } = window;
+
+  // Each artboard embeds ONE atomic primitive via iframe.
+  // Source files live in previews/content/ — each file shows a single,
+  // standalone pattern with no sub-components. Compose at use-time.
+  const F = ({ src, title }) =>
+    <iframe
+      className="frm"
+      src={src}
+      title={title}
+      loading="lazy"
+      allow="clipboard-write; clipboard-read"
+    />;
+
+  function App() {
+    return (
+      <DesignCanvas title="Content Components">
+
+        <DCSection id="type" title="Type">
+          <DCArtboard id="eyebrow"          label="Eyebrow"          width={520} height={80}>
+            <F src="previews/content/eyebrow.html" title="Eyebrow" />
+          </DCArtboard>
+          <DCArtboard id="display-heading"  label="Display heading"  width={760} height={140}>
+            <F src="previews/content/display-heading.html" title="Display heading" />
+          </DCArtboard>
+          <DCArtboard id="section-heading"  label="Section heading"  width={760} height={140}>
+            <F src="previews/content/section-heading.html" title="Section heading" />
+          </DCArtboard>
+          <DCArtboard id="subheading"       label="Subheading"       width={760} height={100}>
+            <F src="previews/content/subheading.html" title="Subheading" />
+          </DCArtboard>
+          <DCArtboard id="lede"             label="Lede"             width={760} height={140}>
+            <F src="previews/content/lede.html" title="Lede" />
+          </DCArtboard>
+          <DCArtboard id="lead-paragraph"   label="Lead paragraph"   width={760} height={160}>
+            <F src="previews/content/lead-paragraph.html" title="Lead paragraph" />
+          </DCArtboard>
+          <DCArtboard id="paragraph"        label="Paragraph"        width={760} height={180}>
+            <F src="previews/content/paragraph.html" title="Paragraph" />
+          </DCArtboard>
+          <DCArtboard id="bullet-list"      label="Bullet list"      width={760} height={200}>
+            <F src="previews/content/bullet-list.html" title="Bullet list" />
+          </DCArtboard>
+          <DCArtboard id="numbered-list"    label="Numbered list"    width={760} height={200}>
+            <F src="previews/content/numbered-list.html" title="Numbered list" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="inline" title="Inline marks">
+          <DCArtboard id="inline-code"      label="Inline code"      width={520} height={120}>
+            <F src="previews/content/inline-code.html" title="Inline code" />
+          </DCArtboard>
+          <DCArtboard id="kbd"              label="Keyboard"         width={520} height={120}>
+            <F src="previews/content/kbd.html" title="Keyboard" />
+          </DCArtboard>
+          <DCArtboard id="term-mark"        label="Term"             width={520} height={120}>
+            <F src="previews/content/term-mark.html" title="Term" />
+          </DCArtboard>
+          <DCArtboard id="footnote-ref"     label="Footnote ref"     width={520} height={120}>
+            <F src="previews/content/footnote-ref.html" title="Footnote ref" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="chrome" title="Chrome">
+          <DCArtboard id="brand-mark"       label="Brand mark"       width={320} height={100}>
+            <F src="previews/content/brand-mark.html" title="Brand mark" />
+          </DCArtboard>
+          <DCArtboard id="breadcrumb"       label="Breadcrumb"       width={520} height={100}>
+            <F src="previews/content/breadcrumb.html" title="Breadcrumb" />
+          </DCArtboard>
+          <DCArtboard id="theme-toggle"     label="Theme toggle"     width={240} height={100}>
+            <F src="previews/content/theme-toggle.html" title="Theme toggle" />
+          </DCArtboard>
+          <DCArtboard id="meta-row"         label="Meta row"         width={760} height={100}>
+            <F src="previews/content/meta-row.html" title="Meta row" />
+          </DCArtboard>
+          <DCArtboard id="nav-item"         label="Nav item"         width={320} height={120}>
+            <F src="previews/content/nav-item.html" title="Nav item" />
+          </DCArtboard>
+          <DCArtboard id="progress-rail"    label="Progress rail"    width={1080} height={100}>
+            <F src="previews/content/progress-rail.html" title="Progress rail" />
+          </DCArtboard>
+          <DCArtboard id="margin-note"      label="Margin note"      width={320} height={220}>
+            <F src="previews/content/margin-note.html" title="Margin note" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="set-pieces" title="Set pieces">
+          <DCArtboard id="pull-quote"       label="Pull quote"       width={760} height={240}>
+            <F src="previews/content/pull-quote.html" title="Pull quote" />
+          </DCArtboard>
+          <DCArtboard id="sparkline"        label="Sparkline"        width={520} height={120}>
+            <F src="previews/content/sparkline.html" title="Sparkline" />
+          </DCArtboard>
+          <DCArtboard id="figure"           label="Figure"           width={760} height={520}>
+            <F src="previews/content/figure.html" title="Figure" />
+          </DCArtboard>
+          <DCArtboard id="code-block"       label="Code block"       width={760} height={300}>
+            <F src="previews/content/code-block.html" title="Code block" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="lists" title="Grouped lists">
+          <DCArtboard id="keylist"         label="Key list"         width={760} height={320}>
+            <F src="previews/content/keylist.html" title="Key list" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="callouts" title="Callouts">
+          <DCArtboard id="callout-note"     label="Note"             width={760} height={180}>
+            <F src="previews/content/callout-note.html" title="Note" />
+          </DCArtboard>
+          <DCArtboard id="callout-tip"      label="Tip"              width={760} height={180}>
+            <F src="previews/content/callout-tip.html" title="Tip" />
+          </DCArtboard>
+          <DCArtboard id="callout-warn"     label="Warning"          width={760} height={180}>
+            <F src="previews/content/callout-warn.html" title="Warning" />
+          </DCArtboard>
+          <DCArtboard id="callout-danger"   label="Danger"           width={760} height={180}>
+            <F src="previews/content/callout-danger.html" title="Danger" />
+          </DCArtboard>
+          <DCArtboard id="callout-example"  label="Example"          width={760} height={200}>
+            <F src="previews/content/callout-example.html" title="Example" />
+          </DCArtboard>
+          <DCArtboard id="prompt-block"     label="Prompt block"     width={760} height={240}>
+            <F src="previews/content/prompt-block.html" title="Prompt block" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="reference" title="Reference">
+          <DCArtboard id="definition-row"   label="Definition row"   width={760} height={140}>
+            <F src="previews/content/definition-row.html" title="Definition row" />
+          </DCArtboard>
+          <DCArtboard id="table"            label="Data table"       width={760} height={300}>
+            <F src="previews/content/table.html" title="Data table" />
+          </DCArtboard>
+          <DCArtboard id="glossary-row"     label="Glossary row"     width={760} height={160}>
+            <F src="previews/content/glossary-row.html" title="Glossary row" />
+          </DCArtboard>
+          <DCArtboard id="footnote-item"    label="Footnote"         width={760} height={140}>
+            <F src="previews/content/footnote-item.html" title="Footnote" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="procedure" title="Procedure">
+          <DCArtboard id="step-item"        label="Step"             width={760} height={160}>
+            <F src="previews/content/step-item.html" title="Step" />
+          </DCArtboard>
+          <DCArtboard id="panel-good"       label="Panel · good"     width={520} height={180}>
+            <F src="previews/content/panel-good.html" title="Panel · good" />
+          </DCArtboard>
+          <DCArtboard id="panel-bad"        label="Panel · bad"      width={520} height={180}>
+            <F src="previews/content/panel-bad.html" title="Panel · bad" />
+          </DCArtboard>
+          <DCArtboard id="disclosure"       label="Disclosure"       width={760} height={140}>
+            <F src="previews/content/disclosure.html" title="Disclosure" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="prompts" title="Interactive">
+          <DCArtboard id="question-prompt"  label="Question"         width={760} height={180}>
+            <F src="previews/content/question-prompt.html" title="Question" />
+          </DCArtboard>
+          <DCArtboard id="choice-option"    label="Choice option"    width={760} height={120}>
+            <F src="previews/content/choice-option.html" title="Choice option" />
+          </DCArtboard>
+          <DCArtboard id="task-input"       label="Task input"       width={760} height={260}>
+            <F src="previews/content/task-input.html" title="Task input" />
+          </DCArtboard>
+          <DCArtboard id="response-prompt"  label="Response prompt"  width={760} height={260}>
+            <F src="previews/content/response-prompt.html" title="Response prompt" />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="closing" title="Closing">
+          <DCArtboard id="takeaway-item"    label="Takeaway"         width={760} height={180}>
+            <F src="previews/content/takeaway-item.html" title="Takeaway" />
+          </DCArtboard>
+          <DCArtboard id="pager-link"       label="Pager link"       width={520} height={140}>
+            <F src="previews/content/pager-link.html" title="Pager link" />
+          </DCArtboard>
+        </DCSection>
+
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>

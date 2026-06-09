@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Long-form article · Cicrus</title>
+<link rel="stylesheet" href="../src/cicrus.css" />
+<style>
+  /* ============================================================
+     Content — typographic & structural elements for long-form documents.
+     Built on Cicrus tokens. Every element earns its pixel.
+     Tufte: maximize data-ink ratio. Subtract first.
+     ============================================================ */
+
+  body { background: var(--black); overflow-x: hidden; }
+
+  /* ── Top chrome ───────────────────────────────────── */
+  .doc-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px var(--space-2xl);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+    background: var(--black);
+  }
+  .doc-brand {
+    font-family: var(--font-body); font-weight: 300;
+    font-size: 18px; letter-spacing: 0.04em; line-height: 1;
+    color: var(--text-display);
+    display: inline-flex; align-items: baseline;
+  }
+  .doc-brand .stem { position: relative; display: inline-block; letter-spacing: 0; }
+  .doc-brand .stem::after {
+    content: ''; position: absolute; left: 50%; bottom: 0.86em;
+    width: 0.20em; height: 0.20em; border-radius: 50%;
+    background: currentColor; transform: translateX(-50%);
+  }
+  .doc-crumb {
+    display: flex; gap: 10px; align-items: center;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-crumb a { color: var(--text-disabled); text-decoration: none; }
+  .doc-crumb a:hover { color: var(--text-primary); }
+  .doc-crumb .sep { color: var(--border-visible); }
+  .doc-mode-switch {
+    display: flex; border: 1px solid var(--border);
+    border-radius: var(--radius-pill); overflow: hidden;
+  }
+  .doc-mode-switch button {
+    background: transparent; border: 0; padding: 6px 12px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-disabled); cursor: pointer;
+  }
+  .doc-mode-switch button.is-active {
+    background: var(--text-display); color: var(--black);
+  }
+
+  /* ── Page shell ─────────────────────────────────────
+     Three columns when wide enough:
+       sidebar nav   ·   main column   ·   margin notes
+     Collapses to single column under 1100px.            */
+  .doc-page {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 680px) 220px;
+    gap: var(--space-2xl);
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-3xl) var(--space-xl);
+  }
+  @media (max-width: 1180px) {
+    .doc-page { grid-template-columns: 200px minmax(0, 1fr); }
+    .margin-col { display: none; }
+  }
+  @media (max-width: 900px) {
+    .doc-page { grid-template-columns: 1fr; padding: var(--space-2xl) var(--space-md); }
+    .doc-toc { display: none; }
+  }
+
+  /* ── Table of contents (left rail) ────────────────── */
+  .doc-toc {
+    position: sticky; top: 100px; align-self: start;
+    display: flex; flex-direction: column; gap: var(--space-md);
+  }
+  .doc-toc-eyebrow {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .doc-toc-list a {
+    display: block; padding: 6px 0;
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--text-secondary); text-decoration: none;
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .doc-toc-list a:hover { color: var(--text-primary); border-color: var(--border-visible); }
+  .doc-toc-list a.is-current {
+    color: var(--text-display);
+    border-left-color: var(--text-display);
+  }
+  .doc-toc-list a .num {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-disabled); letter-spacing: 0.06em;
+    margin-right: 8px;
+  }
+
+  /* ── Hero / lesson opening ────────────────────────── */
+  .doc-hero { display: flex; flex-direction: column; gap: var(--space-md);
+              padding-bottom: var(--space-xl);
+              border-bottom: 1px solid var(--border);
+              margin-bottom: var(--space-2xl); }
+  .doc-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-disabled);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .doc-eyebrow b { font-weight: 400; color: var(--text-secondary); }
+  .doc-eyebrow .dot { width: 4px; height: 4px; background: var(--border-visible); border-radius: 50%; display: inline-block; }
+  .doc-title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 56px; line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--text-display); text-wrap: balance;
+  }
+  .doc-deck {
+    font-family: var(--font-body); font-weight: 300;
+    font-size: 19px; line-height: 1.5;
+    color: var(--text-secondary); max-width: 56ch;
+    text-wrap: pretty;
+  }
+  .doc-meta {
+    display: flex; flex-wrap: wrap; gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; color: var(--text-disabled);
+    text-transform: uppercase;
+  }
+  .doc-meta b { color: var(--text-primary); font-weight: 400; }
+
+  /* ── Body prose ───────────────────────────────────── */
+  .doc-body { font-family: var(--font-body); color: var(--text-primary); }
+  .doc-body > * + * { margin-top: var(--space-lg); }
+  .doc-body h2 {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 28px; line-height: 1.2; letter-spacing: -0.01em;
+    color: var(--text-display); margin-top: var(--space-3xl);
+    padding-top: var(--space-lg); border-top: 1px solid var(--border);
+    scroll-margin-top: 100px;
+    text-wrap: balance;
+  }
+  .doc-body h2 .num {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--text-disabled); letter-spacing: 0.16em;
+    text-transform: uppercase; display: block;
+    margin-bottom: 6px; font-weight: 400;
+  }
+  .doc-body h3 {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 19px; line-height: 1.3; color: var(--text-display);
+    margin-top: var(--space-xl);
+  }
+  .doc-body p {
+    font-size: 17px; line-height: 1.65; color: var(--text-primary);
+    text-wrap: pretty;
+  }
+  .doc-body p.lead {
+    font-size: 19px; font-weight: 300;
+    color: var(--text-display); line-height: 1.55;
+  }
+  .doc-body ul, .doc-body ol { margin-left: 0; padding-left: 0; list-style: none; }
+  .doc-body ul li, .doc-body ol li {
+    position: relative; padding-left: 24px; margin-top: var(--space-sm);
+    font-size: 17px; line-height: 1.6; color: var(--text-primary);
+  }
+  .doc-body ul li::before {
+    content: ''; position: absolute; left: 4px; top: 0.78em;
+    width: 6px; height: 1px; background: var(--text-disabled);
+  }
+  .doc-body ol { counter-reset: doc-ol; }
+  .doc-body ol li::before {
+    counter-increment: doc-ol; content: counter(doc-ol);
+    position: absolute; left: 0; top: 0.1em;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; color: var(--text-disabled);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Inline elements */
+  .doc-body code {
+    font-family: var(--font-mono); font-size: 0.9em;
+    background: var(--surface-raised); color: var(--text-display);
+    padding: 1px 6px; border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .doc-body kbd {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--surface); color: var(--text-display);
+    padding: 2px 7px; border: 1px solid var(--border-visible);
+    border-bottom-width: 2px; border-radius: 4px;
+    vertical-align: baseline;
+  }
+  .doc-body a {
+    color: var(--text-display); text-decoration: underline;
+    text-decoration-color: var(--border-visible);
+    text-underline-offset: 3px; transition: text-decoration-color 0.15s;
+  }
+  .doc-body a:hover { text-decoration-color: var(--text-display); }
+  .doc-body strong { font-weight: 500; color: var(--text-display); }
+  .doc-body em { font-style: italic; color: var(--text-primary); }
+  /* Key-term — highlight the FIRST mention of a vocabulary word */
+  .doc-body .term {
+    font-weight: 500; color: var(--text-display);
+    border-bottom: 1px dashed var(--border-visible);
+    cursor: help;
+  }
+
+  /* Footnote reference (numeric superscript) */
+  .doc-body sup.fn {
+    font-family: var(--font-mono); font-size: 0.7em;
+    color: var(--text-display);
+    vertical-align: super; line-height: 0;
+    text-decoration: none; padding: 0 2px;
+  }
+  .doc-body sup.fn a {
+    color: inherit; text-decoration: none;
+    border: 1px solid var(--border-visible);
+    border-radius: 999px; padding: 0 5px;
+  }
+
+  /* ── Callouts ─────────────────────────────────────── */
+  .doc-callout {
+    display: grid; grid-template-columns: 24px 1fr; gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg) var(--space-md) var(--space-md);
+    border-left: 2px solid var(--text-display);
+    background: var(--surface);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+  }
+  .doc-callout-tag {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-display);
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    align-self: start; padding-top: 2px;
+  }
+  .doc-callout-body { font-size: 15px; line-height: 1.6; color: var(--text-primary); }
+  .doc-callout-body p + p { margin-top: var(--space-sm); }
+  .doc-callout-body strong { color: var(--text-display); font-weight: 500; }
+  .doc-callout--tip     { border-left-color: var(--success); }
+  .doc-callout--tip     .doc-callout-tag { color: var(--success); }
+  .doc-callout--warn    { border-left-color: var(--warning); }
+  .doc-callout--warn    .doc-callout-tag { color: var(--warning); }
+  .doc-callout--danger  { border-left-color: var(--accent); }
+  .doc-callout--danger  .doc-callout-tag { color: var(--accent); }
+  .doc-callout--example { border-left-color: var(--interactive); }
+  .doc-callout--example .doc-callout-tag { color: var(--interactive); }
+
+  /* ── Pull quote ───────────────────────────────────── */
+  .doc-quote {
+    margin: var(--space-2xl) 0; padding: var(--space-xl) 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr auto; gap: var(--space-lg);
+    align-items: end;
+  }
+  .doc-quote blockquote {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 32px; line-height: 1.2; letter-spacing: -0.005em;
+    color: var(--text-display);
+    text-wrap: balance;
+  }
+  .doc-quote cite {
+    font-style: normal; font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled); display: block; text-align: right;
+    white-space: nowrap;
+  }
+  .doc-quote cite b { color: var(--text-primary); font-weight: 400; }
+
+  /* ── Figure ───────────────────────────────────────── */
+  .doc-figure { margin: var(--space-xl) 0; }
+  .doc-figure-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    aspect-ratio: 16 / 9;
+    display: grid; place-items: center;
+    color: var(--text-disabled);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    background-image: radial-gradient(circle, var(--border-visible) 0.5px, transparent 0.5px);
+    background-size: 12px 12px;
+  }
+  .doc-figure figcaption {
+    display: grid; grid-template-columns: auto 1fr; gap: 14px;
+    margin-top: 10px;
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--text-secondary); line-height: 1.5;
+  }
+  .doc-figure figcaption .num {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.08em; color: var(--text-disabled);
+    text-transform: uppercase; padding-top: 1px;
+  }
+
+  /* ── Definition list (glossary) ───────────────────── */
+  .doc-defs {
+    margin: var(--space-xl) 0;
+    display: grid; grid-template-columns: 180px 1fr; gap: 14px var(--space-lg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: var(--space-lg) 0;
+  }
+  .doc-defs dt {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 15px; color: var(--text-display);
+  }
+  .doc-defs dt em {
+    display: block; font-style: normal;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled); margin-top: 2px;
+  }
+  .doc-defs dd {
+    font-size: 15px; line-height: 1.55; color: var(--text-primary);
+    margin: 0;
+  }
+  .doc-defs dd + dt, .doc-defs dd:not(:last-of-type) {
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 14px;
+  }
+  .doc-defs dt:not(:first-of-type) { padding-top: 0; }
+
+  /* ── Data table ───────────────────────────────────── */
+  .doc-table-wrap { margin: var(--space-xl) 0; overflow-x: auto; }
+  .doc-table {
+    width: 100%; border-collapse: collapse;
+    font-family: var(--font-body); font-size: 14px;
+  }
+  .doc-table th, .doc-table td {
+    text-align: left; padding: 10px 14px 10px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .doc-table th {
+    font-family: var(--font-mono); font-weight: 400;
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-disabled);
+    border-bottom-color: var(--border-visible);
+    padding-bottom: var(--space-sm);
+  }
+  .doc-table td { color: var(--text-primary); }
+  .doc-table td.num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right; padding-right: var(--space-lg);
+    color: var(--text-display);
+  }
+
+  /* ── Code block ───────────────────────────────────── */
+  .doc-code {
+    margin: var(--space-xl) 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .doc-code-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px var(--space-md);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-code-head b { color: var(--text-primary); font-weight: 400; }
+  .doc-code-copy {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-secondary); cursor: pointer;
+    padding: 4px 10px; border-radius: var(--radius-pill);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .doc-code-copy:hover { color: var(--text-display); border-color: var(--border-visible); }
+  .doc-code pre {
+    margin: 0; padding: var(--space-md) 0;
+    font-family: var(--font-mono); font-size: 13px;
+    line-height: 1.55; color: var(--text-primary);
+    overflow-x: auto;
+  }
+  .doc-code-line {
+    display: grid; grid-template-columns: 48px 1fr;
+    padding: 0 var(--space-md);
+  }
+  .doc-code-line .ln {
+    color: var(--text-disabled); user-select: none;
+    text-align: right; padding-right: var(--space-md);
+    font-variant-numeric: tabular-nums;
+  }
+  .tok-key { color: var(--interactive); }
+  .tok-str { color: var(--warning); }
+  .tok-num { color: var(--success); }
+  .tok-com { color: var(--text-disabled); font-style: italic; }
+  .tok-fn  { color: var(--text-display); }
+
+  /* ── Steps (numbered procedure) ───────────────────── */
+  .doc-steps {
+    margin: var(--space-xl) 0;
+    counter-reset: doc-step;
+    display: flex; flex-direction: column;
+  }
+  .doc-step {
+    display: grid; grid-template-columns: 56px 1fr;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-top: 1px solid var(--border);
+  }
+  .doc-step:last-child { border-bottom: 1px solid var(--border); }
+  .doc-step-num {
+    counter-increment: doc-step;
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 32px; line-height: 1;
+    color: var(--text-display);
+    font-variant-numeric: tabular-nums;
+  }
+  .doc-step-num::before { content: counter(doc-step, decimal-leading-zero); }
+  .doc-step-body h4 {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 17px; color: var(--text-display);
+    margin-bottom: 6px;
+  }
+  .doc-step-body p {
+    font-size: 15px; line-height: 1.55; color: var(--text-primary);
+  }
+
+  /* ── Comparison panel ─────────────────────────────── */
+  .doc-compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--border);
+    margin: var(--space-xl) 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .doc-compare > div {
+    background: var(--surface); padding: var(--space-lg);
+  }
+  .doc-compare h5 {
+    font-family: var(--font-mono); font-weight: 400;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-disabled);
+    margin-bottom: var(--space-sm);
+  }
+  .doc-compare--do    h5 { color: var(--success); }
+  .doc-compare--dont  h5 { color: var(--accent); }
+  .doc-compare p { font-size: 15px; line-height: 1.5; color: var(--text-primary); }
+
+  /* ── Reveal / spoiler ─────────────────────────────── */
+  .doc-reveal {
+    margin: var(--space-xl) 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .doc-reveal-toggle {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-md);
+    background: transparent; border: 0; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-secondary); text-align: left;
+  }
+  .doc-reveal-toggle:hover { color: var(--text-display); background: var(--surface); }
+  .doc-reveal-chev {
+    width: 12px; height: 12px;
+    transition: transform 0.28s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .doc-reveal.is-open .doc-reveal-chev { transform: rotate(180deg); }
+  .doc-reveal-content {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .doc-reveal.is-open .doc-reveal-content { max-height: 600px; }
+  .doc-reveal-inner {
+    padding: 0 var(--space-md) var(--space-md);
+    border-top: 1px solid var(--border);
+    font-size: 15px; line-height: 1.6; color: var(--text-primary);
+  }
+  .doc-reveal-inner > * { margin-top: var(--space-md); }
+
+  /* ── Quiz / check-in ──────────────────────────────── */
+  .doc-quiz {
+    margin: var(--space-xl) 0;
+    padding: var(--space-lg);
+    border: 1px solid var(--border-visible);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+  }
+  .doc-quiz-tag {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-quiz-q {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 19px; color: var(--text-display);
+    margin: var(--space-sm) 0 var(--space-md);
+    line-height: 1.4; text-wrap: balance;
+  }
+  .doc-quiz-opts { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .doc-quiz-opt {
+    display: grid; grid-template-columns: 28px 1fr 20px; align-items: center;
+    gap: var(--space-sm);
+    padding: 12px 14px;
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-tech);
+    cursor: pointer;
+    font-size: 15px; color: var(--text-primary);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .doc-quiz-opt:hover { border-color: var(--border-visible); }
+  .doc-quiz-opt .letter {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--text-disabled); letter-spacing: 0.08em;
+  }
+  .doc-quiz-opt .check {
+    width: 14px; height: 14px; border: 1px solid var(--border-visible);
+    border-radius: 50%; opacity: 0.4;
+  }
+  .doc-quiz-opt.is-selected {
+    border-color: var(--text-display);
+    color: var(--text-display);
+  }
+  .doc-quiz-opt.is-selected .check {
+    opacity: 1; background: var(--text-display); border-color: var(--text-display);
+  }
+  .doc-quiz-opt.is-correct {
+    border-color: var(--success); color: var(--success);
+  }
+  .doc-quiz-opt.is-correct .check {
+    opacity: 1; background: var(--success); border-color: var(--success);
+  }
+  .doc-quiz-opt.is-wrong {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .doc-quiz-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: var(--space-md);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.08em; color: var(--text-disabled);
+  }
+  .doc-quiz-submit {
+    padding: 8px 16px; border-radius: var(--radius-pill);
+    background: var(--text-display); color: var(--black);
+    border: 0; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+  }
+  .doc-quiz-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Lab / exercise ───────────────────────────────── */
+  .doc-lab {
+    margin: var(--space-xl) 0;
+    border: 1px solid var(--border-visible);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .doc-lab-head {
+    padding: var(--space-md) var(--space-lg);
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .doc-lab-title {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 17px; color: var(--text-display);
+  }
+  .doc-lab-meta {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-lab-body { padding: var(--space-lg); font-size: 15px; line-height: 1.55; color: var(--text-primary); }
+  .doc-lab-body p + p { margin-top: var(--space-md); }
+  .doc-lab-input {
+    margin-top: var(--space-md);
+    display: flex; align-items: center; gap: var(--space-sm);
+    padding: 12px 14px;
+    background: var(--black); border: 1px solid var(--border);
+    border-radius: var(--radius-tech);
+    font-family: var(--font-mono);
+  }
+  .doc-lab-input .prompt { color: var(--text-disabled); font-size: 13px; }
+  .doc-lab-input input {
+    flex: 1; background: transparent; border: 0; outline: 0;
+    color: var(--text-display); font-family: var(--font-mono); font-size: 14px;
+  }
+  .doc-lab-input input::placeholder { color: var(--text-disabled); }
+
+  /* ── Reflection prompt ────────────────────────────── */
+  .doc-reflect {
+    margin: var(--space-xl) 0;
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-reflect-tag {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled); margin-bottom: var(--space-sm);
+  }
+  .doc-reflect-q {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 24px; line-height: 1.3; color: var(--text-display);
+    margin-bottom: var(--space-md); text-wrap: balance;
+  }
+  .doc-reflect textarea {
+    width: 100%; min-height: 100px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-tech);
+    padding: 12px 14px; font-family: var(--font-body); font-size: 15px;
+    color: var(--text-primary); resize: vertical;
+    transition: border-color 0.15s;
+  }
+  .doc-reflect textarea:focus { outline: 0; border-color: var(--text-display); }
+
+  /* ── Summary / takeaways ──────────────────────────────
+     Treated as the closing plate of the lesson. Big numbered
+     entries, hairlines between, a short hook + a clarifier on
+     each one. Different visual rhythm from the body. */
+  .doc-summary {
+    margin: var(--space-3xl) 0 var(--space-xl);
+    padding: var(--space-xl) 0 var(--space-md);
+    border-top: 1px solid var(--text-display);
+    border-bottom: 1px solid var(--border);
+  }
+  .doc-summary-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: var(--space-xl);
+  }
+  .doc-summary-head-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-summary-head-title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 36px; line-height: 1; letter-spacing: -0.01em;
+    color: var(--text-display); margin-top: 6px;
+  }
+  .doc-summary-head-meta {
+    text-align: right;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled); line-height: 1.6;
+  }
+  .doc-summary-head-meta b { color: var(--text-primary); font-weight: 400; }
+
+  .doc-summary ul {
+    list-style: none; display: flex; flex-direction: column;
+    counter-reset: tk;
+  }
+  .doc-summary li {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: var(--space-lg);
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border);
+    align-items: baseline;
+  }
+  .doc-summary li:first-child { border-top: 0; padding-top: 0; }
+  /* The numeric tag, in Doto, with a leading-zero feel */
+  .doc-summary li::before {
+    counter-increment: tk;
+    content: counter(tk, decimal-leading-zero);
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 40px; line-height: 1; color: var(--text-display);
+    font-variant-numeric: tabular-nums;
+  }
+  .doc-summary-headline {
+    display: block;
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 19px; line-height: 1.3; color: var(--text-display);
+    margin-bottom: 6px; text-wrap: balance;
+  }
+  .doc-summary-body {
+    font-family: var(--font-body); font-weight: 400;
+    font-size: 14px; line-height: 1.55; color: var(--text-secondary);
+    max-width: 56ch; text-wrap: pretty;
+  }
+  /* Override the body's default ul li::before — we want our own counter */
+  .doc-body .doc-summary li::before { position: static; }
+
+  /* ── Module nav (prev/next) ───────────────────────── */
+  .doc-modnav {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin: var(--space-2xl) 0 var(--space-3xl);
+  }
+  .doc-modnav a {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: var(--space-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    text-decoration: none; color: var(--text-primary);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .doc-modnav a:hover { border-color: var(--border-visible); background: var(--surface-raised); }
+  .doc-modnav .dir {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled);
+  }
+  .doc-modnav .label {
+    font-family: var(--font-body); font-weight: 500;
+    font-size: 17px; color: var(--text-display);
+  }
+  .doc-modnav .next { text-align: right; }
+
+  /* ── Footnotes ────────────────────────────────────── */
+  .doc-footnotes {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+  .doc-footnotes h6 {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled); margin-bottom: var(--space-md);
+  }
+  .doc-footnotes ol { list-style: none; counter-reset: fn; display: flex; flex-direction: column; gap: var(--space-sm); }
+  .doc-footnotes li {
+    counter-increment: fn; padding-left: 32px; position: relative;
+    font-size: 13px; line-height: 1.5; color: var(--text-secondary);
+  }
+  .doc-footnotes li::before {
+    content: counter(fn);
+    position: absolute; left: 0; top: 0;
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-display);
+    border: 1px solid var(--border-visible);
+    border-radius: 999px; padding: 1px 6px;
+  }
+  .doc-footnotes a { color: var(--text-display); text-decoration: underline; text-decoration-color: var(--border-visible); text-underline-offset: 3px; }
+
+  /* ── Margin notes (right rail) ────────────────────── */
+  .margin-col {
+    display: flex; flex-direction: column; gap: var(--space-2xl);
+    padding-top: 80px; /* align with hero baseline */
+  }
+  .margin-note {
+    font-family: var(--font-body); font-size: 12px;
+    line-height: 1.55; color: var(--text-secondary);
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--border);
+  }
+  .margin-note h6 {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-disabled); margin-bottom: 6px;
+  }
+  .margin-note p + p { margin-top: 8px; }
+
+  /* ── Sparkline (Tufte-aligned, see references/data-graphics.md) ─ */
+  .spark {
+    display: inline-block; vertical-align: middle;
+    color: var(--text-display);
+    margin: 0 6px;
+  }
+
+  /* ── Bottom progress bar (sticky) ─────────────────── */
+  .doc-progress {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    padding: 10px var(--space-2xl);
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: var(--space-lg);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-disabled); z-index: 40;
+  }
+  .doc-progress b { color: var(--text-primary); font-weight: 400; }
+  .doc-progress-rail {
+    width: 240px; height: 1px;
+    background:
+      linear-gradient(to right,
+        var(--text-display) 0,
+        var(--text-display) var(--p, 0%),
+        var(--border-visible) var(--p, 0%),
+        var(--border-visible) 100%);
+  }
+
+  /* ── Light-mode tweaks (only the bits the design system overrides
+        aren't already handling) ──────────────────────  */
+  body.light .doc-callout { background: var(--surface-raised); }
+  body.light .doc-code pre { color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+<!-- ── TOP CHROME ─────────────────────────────────── -->
+<header class="doc-top">
+  <div style="display:flex; align-items:center; gap: var(--space-xl);">
+    <span class="doc-brand"><span class="stem">ı</span>nset</span>
+    <nav class="doc-crumb">
+      <a href="#">Operator Curriculum</a>
+      <span class="sep">›</span>
+      <a href="#">Module 02 · Reading the System</a>
+      <span class="sep">›</span>
+      <span style="color: var(--text-primary);">Lesson 03</span>
+    </nav>
+  </div>
+  <div class="doc-mode-switch" role="tablist">
+    <button class="is-active" data-mode="dark">Dark</button>
+    <button data-mode="light">Light</button>
+  </div>
+</header>
+
+<!-- ── PAGE ──────────────────────────────────────── -->
+<div class="doc-page">
+
+  <!-- LEFT — Table of contents -->
+  <aside class="doc-toc">
+    <div class="doc-toc-eyebrow">In this lesson</div>
+    <ul class="doc-toc-list">
+      <li><a href="#s-1" class="is-current"><span class="num">01</span>The shape of a schematic</a></li>
+      <li><a href="#s-2"><span class="num">02</span>Layers and traces</a></li>
+      <li><a href="#s-3"><span class="num">03</span>Reading flow direction</a></li>
+      <li><a href="#s-4"><span class="num">04</span>A worked example</a></li>
+      <li><a href="#s-5"><span class="num">05</span>Check your reading</a></li>
+      <li><a href="#s-6"><span class="num">06</span>Summary</a></li>
+    </ul>
+  </aside>
+
+  <!-- CENTER — Main content -->
+  <article>
+
+    <!-- ── HERO ─────────────────────────────────── -->
+    <header class="doc-hero">
+      <div class="doc-eyebrow">
+        <b>Module 02</b>
+        <span class="dot"></span>
+        <span>Lesson 03</span>
+        <span class="dot"></span>
+        <span>Foundations</span>
+      </div>
+      <h1 class="doc-title">Reading a system schematic</h1>
+      <p class="doc-deck">
+        A schematic is a contract between the system and you. Once you can
+        read the layers, the traces, and the flow direction, you can debug
+        any service in the stack without ever logging in.
+      </p>
+      <div class="doc-meta">
+        <span><b>14 min</b> read</span>
+        <span><b>3</b> exercises</span>
+        <span><b>1</b> lab</span>
+        <span>Level <b>Intermediate</b></span>
+        <span>Last revised <b>2026-05-22</b></span>
+      </div>
+    </header>
+
+    <!-- ── BODY ─────────────────────────────────── -->
+    <div class="doc-body">
+
+      <p class="lead">
+        Every operational system you'll ever inherit is a wiring diagram
+        in disguise. Learn to read the diagram and the system explains
+        itself.
+      </p>
+
+      <h2 id="s-1"><span class="num">Section 01</span>The shape of a schematic</h2>
+
+      <p>
+        A Cicrus schematic is read <strong>top to bottom</strong>. Each
+        row is one <span class="term">abstraction layer</span> — ingest at
+        the top, storage at the bottom, application logic in the middle.
+        Cards in a row are siblings of the same kind: three workers, four
+        queues, two databases. The eye should never need to scan
+        sideways for meaning.<sup class="fn"><a href="#fn-1">1</a></sup>
+      </p>
+
+      <p>
+        Press <kbd>?</kbd> on any schematic page to show the legend, or
+        <kbd>L</kbd> to toggle live <code>data-flow</code> animation on
+        the traces.
+      </p>
+
+      <!-- Callout: NOTE -->
+      <aside class="doc-callout">
+        <div class="doc-callout-tag">Note</div>
+        <div class="doc-callout-body">
+          <p>The rule is not "five rows maximum" — it's "fits on one
+          screen without scrolling." On a typical 1080p display, that
+          means about <strong>five rows</strong>. If your system needs
+          more, split into two diagrams at the most natural seam.</p>
+        </div>
+      </aside>
+
+      <h3>What counts as a layer</h3>
+
+      <p>
+        A row is a layer if and only if every card in it has the same
+        <em>kind of responsibility</em>. "Workers" is a layer; "things
+        that happen to be running right now" is not. The discipline of
+        choosing the right rows is half the work of drawing a useful
+        schematic — and reading one quickly.
+      </p>
+
+      <!-- Definition list -->
+      <dl class="doc-defs">
+        <dt>Layer
+          <em>noun</em>
+        </dt>
+        <dd>One horizontal row in a schematic. Contains cards of one
+            uniform kind. Typically: ingest, queue, worker, storage,
+            output.</dd>
+
+        <dt>Trace
+          <em>noun</em>
+        </dt>
+        <dd>A line connecting two cards. Encodes a real data flow at
+            runtime — never a conceptual relationship.</dd>
+
+        <dt>Card
+          <em>noun</em>
+        </dt>
+        <dd>A single system component. Has a name, a state, a few
+            metrics, and zero decoration.</dd>
+
+        <dt>Flow
+          <em>verb · also noun</em>
+        </dt>
+        <dd>The direction data moves along a trace. Always rendered
+            top-down via dashed animation on the line itself, never via
+            moving particles.</dd>
+      </dl>
+
+      <h2 id="s-2"><span class="num">Section 02</span>Layers and traces</h2>
+
+      <p>
+        Look at any real schematic for three seconds and you'll see two
+        things: <strong>rows</strong> (the layers) and <strong>lines</strong>
+        (the traces). Everything else is noise. The figure below is
+        annotated to show what you're looking at.
+      </p>
+
+      <!-- Figure -->
+      <figure class="doc-figure">
+        <div class="doc-figure-frame">[ figure placeholder · schematic walkthrough ]</div>
+        <figcaption>
+          <span class="num">Fig. 01</span>
+          <span>Anatomy of a Cicrus schematic. Five layers from
+            ingest (top) to storage (bottom). Highlighted trace
+            shows the path of a single request from API gateway
+            through three workers to the primary database.</span>
+        </figcaption>
+      </figure>
+
+      <!-- Data table -->
+      <div class="doc-table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>What it encodes</th>
+              <th>Visual cue</th>
+              <th style="text-align: right;">Avg. count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Row</td>
+              <td>One abstraction layer</td>
+              <td>Horizontal band of cards</td>
+              <td class="num">5</td>
+            </tr>
+            <tr>
+              <td>Card</td>
+              <td>One component</td>
+              <td>Bordered rectangle, name + state</td>
+              <td class="num">3–12</td>
+            </tr>
+            <tr>
+              <td>Trace</td>
+              <td>A data flow</td>
+              <td>Line between two cards</td>
+              <td class="num">8–24</td>
+            </tr>
+            <tr>
+              <td>Dot</td>
+              <td>Liveness signal</td>
+              <td>1px breathing pulse on the card</td>
+              <td class="num">1 per card</td>
+            </tr>
+            <tr>
+              <td>Glyph</td>
+              <td>"Thinking" object state</td>
+              <td>Animated pixel sphere</td>
+              <td class="num">0–1 per screen</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Callout: TIP -->
+      <aside class="doc-callout doc-callout--tip">
+        <div class="doc-callout-tag">Tip</div>
+        <div class="doc-callout-body">
+          <p>When debugging an unfamiliar service, find its row first —
+          that tells you what kind of thing it is. Then trace upward
+          to its inputs and downward to its dependencies. Never start
+          by reading code.</p>
+        </div>
+      </aside>
+
+      <h2 id="s-3"><span class="num">Section 03</span>Reading flow direction</h2>
+
+      <p>
+        Flow on a Cicrus schematic moves <strong>downward by
+        default</strong>. Read the rows in vertical order, the same way
+        you read a page. Bidirectional or upward flows are explicit
+        exceptions — they're rare, and they're marked.
+      </p>
+
+      <!-- Pull quote -->
+      <blockquote class="doc-quote">
+        <blockquote>"A good diagram answers a question. A great diagram
+        makes you ask the right one."</blockquote>
+        <cite><b>Mira Chen</b><br/>Operator Handbook · §4</cite>
+      </blockquote>
+
+      <!-- Steps -->
+      <div class="doc-steps">
+        <div class="doc-step">
+          <div class="doc-step-num"></div>
+          <div class="doc-step-body">
+            <h4>Find the top-most card</h4>
+            <p>The system's true entry point. Usually an API gateway,
+            a queue consumer, or a scheduled job runner. If there are
+            multiple, mentally pick the one your request would touch
+            first.</p>
+          </div>
+        </div>
+        <div class="doc-step">
+          <div class="doc-step-num"></div>
+          <div class="doc-step-body">
+            <h4>Trace one path downward</h4>
+            <p>Follow a single trace from top card to bottom. Don't
+            try to absorb every line at once — pick one and finish it.
+            Repeat for the next path.</p>
+          </div>
+        </div>
+        <div class="doc-step">
+          <div class="doc-step-num"></div>
+          <div class="doc-step-body">
+            <h4>Note every fork</h4>
+            <p>A card that fans out to multiple downstream cards is a
+            decision point. List them in the margin as you go — you'll
+            need this for diagnosis later.</p>
+          </div>
+        </div>
+        <div class="doc-step">
+          <div class="doc-step-num"></div>
+          <div class="doc-step-body">
+            <h4>Look for the missing card</h4>
+            <p>An experienced reader spots what isn't drawn. If you see
+            a worker layer but no queue feeding it, there's a queue
+            somewhere — it just wasn't worth drawing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Callout: WARNING -->
+      <aside class="doc-callout doc-callout--warn">
+        <div class="doc-callout-tag">Warning</div>
+        <div class="doc-callout-body">
+          <p><strong>Never trust an unlabeled trace.</strong> If a line
+          between two cards has no label and you don't know what flows
+          on it, the schematic is incomplete. File an issue against the
+          system owner before relying on the diagram for diagnosis.</p>
+        </div>
+      </aside>
+
+      <!-- Comparison -->
+      <div class="doc-compare">
+        <div class="doc-compare--do">
+          <h5>Do</h5>
+          <p>Read rows top to bottom. One trace at a time. Pick a single
+          request path and finish it before starting another.</p>
+        </div>
+        <div class="doc-compare--dont">
+          <h5>Don't</h5>
+          <p>Don't try to memorize the whole diagram before reading
+          a trace. Don't scan sideways for "where this fits." The rows
+          already told you.</p>
+        </div>
+      </div>
+
+      <h2 id="s-4"><span class="num">Section 04</span>A worked example</h2>
+
+      <p>
+        Below is the actual schematic for the
+        <code>app.report.sync</code> service. We'll trace a single
+        report run from API call to disk in four moves. Watch the
+        sparkline on each card —
+        <svg class="spark" viewBox="0 0 60 16" width="60" height="16" preserveAspectRatio="none">
+          <polyline points="0,12 6,11 12,13 18,8 24,9 30,5 36,7 42,3 48,4 54,2 60,1"
+            fill="none" stroke="currentColor" stroke-width="1" />
+        </svg>
+        <em>that</em> tells you the load profile of the last 30 minutes.
+      </p>
+
+      <!-- Code block -->
+      <div class="doc-code">
+        <div class="doc-code-head">
+          <b>app/report/sync.js</b>
+          <button type="button" class="doc-code-copy" data-copy>Copy</button>
+        </div>
+        <pre><div class="doc-code-line"><span class="ln">1</span><span><span class="tok-com"># entry point for the worker</span></span></div><div class="doc-code-line"><span class="ln">2</span><span><span class="tok-key">defmodule</span> <span class="tok-fn">Cicrus.Payroll.Sync</span> <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">3</span><span>  <span class="tok-key">use</span> Cicrus.Worker, queue: <span class="tok-str">"report.sync"</span></span></div><div class="doc-code-line"><span class="ln">4</span><span></span></div><div class="doc-code-line"><span class="ln">5</span><span>  <span class="tok-key">def</span> <span class="tok-fn">perform</span>(%{<span class="tok-str">"entity_id"</span> => id, <span class="tok-str">"cycle"</span> => cycle}) <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">6</span><span>    {:ok, runs} = Payroll.<span class="tok-fn">load_runs</span>(id, cycle)</span></div><div class="doc-code-line"><span class="ln">7</span><span>    runs</span></div><div class="doc-code-line"><span class="ln">8</span><span>    |&gt; Enum.<span class="tok-fn">map</span>(&amp;FX.<span class="tok-fn">normalize</span>/<span class="tok-num">1</span>)</span></div><div class="doc-code-line"><span class="ln">9</span><span>    |&gt; Ledger.<span class="tok-fn">commit!</span>()</span></div><div class="doc-code-line"><span class="ln">10</span><span>  <span class="tok-key">end</span></span></div><div class="doc-code-line"><span class="ln">11</span><span><span class="tok-key">end</span></span></div></pre>
+      </div>
+
+      <!-- Callout: EXAMPLE -->
+      <aside class="doc-callout doc-callout--example">
+        <div class="doc-callout-tag">Example</div>
+        <div class="doc-callout-body">
+          <p>When the report cycle for <code>entity_id: "uk-ltd"</code>
+          enters this worker, the trace lights up green for ~210ms,
+          then handed off to <code>Ledger</code> downstream. Watch for
+          that handoff in the schematic — if the green stalls on this
+          card, the issue is in the FX normalization step at line 8.</p>
+        </div>
+      </aside>
+
+      <!-- Lab -->
+      <section class="doc-lab">
+        <header class="doc-lab-head">
+          <span class="doc-lab-title">Lab · Trace a request</span>
+          <span class="doc-lab-meta">~6 min · self-checked</span>
+        </header>
+        <div class="doc-lab-body">
+          <p>The system above received a request for
+          <code>entity_id: "br-ltda"</code> at <code>14:02:17</code>.
+          Trace the request from the API gateway to the database. List
+          every card it passes through, in order. Use the schematic
+          above to verify.</p>
+          <p>Your answer should be a sequence of 4–6 component names,
+          separated by arrows.</p>
+          <div class="doc-lab-input">
+            <span class="prompt">→</span>
+            <input type="text" placeholder="api.gateway → report.sync → ..." />
+          </div>
+        </div>
+      </section>
+
+      <!-- Reveal / spoiler -->
+      <div class="doc-reveal">
+        <button type="button" class="doc-reveal-toggle" data-reveal>
+          <span>Reveal answer</span>
+          <svg class="doc-reveal-chev" viewBox="0 0 12 12" fill="none"
+               stroke="currentColor" stroke-width="1.4">
+            <path d="M2 4 L6 8 L10 4"></path>
+          </svg>
+        </button>
+        <div class="doc-reveal-content">
+          <div class="doc-reveal-inner">
+            <p>The full path is:</p>
+            <p><code>api.gateway → router.entity → report.sync → ledger.commit → store.primary</code></p>
+            <p>Five cards across three layers. The
+            <code>router.entity</code> step is easy to miss if you only
+            scan the topmost and bottommost rows — but it's where
+            BR-specific FX normalization is applied.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="s-5"><span class="num">Section 05</span>Check your reading</h2>
+
+      <!-- Quiz -->
+      <section class="doc-quiz" data-quiz>
+        <div class="doc-quiz-tag">Question · 1 of 1</div>
+        <p class="doc-quiz-q">
+          You see a Cicrus schematic with four rows and a single trace
+          that goes <em>up</em> from row 3 to row 1. What does that
+          almost certainly indicate?
+        </p>
+        <ul class="doc-quiz-opts">
+          <li class="doc-quiz-opt" data-correct="false">
+            <span class="letter">A</span>
+            <span>The diagram is wrong — flow only goes downward.</span>
+            <span class="check"></span>
+          </li>
+          <li class="doc-quiz-opt" data-correct="true">
+            <span class="letter">B</span>
+            <span>An explicit feedback path — a callback, an ack, or a
+              push notification back to the entry point.</span>
+            <span class="check"></span>
+          </li>
+          <li class="doc-quiz-opt" data-correct="false">
+            <span class="letter">C</span>
+            <span>The author drew the rows in the wrong order.</span>
+            <span class="check"></span>
+          </li>
+          <li class="doc-quiz-opt" data-correct="false">
+            <span class="letter">D</span>
+            <span>A bug — the data is flowing in the wrong direction
+              in production.</span>
+            <span class="check"></span>
+          </li>
+        </ul>
+        <div class="doc-quiz-actions">
+          <span data-status>Select one answer.</span>
+          <button class="doc-quiz-submit" data-submit disabled>Submit</button>
+        </div>
+      </section>
+
+      <!-- Reflection -->
+      <section class="doc-reflect">
+        <div class="doc-reflect-tag">Reflect</div>
+        <p class="doc-reflect-q">
+          Think of a system you maintain. If you drew its schematic,
+          what would the bottom row hold?
+        </p>
+        <textarea placeholder="Write a few sentences — no length target."></textarea>
+      </section>
+
+      <h2 id="s-6"><span class="num">Section 06</span>Summary</h2>
+
+      <!-- Summary -->
+      <section class="doc-summary">
+        <header class="doc-summary-head">
+          <div>
+            <div class="doc-summary-head-eyebrow">In summary</div>
+            <div class="doc-summary-head-title">Four moves</div>
+          </div>
+          <div class="doc-summary-head-meta">
+            Lesson <b>03 / 09</b><br/>
+            <b>14 min</b> · complete
+          </div>
+        </header>
+        <ul>
+          <li>
+            <div>
+              <span class="doc-summary-headline">Rows are the system's nouns.</span>
+              <span class="doc-summary-body">Every row in a schematic is one
+              kind of thing — ingest, queue, worker, store. If a card
+              doesn't share its row's responsibility, it's drawn in
+              the wrong row.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="doc-summary-headline">Traces are the verbs.</span>
+              <span class="doc-summary-body">A line between two cards
+              encodes a real runtime flow — never a conceptual
+              relationship, never a wish. If you can't say what runs
+              along it, the trace is a bug in the diagram.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="doc-summary-headline">One path at a time.</span>
+              <span class="doc-summary-body">Don't try to absorb the
+              whole diagram. Pick the topmost card, follow one trace
+              downward to the bottom, name every fork on the way. Then
+              do it again with a different starting point.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="doc-summary-headline">The best readers see what isn't drawn.</span>
+              <span class="doc-summary-body">A worker layer with no
+              queue above it tells you a queue exists somewhere —
+              just not on this canvas. Mature operators read the gaps
+              as carefully as the lines.</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Prev / Next -->
+      <nav class="doc-modnav">
+        <a href="#" class="prev">
+          <span class="dir">← Previous</span>
+          <span class="label">Lesson 02 · The card and its parts</span>
+        </a>
+        <a href="#" class="next">
+          <span class="dir">Next →</span>
+          <span class="label">Lesson 04 · Live data on a static page</span>
+        </a>
+      </nav>
+
+      <!-- Footnotes -->
+      <section class="doc-footnotes">
+        <h6>Footnotes</h6>
+        <ol>
+          <li>The "no sideways scanning" rule comes from Tufte's
+              critique of comparison-by-rotation. See <em>Envisioning
+              Information</em>, ch. 4. For Cicrus's own data-graphics
+              discipline, see <a href="#">references/data-graphics.md</a>.</li>
+        </ol>
+      </section>
+
+    </div>
+  </article>
+
+  <!-- RIGHT — Margin notes -->
+  <aside class="margin-col">
+    <div class="margin-note">
+      <h6>On vocabulary</h6>
+      <p>"Schematic" here means the architectural diagram of a running
+      system — not an electrical drawing. Borrowed deliberately because
+      the rules are the same.</p>
+    </div>
+    <div class="margin-note">
+      <h6>For practitioners</h6>
+      <p>If you maintain a schematic, refresh it on every release where
+      a card is added, removed, or moved between rows.</p>
+    </div>
+    <div class="margin-note">
+      <h6>Further reading</h6>
+      <p>Tufte, <em>Envisioning Information</em> (1990) — particularly
+      the chapter on layering and separation.</p>
+      <p>Cicrus reference: <a href="#" style="color: var(--text-display);">references/schematics.md</a>.</p>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── BOTTOM PROGRESS ─────────────────────────── -->
+<div class="doc-progress">
+  <span><b>Module 02</b> · Reading the System</span>
+  <div class="doc-progress-rail" id="doc-rail" style="--p: 32%;"></div>
+  <span style="text-align: right;">Lesson <b>03 / 09</b></span>
+</div>
+
+<script>
+  // Mode toggle
+  (function () {
+    const KEY = 'cicrus.mode';
+    const saved = localStorage.getItem(KEY);
+    if (saved === 'light') document.body.classList.add('light');
+    document.querySelectorAll('.doc-mode-switch button').forEach(btn => {
+      btn.classList.toggle('is-active', (saved || 'dark') === btn.dataset.mode);
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        document.body.classList.toggle('light', mode === 'light');
+        localStorage.setItem(KEY, mode);
+        document.querySelectorAll('.doc-mode-switch button').forEach(b => {
+          b.classList.toggle('is-active', b.dataset.mode === mode);
+        });
+      });
+    });
+  })();
+
+  // Reveal toggles
+  document.querySelectorAll('[data-reveal]').forEach(t => {
+    t.addEventListener('click', () => t.closest('.doc-reveal').classList.toggle('is-open'));
+  });
+
+  // Quiz behavior — single-question MCQ
+  document.querySelectorAll('[data-quiz]').forEach(quiz => {
+    const opts = [...quiz.querySelectorAll('.doc-quiz-opt')];
+    const submit = quiz.querySelector('[data-submit]');
+    const status = quiz.querySelector('[data-status]');
+    let chosen = null, locked = false;
+    opts.forEach(o => o.addEventListener('click', () => {
+      if (locked) return;
+      opts.forEach(x => x.classList.remove('is-selected'));
+      o.classList.add('is-selected');
+      chosen = o;
+      submit.disabled = false;
+      status.textContent = 'Ready to submit.';
+    }));
+    submit.addEventListener('click', () => {
+      if (!chosen || locked) return;
+      locked = true;
+      const correct = chosen.dataset.correct === 'true';
+      chosen.classList.remove('is-selected');
+      chosen.classList.add(correct ? 'is-correct' : 'is-wrong');
+      // also reveal the right answer if wrong
+      if (!correct) {
+        const right = opts.find(o => o.dataset.correct === 'true');
+        if (right) right.classList.add('is-correct');
+      }
+      submit.disabled = true;
+      status.textContent = correct ? 'Correct.' : 'Not quite — the highlighted answer is correct.';
+    });
+  });
+
+  // Code copy
+  document.querySelectorAll('[data-copy]').forEach(b => {
+    b.addEventListener('click', () => {
+      const pre = b.closest('.doc-code').querySelector('pre');
+      navigator.clipboard?.writeText(pre.innerText);
+      const o = b.textContent;
+      b.textContent = 'Copied';
+      setTimeout(() => (b.textContent = o), 1400);
+    });
+  });
+
+  // TOC active-section based on scroll
+  (function () {
+    const links = [...document.querySelectorAll('.doc-toc-list a')];
+    const targets = links.map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        links.forEach(l => l.classList.toggle('is-current', l.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin: '-120px 0px -60% 0px' });
+    targets.forEach(t => io.observe(t));
+  })();
+
+  // Progress rail follows scroll
+  (function () {
+    const rail = document.getElementById('doc-rail');
+    const update = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = Math.max(0, Math.min(1, h.scrollTop / Math.max(1, max)));
+      // base lesson progress (32%) + 68% of in-lesson scroll
+      rail.style.setProperty('--p', (32 + p * 68) + '%');
+    };
+    document.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+</script>
+
+</body>
+</html>

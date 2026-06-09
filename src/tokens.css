@@ -1,0 +1,120 @@
+/* ============================================================
+   Cicrus · tokens.css  (ITCSS layer 1 — settings)
+   Design tokens only: fonts, color (dark + light), spacing, radii.
+   Loaded first. Machine-readable mirror lives in tokens.json.
+   Drop in before any other stylesheet. Defaults to dark mode;
+   add class="light" to <body> for light mode. Both modes are
+   first-class — neither is derived from the other.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Doto:wght@400;500;700&display=swap');
+
+:root {
+  /* ── Spacing (8px base) ── */
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* ── Radii ── */
+  --radius-tech: 4px;     /* alert banners, modals, code chips */
+  --radius-card: 8px;     /* cards (task, service, stat, kanban) */
+  --radius-pill: 999px;   /* badges, buttons, toggles */
+
+  /* ── Shadows ── */
+  --hover-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --card-shadow: none;    /* dark: none. Light overrides below. */
+
+  /* ── Type scale ── */
+  --display-xl: 72px;     /* hero numbers, time displays */
+  --display-lg: 48px;     /* section heroes */
+  --display-md: 36px;     /* page titles, stat values */
+  --heading: 24px;
+  --subheading: 18px;
+  --body: 16px;
+  --body-sm: 14px;
+  --caption: 12px;
+  --label: 11px;
+  --label-xs: 10px;
+
+  /* Letter-spacing presets */
+  --ls-tight: -0.02em;
+  --ls-label: 0.08em;
+  --ls-wide: 0.06em;
+}
+
+/* ── Dark mode (default) ── */
+body {
+  --black: #000000;
+  --surface: #111111;
+  --surface-raised: #1A1A1A;
+  --border: #2E2E2E;
+  --border-visible: #555555;
+  --text-disabled: #8F8F8F;
+  --text-secondary: #B8B8B8;
+  --text-primary: #E8E8E8;
+  --text-display: #FFFFFF;
+  --accent: #D71921;
+  --accent-subtle: rgba(215, 25, 33, 0.15);
+  --success: #4A9E5C;
+  --warning: #D4A843;
+  --error: #D71921;
+  --interactive: #5B9BF6;
+
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'Space Mono', 'JetBrains Mono', 'SF Mono', monospace;
+  --font-display: 'Doto', 'Space Mono', monospace;
+
+  --heading-weight: 300;
+  --heading-ls: -0.02em;
+
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ── Light mode override ── */
+body.light {
+  --black: #F5F5F5;
+  --surface: #FFFFFF;
+  --surface-raised: #F0F0F0;
+  --border: #D9D9D9;
+  --border-visible: #9E9E9E;
+  --text-disabled: #737373;
+  --text-secondary: #595959;
+  --text-primary: #1A1A1A;
+  --text-display: #000000;
+  --accent-subtle: rgba(215, 25, 33, 0.08);
+  --interactive: #007AFF;
+
+  --heading-weight: 400;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Semantic typographic classes ── */
+.t-display-xl { font-family: var(--font-display); font-size: var(--display-xl); line-height: 1.0; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: 400; }
+.t-display-lg { font-family: var(--font-display); font-size: var(--display-lg); line-height: 1.05; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: 400; }
+.t-display-md { font-family: var(--font-display); font-size: var(--display-md); line-height: 1.1; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: var(--heading-weight); }
+.t-heading    { font-family: var(--font-body); font-size: var(--heading); line-height: 1.2; letter-spacing: -0.01em; color: var(--text-primary); font-weight: 500; }
+.t-subheading { font-family: var(--font-body); font-size: var(--subheading); line-height: 1.3; color: var(--text-primary); font-weight: 400; }
+.t-body       { font-family: var(--font-body); font-size: var(--body); line-height: 1.5; color: var(--text-primary); font-weight: 400; }
+.t-body-sm    { font-family: var(--font-body); font-size: var(--body-sm); line-height: 1.5; letter-spacing: 0.01em; color: var(--text-primary); font-weight: 400; }
+.t-caption    { font-family: var(--font-body); font-size: var(--caption); line-height: 1.4; letter-spacing: 0.04em; color: var(--text-secondary); font-weight: 400; }
+.t-label      { font-family: var(--font-mono); font-size: var(--label); line-height: 1.2; letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--text-secondary); font-weight: 400; }
+.t-label-xs   { font-family: var(--font-mono); font-size: var(--label-xs); line-height: 1.2; letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-disabled); font-weight: 400; }
+.t-mono       { font-family: var(--font-mono); }
+
+/* ── Dot-matrix motif ── */
+.dot-grid-bg     { background-image: radial-gradient(circle, var(--border) 0.5px, transparent 0.5px); background-size: 16px 16px; }
+.dot-grid-strong { background-image: radial-gradient(circle, var(--border-visible) 1px, transparent 1px); background-size: 16px 16px; }

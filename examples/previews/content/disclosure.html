@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Disclosure · Cicrus</title>
+<link rel="stylesheet" href="../../../src/cicrus.css" />
+<style>body { padding: 32px; }</style>
+</head>
+<body>
+<div class="doc-reveal">
+  <button type="button" class="doc-reveal-toggle" data-reveal>
+    <span>Show details</span>
+    <svg class="doc-reveal-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M2 4 L6 8 L10 4"></path>
+    </svg>
+  </button>
+  <div class="doc-reveal-content">
+    <div class="doc-reveal-inner">
+      <p>A disclosure hides supplementary content behind a click. Use it for optional context, long lists, or solutions to exercises.</p>
+      <p>Keep the trigger label specific — never just <code>More</code>.</p>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelector('[data-reveal]')?.addEventListener('click', e =>
+  e.target.closest('.doc-reveal').classList.toggle('is-open'));
+</script>
+</body>
+</html>

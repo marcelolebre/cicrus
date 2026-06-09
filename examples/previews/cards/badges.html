@@ -1,0 +1,96 @@
+<!-- @dsCard group="Components" name="Badges" subtitle="Border-only category pills" viewport="900x520" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Badges — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 220px 220px 1fr;
+      gap: 16px 28px;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .row:last-of-type { border-bottom: 0; }
+    .row .name { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); letter-spacing: 0.04em; }
+    .row .use { font-family: var(--font-body); font-size: 13px; font-weight: 300; color: var(--text-secondary); line-height: 1.5; }
+
+    .doctrine {
+      margin-top: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 28px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .doctrine strong { color: var(--text-display); font-weight: 400; }
+    .doctrine code { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Badge taxonomy</div>
+    <div class="sub">CATEGORY · NOT PRIORITY · BORDER-ONLY PILLS</div>
+  </div>
+
+  <div class="row">
+    <div><span class="c-badge c-badge--strong">SESSION_PROCESS</span></div>
+    <span class="name">.c-badge--strong</span>
+    <span class="use">Process / default emphasis. Text in <code class="t-mono">--text-primary</code>, border in <code class="t-mono">--text-secondary</code>.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--info">SESSION_RESOURCE</span></div>
+    <span class="name">.c-badge--info</span>
+    <span class="use">Resource / reference. The interactive blue, signaling tappable taxonomy.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--warning">MAKE_MONITOR</span></div>
+    <span class="name">.c-badge--warning</span>
+    <span class="use">Monitor / observation. Warning amber — pending or in-progress.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--success">2 STEPS</span></div>
+    <span class="name">.c-badge--success</span>
+    <span class="use">Step count, progress. Success green — small numeric metadata.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--muted">SYSTEM</span></div>
+    <span class="name">.c-badge--muted</span>
+    <span class="use">System / infrastructure. Disabled-text + visible border.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--subtle">RECURRING</span></div>
+    <span class="name">.c-badge--subtle</span>
+    <span class="use">Recurring / meta. Disabled-text + faint border — recedes into the row.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge--neutral">STATUS_CHANGE</span></div>
+    <span class="name">.c-badge--neutral</span>
+    <span class="use">Type tag in lists. Secondary text + visible border.</span>
+  </div>
+  <div class="row">
+    <div><span class="c-badge c-badge-accent">FAILED</span></div>
+    <span class="name">.c-badge-accent</span>
+    <span class="use">Accent moment. Reserve for the one-and-only red item per screen.</span>
+  </div>
+
+  <div class="doctrine">
+    <strong>Mixing.</strong> A task card may carry multiple badges (e.g. <code>SESSION_RESOURCE</code> + <code>RECURRING</code>) — category badge first, meta badges after. <strong>Max 3 per card.</strong>
+    <br>
+    <strong>Composition.</strong> All badges share Space Mono 10px, 0.06em letter-spacing, UPPERCASE, padding 3px 10px, border-radius 999px, 1px solid border. Color codes the <strong>label text + border</strong>; the fill is always transparent.
+  </div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!-- @dsCard group="Brand" name="State glyphs" subtitle="Animated thinking-object states" viewport="900x520" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>State glyphs — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; color: var(--text-primary); }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+
+    .glyph-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-display);
+    }
+    .glyph-card .stage {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .glyph-card .name { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-display); }
+    .glyph-card .desc { font-family: var(--font-body); font-size: 13px; font-weight: 300; color: var(--text-secondary); text-align: center; line-height: 1.55; }
+    .glyph-card.error { color: #ff5c5c; }
+    .glyph-card.error .name { color: #ff5c5c; }
+
+    .doctrine {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .doctrine strong { color: var(--text-display); font-weight: 400; }
+    .doctrine code { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">State glyphs</div>
+    <div class="sub">96×96 PIXEL GRID · ONE THINKING-OBJECT · THREE STATES</div>
+  </div>
+
+  <div class="row">
+    <div class="glyph-card">
+      <div class="stage" id="g-idle"></div>
+      <div class="name">IDLE</div>
+      <div class="desc">Wobbling putty blob. Healthy, dormant. Soap bubble in wind — never quite a sphere.</div>
+    </div>
+    <div class="glyph-card">
+      <div class="stage" id="g-thinking"></div>
+      <div class="name">THINKING</div>
+      <div class="desc">Siri-style swirl with heartbeat ring. Active, generating, processing.</div>
+    </div>
+    <div class="glyph-card error">
+      <div class="stage" id="g-error"></div>
+      <div class="name">ERROR</div>
+      <div class="desc">The thinking sphere, broken. Servos failing, ring shattered. Warning red.</div>
+    </div>
+  </div>
+
+  <div class="doctrine">
+    <strong>One per screen.</strong> The glyph is the §2.6 “moment of surprise” — having two of the same kind on one view flattens the effect. Pick the smallest size that reads: <code>32–48px</code> as a status header replacement, <code>120–180px</code> as a stat-card hero, <code>200px</code> as a dashboard tile, <code>240–288px</code> as a loading takeover. Idle and thinking inherit the canvas’s computed <code>color</code>; error stays warning-red on every surface.
+  </div>
+
+  <script type="module">
+    import { mountGlyph } from '../../../src/glyphs.js';
+    const mounts = [
+      [document.getElementById('g-idle'),     'idle'],
+      [document.getElementById('g-thinking'), 'thinking'],
+      [document.getElementById('g-error'),    'error'],
+    ];
+    for (const [el, state] of mounts) {
+      mountGlyph(el, { state, size: 200 });
+    }
+  </script>
+</body>
+</html>

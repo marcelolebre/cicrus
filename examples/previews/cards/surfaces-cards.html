@@ -1,0 +1,166 @@
+<!-- @dsCard group="Components" name="Cards & surfaces" subtitle="Generic surface + rich item card" viewport="900x720" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Surfaces & cards — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    .group { margin-bottom: 48px; }
+    .group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .row4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    .footer-spec {
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-disabled);
+    }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Surfaces &amp; cards</div>
+    <div class="sub">--SURFACE · --SURFACE-RAISED · 8PX RADIUS · 1PX --BORDER</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Card flavors — surface vs. raised</div>
+    <div class="row3">
+      <div class="c-card">
+        <div class="c-card-title">Default card · --surface</div>
+        <div class="c-card-desc">Used inside views as the lightest container — sits directly on the page background.</div>
+        <div class="footer-spec">.C-CARD</div>
+      </div>
+      <div class="c-card c-card--raised">
+        <div class="c-card-title">Raised card · --surface-raised</div>
+        <div class="c-card-desc">Slightly lighter fill. Used for items that nest <em>inside</em> a card — task cards in a kanban column, dropdown menus.</div>
+        <div class="footer-spec">.C-CARD.C-CARD--RAISED</div>
+      </div>
+      <div class="c-card c-card--clickable">
+        <div class="c-card-title">Clickable card</div>
+        <div class="c-card-desc">Hover lifts <code class="t-mono" style="color: var(--text-primary);">border-color</code> to <code class="t-mono" style="color: var(--text-primary);">--border-visible</code>. No shadow change. No scale.</div>
+        <div class="footer-spec">.C-CARD.C-CARD--CLICKABLE</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Stat card — Doto value · ALL CAPS label · optional bar</div>
+    <div class="row4">
+      <div class="c-stat">
+        <div class="c-stat-value">37</div>
+        <div class="c-stat-label">TODO</div>
+        <div class="c-stat-bar">
+          <div class="seg filled"></div><div class="seg filled"></div><div class="seg filled"></div><div class="seg"></div><div class="seg"></div>
+        </div>
+      </div>
+      <div class="c-stat">
+        <div class="c-stat-value">7</div>
+        <div class="c-stat-label">IN PROGRESS</div>
+        <div class="c-stat-bar">
+          <div class="seg filled"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        </div>
+      </div>
+      <div class="c-stat">
+        <div class="c-stat-value c-stat-value--success">11</div>
+        <div class="c-stat-label">DONE</div>
+        <div class="c-stat-bar">
+          <div class="seg success"></div><div class="seg success"></div><div class="seg success"></div><div class="seg"></div><div class="seg"></div>
+        </div>
+      </div>
+      <div class="c-stat">
+        <div class="c-stat-value c-stat-value--danger">2</div>
+        <div class="c-stat-label">FAILED</div>
+        <div class="c-stat-bar">
+          <div class="seg danger"></div><div class="seg danger"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Service card — status dot anchor</div>
+    <div class="row4">
+      <div class="c-statuscard">
+        <div class="c-statuscard-head">
+          <span class="c-dot c-dot-up"></span>
+          <span class="c-statuscard-name">PostgreSQL</span>
+        </div>
+        <div class="c-statuscard-detail">
+          v17.4 (Homebrew)<br>
+          UP<br>
+          last_check: 2s ago
+        </div>
+      </div>
+      <div class="c-statuscard">
+        <div class="c-statuscard-head">
+          <span class="c-dot c-dot-down"></span>
+          <span class="c-statuscard-name">API Gateway</span>
+        </div>
+        <div class="c-statuscard-detail">
+          3 failed_requests, 12 total<br>
+          0.0.0.0:11435, 0 open<br>
+          last_check: 4s ago, ERROR
+        </div>
+      </div>
+      <div class="c-statuscard">
+        <div class="c-statuscard-head">
+          <span class="c-dot c-dot-warn"></span>
+          <span class="c-statuscard-name">Model Host</span>
+        </div>
+        <div class="c-statuscard-detail">
+          1 of 3 nodes responsive<br>
+          DEGRADED<br>
+          last_check: 11s ago
+        </div>
+      </div>
+      <div class="c-statuscard">
+        <div class="c-statuscard-head">
+          <span class="c-dot c-dot-up"></span>
+          <span class="c-statuscard-name">Scheduler</span>
+        </div>
+        <div class="c-statuscard-detail">
+          4 workers, 0 queued<br>
+          UP<br>
+          last_check: 1s ago
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">Task card — raised, badged, descriptive</div>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+      <div class="c-card c-card--raised c-card--clickable">
+        <div class="c-card-title">Investigate gateway scale-socket loop on cold start</div>
+        <div class="c-card-desc" style="font-weight: 300;">Reconnect storm during boot saturates the supervisor’s mailbox. Reproduces only when the upstream returns 502 within 80ms.</div>
+        <div class="c-card-meta">
+          <span class="c-badge c-badge--strong">SESSION_PROCESS</span>
+          <span class="c-badge c-badge--subtle">RECURRING</span>
+          <span style="margin-left: auto;">#2079</span>
+        </div>
+      </div>
+      <div class="c-card c-card--raised c-card--clickable">
+        <div class="c-card-title">Promote model-host health-check from poll to push</div>
+        <div class="c-card-desc" style="font-weight: 300;">Polling at 5s leaves a 3.4s detection window in the worst case. Move to push on supervisor lifecycle events.</div>
+        <div class="c-card-meta">
+          <span class="c-badge c-badge--warning">MAKE_MONITOR</span>
+          <span class="c-badge c-badge--success">2 STEPS</span>
+          <span style="margin-left: auto;">#2080</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
