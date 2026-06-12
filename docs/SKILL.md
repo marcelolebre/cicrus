@@ -7,11 +7,11 @@ allowed-tools: [Read, Write, Edit, Glob, Grep]
 
 # Cicrus — Operator-Console Design System
 
-A senior product designer's toolkit for building **operator consoles, dashboards, and internal tools**. Nothing-inspired (Swiss typography, industrial restraint, monochromatic canvas) but grounded in the concrete components of the Cicrus prototype: kanban boards, timelines, service dashboards, knowledge indexes. Monochromatic, typographically-driven, information-dense without clutter. Dark and light mode with equal rigor, WCAG-clean out of the box.
+A senior product designer's toolkit for building **operator consoles, dashboards, and internal tools**. Nothing-inspired (Swiss typography, industrial restraint, monochromatic canvas) but grounded in the concrete components of the Cicrus prototype: kanban boards, timelines, service dashboards, knowledge indexes. Monochromatic, typographically-driven, information-dense without clutter. Three first-class modes — dark, light, and liquid glass — with equal rigor, WCAG-clean out of the box.
 
 **Before any design work:**
 1. Declare Google Fonts required and how to load them (see `./tokens.md` §1).
-2. Ask which mode to start with — dark or light. Neither is "derived."
+2. Ask which mode to start with — dark, light, or liquid. None is "derived."
 
 ---
 
@@ -22,7 +22,7 @@ A senior product designer's toolkit for building **operator consoles, dashboards
 - **Monochrome is the canvas.** Color is an event, not a default — except when encoding data status.
 - **Type does the heavy lifting.** Scale, weight, spacing create hierarchy — not color, not icons.
 - **Labels are instrument labels.** ALL CAPS, Space Mono, 11px, 0.08em tracking — like hardware panel stencils.
-- **Both modes are first-class.** Dark = OLED instrument panel. Light = printed technical manual. Full design attention on each.
+- **All modes are first-class.** Dark = OLED instrument panel. Light = printed technical manual. Liquid = milky glass frosting whatever sits behind it (iOS 26 / macOS Tahoe reference — see `./integration.md` §2). Full design attention on each.
 - **Industrial warmth.** Technical and precise, but never cold. A human hand should be felt.
 - **Accessibility is part of craft.** Every text color clears WCAG AA on its background. No exceptions for "aesthetic" muted text.
 - **Tufte-aligned.** *The Visual Display of Quantitative Information* is part of the lineage. For anything quantitative — charts, dashboards, tables, sparklines — read [`./data-graphics.md`](././data-graphics.md). Maximize the data-ink ratio. Erase what isn't data. No 3D, no pie charts, no chartjunk, no dual-axis line plots.
@@ -175,7 +175,7 @@ Lead section → heaviest treatment. Secondary → different form. Tertiary → 
 ## 4. WORKFLOW
 
 1. **Declare fonts** — tell the user which Google Fonts to load (see `./tokens.md` §1). Default stack: `Space Grotesk`, `Space Mono`, `Doto`.
-2. **Ask mode** — dark or light? Neither is default. Both must be supported from day one.
+2. **Ask mode** — dark, light, or liquid? Dark is the shipping default, but all three must be supported from day one.
 3. **Sketch hierarchy** — identify the 3 layers before writing any code.
 4. **Compose** — apply craft rules (§2.1–2.9).
 5. **Check tokens** — consult `./tokens.md` for exact values.
@@ -190,12 +190,12 @@ Lead section → heaviest treatment. Secondary → different form. Tertiary → 
 
 For detailed token values, component specs, and platform-specific guidance:
 
-- **`./tokens.md`** — Fonts, type scale, color system (dark + light with WCAG ratios), spacing scale, grid, motion, iconography, dot-matrix motif, badge taxonomy.
+- **`./tokens.md`** — Fonts, type scale, color system (dark / light / liquid with WCAG ratios), spacing scale, grid, motion, iconography, dot-matrix motif, badge taxonomy.
 - **`./components.md`** — Nav, mode toggle, view header, badges, filter buttons, inputs, cards (task, service, stat), kanban column, timeline item, knowledge column, alert banner, status dot, theme bar, segmented progress, toggles, scrollbar.
 - **`./patterns.md`** — Screen-level compositions: kanban board, timeline feed, agent timeline, notification inbox, service dashboard, knowledge index, stats grid, empty/error/loading states.
 - **`./platform-mapping.md`** — HTML/CSS, React/Tailwind, SwiftUI output conventions.
 - **`./schematics.md`** — Operator-console architecture diagrams. Layered cards as modules, SVG traces as connectors, animation grammar where flow speed encodes link load and breathing dots encode liveness.
-- **`./glyphs.md`** — Animated state glyphs (idle, thinking, error). Pixel-grid canvas renderers for one "thinking object" entity in three states, with `mountGlyph` API and embed snippets.
+- **`./glyphs.md`** — Animated state glyphs (running, stopped, broken). The app's dot-matrix mark doubling as a status light — the sun dot carries the state (green breathing = running, white still = stopped, red = broken) — with `mountGlyph` API and embed snippets.
 - **`./data-graphics.md`** — Tufte applied to Cicrus. Sparklines, dot plots, range bars, small multiples, slopegraphs, gauges. Data-ink discipline, lie factor, chartjunk anti-patterns, and a pre-ship checklist for any quantitative graphic.
 - **`../examples/glyphs-demo.html`** — Worked example showing the three glyphs side by side, loading the renderer module from `../src/glyphs.js`.
 - **`../examples/starter.html`** — Copy-pasteable single-file starter with full dark+light token set, mode toggle, sample nav, and one worked screen.

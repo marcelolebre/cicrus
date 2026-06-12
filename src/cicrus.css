@@ -4,17 +4,25 @@
    <link rel="stylesheet" href="src/cicrus.css">
    <body>            ← dark mode (default)
    <body class="light">  ← light mode
+   <body class="liquid"> ← liquid-glass mode
 
    Imports in ITCSS order (low → high specificity):
      1. tokens      — design tokens (settings)
      2. base        — reset + element defaults (generic)
      3. components  — .c-* UI components
-     4. content     — .doc-* long-form content
-     5. utilities   — single-purpose helpers (trumps)
+     4. dataviz     — Tufte data-graphics components
+     5. motion      — subtle, compositor-only animation
+     6. content     — .doc-* long-form content
+     7. liquid      — liquid-glass mode (body.liquid) — themes
+                      every layer above it, so it loads after them
+     8. utilities   — single-purpose helpers (trumps)
    Repo: https://github.com/marcelolebre/cicrus
    ============================================================ */
 @import url('./tokens.css');
 @import url('./base.css');
 @import url('./components.css');
+@import url('./dataviz.css');
+@import url('./motion.css');
 @import url('./content.css');
+@import url('./liquid.css');
 @import url('./utilities.css');

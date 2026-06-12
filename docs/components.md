@@ -67,7 +67,7 @@ Mono 10px, ALL-CAPS. Max 3 per surface. Apply color to text + border, never fill
 
 | Class | Role |
 |-------|------|
-| `.c-dot` | Health light. `.c-dot-up` (green), `.c-dot-down` (red, pulses), `.c-dot-warn` (amber), `.c-dot-idle`. |
+| `.c-dot` | Health light. `.c-dot--up` (green), `.c-dot--down` (red, pulses), `.c-dot--warn` (amber), `.c-dot--idle`. Single-dash forms are deprecated aliases. |
 | `.c-status-dot` | Process-state dot. `--todo`, `--running` (pulses), `--review`, `--done`, `--failed`. |
 | `.c-alert` | Single-row inline banner. `--warning`, `--info`. Prefix copy with `[ERROR]` / `[WARN]` / `[INFO]`. |
 
@@ -105,6 +105,47 @@ Mono 10px, ALL-CAPS. Max 3 per surface. Apply color to text + border, never fill
 | `.c-errorrow` | Failure row: `.c-errorrow-title`, `.c-errorrow-detail` (red, break-all). |
 | `.c-kv` | Key/value metadata grid (`dt` / `dd`). |
 | `.c-empty`, `.c-loading`, `.c-not-impl` | State stubs (`[LOADING...]`, `[NOT YET IMPLEMENTED]`). |
+
+## Data graphics (`.c-*`, Tufte)
+
+Quantitative-display components in [`dataviz.css`](../src/dataviz.css). Per-instance
+values pass as **unitless 0–100** custom properties via inline `style`. Color
+(`--success`/`--warning`/`--accent`) is a *signal* — threshold crossings only, never
+decoration. Full rationale in [`data-graphics.md`](./data-graphics.md).
+
+| Class | Role |
+|-------|------|
+| `.c-spark` | Word-sized sparkline. Wraps an inline `<svg><polyline></svg>`; mark latest with `<circle>`, extremes with `.c-spark-hi`/`.c-spark-lo`. Pair with its number via `.c-spark-pair` + `.c-spark-now`. |
+| `.c-sparkbar` | Inline mini bar chart. Each `<i>` column height = `--v`. Status fills `.c-bar-hi`/`-warn`/`-alarm`. |
+| `.c-bars` | Labeled horizontal bars (grid: label · track · value). `.c-bar-label`, `.c-bar-track`, `.c-bar-fill` (`--v` width; `--ctx`/`--over`/`--ok`/`--warn`), `.c-bar-value`. Bars start at 0 (lie factor 1.0). |
+| `.c-dotplot` | Dot plot — Tufte's bar replacement. `.c-dotplot-label`, `.c-dotplot-track` (dot at `--v`; `--over`/`--ok`/`--ctx`; dashed reference at `--ref` via `.c-dot--ref`), `.c-dotplot-value`. |
+| `.c-rangebar` | min · median · max in one channel. `.c-rangebar-track` spans `--lo`→`--hi` with a center dot at `--mid`. |
+| `.c-multiples` | Small-multiples grid (`--cols`). Each `.c-multiple` holds `.c-multiple-label`, a chart, `.c-multiple-value`. Identical scales; comparison through space, not animation. |
+| `.c-gauge` | The one acceptable circular chart — single ratio at `--v`. Variants `--ok`/`--warn`/`--alarm`. Center via `.c-gauge-wrap` > `.c-gauge-center` (`.c-gauge-num`, `.c-gauge-unit`). |
+| `.c-delta` | Change indicator. Glyph = direction (`--up`/`--down`), color = good/bad (`--good`/`--bad`/`--warn`). |
+| `.c-metrics` | Dashboard metric table: `.c-metric-name` · `.c-metric-spark` · `.c-metric-now` · delta. The canonical micro/macro tile. |
+
+Live preview: [`../examples/previews/dataviz/`](../examples/previews/dataviz/).
+
+## Motion (`.c-*`)
+
+Opt-in animation classes in [`motion.css`](../src/motion.css) — percussive,
+compositor-only (opacity + transform), all gated behind `prefers-reduced-motion`.
+Full guide: [`motion.md`](./motion.md).
+
+| Class | Role |
+|-------|------|
+| `.c-rise` | Fade-up entrance for one element. |
+| `.c-stagger` | Children enter in reading order, 35ms apart. |
+| `.c-slide-in` | Panel/drawer entrance from the right. |
+| `.c-data-enter` | On a parent: bars sweep from zero, sparkbar columns rise, sparklines draw (`pathLength="1"`). |
+| `.c-caret` / `.c-blink` | Hard `steps()` blink — terminal caret / liveness. |
+| `.c-loading--live` | Cycling dots on `.c-loading` (fixed width). |
+| `.c-tick` | One-shot relay-flip for a changed value (re-add from JS). |
+
+Motion tokens: `--ease` (the one curve), `--dur-micro` 150ms, `--dur-switch` 300ms,
+`--dur-view` 400ms, `--dur-data` 600ms (data sweeps). The gauge's `--v` is registered,
+so JS updates sweep the ring.
 
 ## Utilities
 

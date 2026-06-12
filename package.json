@@ -1,7 +1,7 @@
 {
   "name": "cicrus",
-  "version": "1.0.0",
-  "description": "A monochromatic, typography-first CSS design system for operator consoles, dashboards, and internal tools. Plain CSS + design tokens — no build step, no framework. Dark and light modes both first-class.",
+  "version": "2.9.0",
+  "description": "A monochromatic, typography-first CSS design system for operator consoles, dashboards, and internal tools. Plain CSS + design tokens — no build step, no framework. Three first-class modes: dark, light, and liquid glass.",
   "keywords": [
     "design-system",
     "css",
@@ -12,7 +12,10 @@
     "operator-console",
     "ui",
     "typography",
-    "no-build"
+    "no-build",
+    "liquid-glass",
+    "tufte",
+    "dataviz"
   ],
   "license": "MIT",
   "homepage": "https://github.com/marcelolebre/cicrus#readme",
@@ -40,6 +43,9 @@
     "./base.css": "./src/base.css",
     "./components.css": "./src/components.css",
     "./content.css": "./src/content.css",
+    "./dataviz.css": "./src/dataviz.css",
+    "./motion.css": "./src/motion.css",
+    "./liquid.css": "./src/liquid.css",
     "./utilities.css": "./src/utilities.css",
     "./glyphs": "./src/glyphs.js",
     "./tokens": "./tokens.json",
@@ -59,6 +65,6 @@
     "README.md"
   ],
   "scripts": {
-    "build": "cat src/tokens.css src/base.css src/components.css src/content.css src/utilities.css > cicrus.bundle.css && echo 'Wrote cicrus.bundle.css'"
+    "build": "cat src/tokens.css src/base.css src/components.css src/dataviz.css src/motion.css src/content.css src/liquid.css src/utilities.css > cicrus.bundle.css && echo 'Wrote cicrus.bundle.css'"
   }
 }

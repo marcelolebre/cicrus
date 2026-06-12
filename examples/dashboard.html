@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Task Board · Cicrus</title>
 <link rel="stylesheet" href="../src/cicrus.css" />
-<link rel="stylesheet" href="../src/cicrus.css" />
 <style>
   /* ============================================================
      Page-local styles (.tb-*) — task board screen
@@ -943,7 +942,49 @@
     color: var(--accent);
     border-color: var(--accent);
   }
-</style>
+
+  /* ── Liquid mode (page-local) ────────────────────────────
+     This screen uses page-local .tb-* surfaces built on Cicrus
+     tokens; tokens give them the glass palette automatically,
+     and these rules assign material tiers — mirroring
+     src/liquid.css (chrome / panel / support). */
+  body.liquid .tb-topbar,
+  body.liquid .tb-side {
+    background: var(--glass-chrome-fill);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+  body.liquid .tb-topbar { box-shadow: var(--glass-specular), inset 0 -1px 0 rgba(0,0,0,0.28); }
+  body.liquid .tb-side   { box-shadow: var(--glass-specular), inset -1px 0 0 rgba(0,0,0,0.24); }
+  body.liquid .tb-col,
+  body.liquid .tb-panel {
+    background: var(--glass-panel-fill);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-rim), var(--glass-shadow-float);
+  }
+  body.liquid .tb-stats {
+    background: var(--glass-panel-fill);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-specular), var(--glass-hairline), var(--glass-shadow-rest);
+  }
+  /* Cards sit on glass columns: fill only, no second blur pass. */
+  body.liquid .tb-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--surface-raised);
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    body.liquid .tb-topbar,
+    body.liquid .tb-side,
+    body.liquid .tb-col,
+    body.liquid .tb-stats,
+    body.liquid .tb-panel {
+      background: rgba(13, 13, 22, 0.94);
+    }
+  }
+  </style>
 </head>
 <body>
 
@@ -961,6 +1002,7 @@
       <div class="tb-mode" role="group" aria-label="Theme">
         <button type="button" data-mode="dark" class="is-active">Dark</button>
         <button type="button" data-mode="light">Light</button>
+        <button type="button" data-mode="liquid">Liquid</button>
       </div>
     </div>
   </header>
@@ -1365,13 +1407,14 @@
     const KEY = 'cicrus.mode';
     const body = document.body;
     const saved = localStorage.getItem(KEY);
-    if (saved === 'light') body.classList.add('light');
+    if (saved === 'light' || saved === 'liquid') body.classList.add(saved);
     document.querySelectorAll('.tb-mode button').forEach(btn => {
       const isActive = (saved || 'dark') === btn.dataset.mode;
       btn.classList.toggle('is-active', isActive);
       btn.addEventListener('click', () => {
         const mode = btn.dataset.mode;
-        body.classList.toggle('light', mode === 'light');
+        body.classList.remove('light', 'liquid');
+        if (mode !== 'dark') body.classList.add(mode);
         localStorage.setItem(KEY, mode);
         document.querySelectorAll('.tb-mode button').forEach(b => {
           b.classList.toggle('is-active', b.dataset.mode === mode);

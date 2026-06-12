@@ -57,36 +57,36 @@
 | `--surface` | `#111111` | — | Elevated surfaces, cards, nav, theme-bar |
 | `--surface-raised` | `#1A1A1A` | — | Secondary elevation, task cards, dropdowns |
 | `--border` | `#2E2E2E` | — | Subtle dividers, card outline (decorative) |
-| `--border-visible` | `#555555` | 3.0:1 | Intentional borders, filter-btn, input underline |
-| `--text-disabled` | `#8F8F8F` | 4.6:1 | Nav default, timestamps, placeholders, col-count |
-| `--text-secondary` | `#B8B8B8` | 7.5:1 | Labels, card descriptions, knowledge items |
-| `--text-primary` | `#E8E8E8` | 16.5:1 | Body text, task titles, service names |
+| `--border-visible` | `#555555` | 2.8:1 (non-text) | Intentional borders, filter-btn, input underline |
+| `--text-disabled` | `#8F8F8F` | 6.5:1 | Nav default, timestamps, placeholders, col-count |
+| `--text-secondary` | `#B8B8B8` | 10.6:1 | Labels, card descriptions, knowledge items |
+| `--text-primary` | `#E8E8E8` | 17.1:1 | Body text, task titles, service names |
 | `--text-display` | `#FFFFFF` | 21:1 | Headlines, hero numbers, active nav |
 
 ### Light Mode
 
 | Token | Hex | Contrast on `--black` (#F5F5F5) | Role |
 |-------|-----|:-:|------|
-| `--black` | `#F5F5F5` | — | Primary background (warm off-white, printed page) |
+| `--black` | `#F5F5F5` | — | Primary background (neutral off-white, printed page) |
 | `--surface` | `#FFFFFF` | — | Elevated surfaces, cards, nav |
 | `--surface-raised` | `#F0F0F0` | — | Secondary elevation |
 | `--border` | `#D9D9D9` | — | Subtle dividers |
-| `--border-visible` | `#9E9E9E` | 3.0:1 | Intentional borders |
-| `--text-disabled` | `#737373` | 4.6:1 | Nav default, timestamps, placeholders |
-| `--text-secondary` | `#595959` | 7.0:1 | Labels, card descriptions |
-| `--text-primary` | `#1A1A1A` | 16.6:1 | Body text |
+| `--border-visible` | `#9E9E9E` | 2.5:1 (non-text) | Intentional borders |
+| `--text-disabled` | `#6B6B6B` | 4.9:1 | Nav default, timestamps, placeholders |
+| `--text-secondary` | `#595959` | 6.4:1 | Labels, card descriptions |
+| `--text-primary` | `#1A1A1A` | 16.0:1 | Body text |
 | `--text-display` | `#000000` | 21:1 | Headlines |
 
-### Accent & Status (identical across modes)
+### Accent & Status (mode-aware — the role is identical, the shade tracks the mode for AA)
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| `--accent` | `#D71921` | Signal light: active states, destructive, urgent, error banners. One per screen as UI element. Never decorative. |
-| `--accent-subtle` | `rgba(215,25,33,0.15)` dark / `rgba(215,25,33,0.08)` light | Accent tint backgrounds (alert banners) |
-| `--success` | `#4A9E5C` | Confirmed, completed, connected, "UP" services |
-| `--warning` | `#D4A843` | Caution, pending, degraded |
-| `--error` | `#D71921` | Shares accent red — errors ARE the accent moment |
-| `--interactive` | `#5B9BF6` (dark) / `#007AFF` (light) | Tappable text: links, picker values, resource badges. Not for buttons. |
+| Token | Dark | Light | Liquid | Usage |
+|-------|------|-------|--------|-------|
+| `--accent` | `#F0353D` (5.3:1) | `#D71921` (4.8:1) | `#FF5C5C` (4.9:1 on film) | Signal light: destructive, urgent, error banners. One per screen. Never decorative. Brand red `#D71921` is the print shade; dark/liquid brighten it because deep red fails AA as text on those floors. |
+| `--accent-subtle` | `rgba(240,53,61,0.15)` | `rgba(215,25,33,0.08)` | `rgba(255,92,92,0.16)` | Accent tint backgrounds (alert banners) |
+| `--success` | `#4A9E5C` (6.3:1) | `#2E7D32` (4.7:1) | `#5EE596` | Confirmed, completed, connected, "UP" services |
+| `--warning` | `#D4A843` (9.5:1) | `#8F6A00` (4.6:1) | `#E8CC74` | Caution, pending, degraded |
+| `--error` | — | — | — | Alias of `--accent` in every mode — errors ARE the accent moment |
+| `--interactive` | `#5B9BF6` (7.5:1) | `#0058CC` (5.9:1) | `#7DE8D8` | Tappable text: links, picker values, resource badges. Not for buttons. |
 
 ### Data Status Colors
 
@@ -240,11 +240,11 @@ body {
   --text-secondary: #B8B8B8;
   --text-primary: #E8E8E8;
   --text-display: #FFFFFF;
-  --accent: #D71921;
-  --accent-subtle: rgba(215,25,33,0.15);
+  --accent: #F0353D;          /* brand #D71921 brightened for AA on OLED black */
+  --accent-subtle: rgba(240,53,61,0.15);
   --success: #4A9E5C;
   --warning: #D4A843;
-  --error: #D71921;
+  --error: var(--accent);
   --interactive: #5B9BF6;
   --font-body: 'Space Grotesk', system-ui, sans-serif;
   --font-mono: 'Space Mono', monospace;
@@ -252,16 +252,8 @@ body {
   --heading-weight: 300;
   --heading-ls: -0.02em;
   --card-shadow: none;
-
-  font-family: var(--font-body);
-  background: var(--black);
-  color: var(--text-primary);
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-              color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* No theme-switch transition on body — a Chromium bug freezes
+     var()-driven properties when only the custom property changes. */
 }
 
 /* ── Light ── */
@@ -271,11 +263,17 @@ body.light {
   --surface-raised: #F0F0F0;
   --border: #D9D9D9;
   --border-visible: #9E9E9E;
-  --text-disabled: #737373;
+  --text-disabled: #6B6B6B;
   --text-secondary: #595959;
   --text-primary: #1A1A1A;
   --text-display: #000000;
+  --accent: #D71921;          /* brand red holds AA on paper */
   --accent-subtle: rgba(215,25,33,0.08);
-  --interactive: #007AFF;
+  --success: #2E7D32;
+  --warning: #8F6A00;
+  --interactive: #0058CC;
 }
+
+/* Liquid (body.liquid) adds the milky-film glass tokens —
+   see src/tokens.css and the glass group in tokens.json. */
 ```

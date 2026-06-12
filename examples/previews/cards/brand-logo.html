@@ -1,0 +1,207 @@
+<!-- @dsCard group="Brand" name="App logo" subtitle="Icarus — wings & sun on liquid glass" viewport="1040x880" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>App logo — Icarus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body.liquid { padding: 48px; min-height: 100vh; }
+
+    /* Real content behind the glass — the tiles must reveal it. */
+    .behind { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .behind .big { position: absolute; top: 10%; left: -2%; font-family: var(--font-display); font-size: 230px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-display); opacity: 0.05; line-height: 1; }
+    .behind .glow { position: absolute; top: 16%; right: 8%; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, rgba(232, 204, 116, 0.14) 0%, transparent 70%); }
+    .wrap { position: relative; z-index: 1; }
+
+    .head {
+      margin-bottom: 40px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.02em; color: var(--text-display); text-transform: uppercase; }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+
+    /* ── The mark: dot-matrix wings rising toward a sun (7×6) ── */
+    .mark {
+      display: grid;
+      grid-template-columns: repeat(7, var(--dot, 16px));
+      gap: calc(var(--dot, 16px) * 0.52);
+      --wing: #FFFFFF;
+      --sun: #E8CC74;
+    }
+    .mark .d {
+      width: var(--dot, 16px); height: var(--dot, 16px);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .mark .d.lit {
+      background: var(--wing);
+      box-shadow: 0 0 calc(var(--dot, 16px) * 0.6) rgba(255, 255, 255, 0.30);
+    }
+    .mark .d.sun {
+      background: var(--sun);
+      transform: scale(1.45);
+      box-shadow: 0 0 calc(var(--dot, 16px) * 1.2) color-mix(in srgb, var(--sun) 65%, transparent);
+    }
+    .mark.mono { --sun: #FFFFFF; }
+    .mark.mono .d.sun { box-shadow: 0 0 calc(var(--dot, 16px) * 0.7) rgba(255, 255, 255, 0.40); }
+
+    /* ── App-icon tile: panel-tier Liquid Glass ──
+       Translucent fill, light bent through a modest blur, and
+       the specular rim — never an opaque painted square. */
+    .tile {
+      display: grid; place-items: center;
+      border-radius: 28%;
+      background: var(--glass-panel-fill);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-rim), var(--glass-shadow-float);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      display: grid; grid-template-columns: 280px 1fr; gap: 56px; align-items: center;
+      padding: 64px 56px; margin-bottom: 24px;
+      border-radius: 20px;
+      background: var(--glass-panel-fill);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-specular), var(--glass-hairline), var(--glass-shadow-rest);
+    }
+    .hero .tile { width: 220px; height: 220px; justify-self: center; --dot: 17px; }
+    .hero-copy .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #E8CC74; }
+    .hero-copy .name { font-family: var(--font-display); font-size: 72px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-display); line-height: 1; margin: 18px 0 20px; }
+    .hero-copy .desc { font-family: var(--font-body); font-weight: 300; font-size: 15px; line-height: 1.7; color: var(--text-secondary); max-width: 420px; }
+    .hero-copy .desc b { color: var(--text-primary); font-weight: 400; }
+
+    /* ── Variation row ── */
+    .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .cell {
+      border-radius: 14px; padding: 40px 28px 22px;
+      background: var(--glass-panel-fill);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-rim), var(--glass-shadow-rest);
+      display: flex; flex-direction: column; align-items: center; gap: 28px;
+    }
+    .cell .stage { flex: 1; display: grid; place-items: center; min-height: 150px; }
+    .cell .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); width: 100%; text-align: center; padding-top: 16px; border-top: 1px solid var(--border); }
+    .cell .tile { width: 128px; height: 128px; --dot: 9px; }
+
+    /* wordmark lockup */
+    .lockup {
+      display: inline-flex; align-items: center; gap: 18px;
+      padding: 18px 26px 18px 20px; border-radius: 999px;
+      background: var(--glass-chrome-fill);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-specular), var(--glass-hairline), var(--glass-shadow-rest);
+    }
+    .lockup .mark { --dot: 5.5px; }
+    .lockup .word { font-family: var(--font-display); font-size: 30px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-display); line-height: 1; }
+
+    /* ── Size ladder ── */
+    .ladder {
+      display: flex; align-items: flex-end; gap: 40px;
+      padding: 40px 48px; border-radius: 14px;
+      background: var(--glass-panel-fill);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--glass-rim), var(--glass-shadow-rest);
+    }
+    .ladder .unit { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .ladder .unit .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; color: var(--text-disabled); }
+    .ladder .s96 { width: 96px; height: 96px; --dot: 6.8px; }
+    .ladder .s56 { width: 56px; height: 56px; --dot: 4px; }
+    .ladder .s36 { width: 36px; height: 36px; --dot: 2.6px; }
+    .ladder .s24 { width: 24px; height: 24px; --dot: 1.7px; border-radius: 24%; }
+
+    .doctrine { margin-top: 26px; font-family: var(--font-body); font-size: 14px; font-weight: 300; color: var(--text-secondary); line-height: 1.75; max-width: 760px; }
+    .doctrine code { font-family: var(--font-mono); font-size: 12.5px; color: #E8CC74; }
+    .doctrine b { color: var(--text-primary); font-weight: 400; }
+  </style>
+</head>
+<body class="liquid">
+  <div class="behind" aria-hidden="true">
+    <div class="big">icarus</div>
+    <div class="glow"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="head">
+      <div class="ttl">App logo</div>
+      <div class="sub">Icarus · wings &amp; sun · liquid glass</div>
+    </div>
+
+    <div class="hero">
+      <div class="tile"><div class="mark" data-icarus></div></div>
+      <div class="hero-copy">
+        <div class="eyebrow">wings toward the sun</div>
+        <div class="name">icarus</div>
+        <p class="desc">The myth, told in the system's own <b>dot-matrix vocabulary</b>: a pair of wings
+          rising toward a single <b>amber sun</b>. The icon is a pane of <b>Liquid Glass</b> — translucent,
+          light bent through it, a specular rim catching the edge — never an opaque painted square.
+          The dots paint at full opacity on the glass.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="cell">
+        <div class="stage"><div class="tile"><div class="mark" data-icarus></div></div></div>
+        <div class="lbl">Primary · white wings · amber sun</div>
+      </div>
+      <div class="cell">
+        <div class="stage"><div class="tile"><div class="mark mono" data-icarus></div></div></div>
+        <div class="lbl">Restrained · monochrome</div>
+      </div>
+      <div class="cell">
+        <div class="stage">
+          <div class="lockup"><div class="mark" data-icarus></div><span class="word">icarus</span></div>
+        </div>
+        <div class="lbl">Horizontal lockup</div>
+      </div>
+    </div>
+
+    <div class="ladder">
+      <div class="unit"><div class="tile s96"><div class="mark" data-icarus></div></div><span class="cap">96</span></div>
+      <div class="unit"><div class="tile s56"><div class="mark" data-icarus></div></div><span class="cap">56</span></div>
+      <div class="unit"><div class="tile s36"><div class="mark" data-icarus></div></div><span class="cap">36</span></div>
+      <div class="unit"><div class="tile s24"><div class="mark" data-icarus></div></div><span class="cap">24 · favicon</span></div>
+    </div>
+
+    <p class="doctrine">
+      A <code>7×6</code> dot matrix: seven wing dots describe the ascending <b>V</b>, one oversized dot
+      (<code>scale 1.45</code>, <code>--warning</code> amber) is the sun it climbs toward, and the unlit grid is held
+      at <code>0.06</code>-alpha so the mark reads as a dot-matrix display, not a drawing. The tile is
+      <b>panel-tier Liquid Glass</b>: translucent fill, <code>blur(12px) saturate(160%)</code>, the specular
+      rim, a soft float shadow — whatever sits behind shows through it. Two inks only: white wings,
+      amber sun; monochrome when the context wants total restraint. The mark holds to a 24px favicon;
+      below that, drop the grid and keep the sun and wing-tips.
+    </p>
+  </div>
+
+  <script>
+    // 7×6 dot matrix — 0 off, 1 wing, 2 sun.
+    var ICARUS = [
+      [0,0,0,2,0,0,0],
+      [0,0,0,0,0,0,0],
+      [1,0,0,0,0,0,1],
+      [0,1,0,0,0,1,0],
+      [0,0,1,0,1,0,0],
+      [0,0,0,1,0,0,0]
+    ];
+    document.querySelectorAll('.mark[data-icarus]').forEach(function (m) {
+      var frag = document.createDocumentFragment();
+      ICARUS.forEach(function (row) {
+        row.forEach(function (v) {
+          var d = document.createElement('span');
+          d.className = v === 2 ? 'd lit sun' : (v === 1 ? 'd lit' : 'd');
+          frag.appendChild(d);
+        });
+      });
+      m.appendChild(frag);
+    });
+  </script>
+</body>
+</html>

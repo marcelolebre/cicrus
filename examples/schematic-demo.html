@@ -1,3 +1,4 @@
+<!-- @dsCard group="Brand" name="Schematics" subtitle="Node-and-wire diagram language" viewport="1100x760" -->
 <!doctype html>
 <html lang="en" class="dark">
 <head>
@@ -8,9 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link href="../src/cicrus.css" rel="stylesheet">
 <style>
-  /* Schematic-specific tokens — add to cicrus.css if reused */
-  :root      { --trace: rgba(255,255,255,0.32); --trace-faint: rgba(255,255,255,0.08); }
-  html.light { --trace: rgba(0,0,0,0.40);       --trace-faint: rgba(0,0,0,0.08); }
+  /* Schematic-specific tokens, local to this demo —
+     aliased to shipped Cicrus tokens where one exists. */
+  body {
+    --trace: rgba(255,255,255,0.32);
+    --trace-faint: rgba(255,255,255,0.08);
+    --bg-base: var(--black);
+    --border-strong: var(--border-visible);
+    --rule: var(--border);
+    --body: var(--font-body);
+    --label: var(--font-mono);
+  }
+  body.light {
+    --trace: rgba(0,0,0,0.40);
+    --trace-faint: rgba(0,0,0,0.08);
+  }
 
   body { background: var(--bg-base); margin: 0; font-family: var(--body); }
   .frame { max-width: 920px; margin: 0 auto; padding: 40px 32px; }

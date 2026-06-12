@@ -1,8 +1,8 @@
 # Cicrus
 
 A monochromatic, typography-first design system for operator consoles, dashboards, and
-internal tools — *not* marketing pages. Dark and light modes are both first-class. Plain
-CSS + design tokens: no build step, no framework.
+internal tools — *not* marketing pages. Three first-class modes: dark, light, and
+liquid glass. Plain CSS + design tokens: no build step, no framework.
 
 > Subtract, don't add. Structure is ornament. Color is an event.
 
@@ -27,7 +27,7 @@ load time. To ship a single file, run `npm run build` → `cicrus.bundle.css`.
 ```html
 <link rel="stylesheet" href="src/cicrus.css">
 
-<body><!-- dark by default; add class="light" for light mode -->
+<body><!-- dark by default; class="light" / class="liquid" for the other modes -->
   <main class="c-view">
     <header class="c-view-header">
       <h1 class="c-view-title">Dashboard</h1>
@@ -57,10 +57,13 @@ cicrus/
 ├── AGENTS.md             ← entry point for AI agents
 ├── src/                  ← the library (import this)
 │   ├── cicrus.css          single-import barrel (ITCSS)
-│   ├── tokens.css          design tokens — dark + light
+│   ├── tokens.css          design tokens — dark / light / liquid
 │   ├── base.css            reset + element defaults
 │   ├── components.css      .c-* UI components
+│   ├── dataviz.css         .c-* Tufte data graphics
+│   ├── motion.css          .c-* subtle, compositor-only animation
 │   ├── content.css         .doc-* long-form content
+│   ├── liquid.css          liquid-glass mode (body.liquid)
 │   ├── utilities.css       single-purpose helpers
 │   └── glyphs.js           optional animated state glyphs
 ├── tokens.json           ← machine-readable tokens (W3C DTCG)
@@ -71,13 +74,16 @@ cicrus/
 │   ├── components.md       every class, matched to the CSS
 │   ├── patterns.md         screen-level compositions
 │   ├── integration.md      wiring it into your stack
-│   ├── glyphs.md  data-graphics.md  schematics.md  platform-mapping.md
+│   ├── data-graphics.md    Tufte data-viz principles + components
+│   ├── motion.md           how Cicrus moves (and when it doesn't)
+│   ├── glyphs.md  schematics.md  platform-mapping.md
 └── examples/             ← see it run
     ├── component-index.html      catalog of everything
     ├── starter.html              copy-pasteable single file
     ├── dashboard.html  article.html  chat.html  operator-console.html
+    ├── glyphs-demo.html  schematic-demo.html
     └── previews/                 one file per component
-        ├── ui/  content/  cards/
+        ├── ui/  content/  cards/  dataviz/  motion/  modes/
 ```
 
 ## Principles
@@ -88,8 +94,8 @@ cicrus/
    for hero moments only.
 3. **Monochrome is the canvas** — color encodes status, never decoration. Red is an
    interrupt, not a palette.
-4. **Both modes first-class** — dark = OLED panel, light = printed manual. Neither
-   derived from the other.
+4. **Modes are first-class** — dark = OLED panel, light = printed manual, liquid =
+   milky glass frosting whatever sits behind it. None derived from another.
 5. **Labels are instrument labels** — Space Mono, ALL CAPS, ~11px, 0.08em tracking.
 6. **Accessibility is craft** — every text color clears WCAG AA on its background.
 

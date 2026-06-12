@@ -1,4 +1,4 @@
-<!-- @dsCard group="Brand" name="State glyphs" subtitle="Animated thinking-object states" viewport="900x520" -->
+<!-- @dsCard group="Brand" name="State glyphs" subtitle="The Icarus mark as a status light" viewport="900x520" -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -33,8 +33,9 @@
     }
     .glyph-card .name { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-display); }
     .glyph-card .desc { font-family: var(--font-body); font-size: 13px; font-weight: 300; color: var(--text-secondary); text-align: center; line-height: 1.55; }
-    .glyph-card.error { color: #ff5c5c; }
-    .glyph-card.error .name { color: #ff5c5c; }
+    /* Red is scoped to the label only — the glyph's wings follow the
+       page colour; only the sun carries the broken signal. */
+    .glyph-card.error .name { color: var(--accent); }
 
     .doctrine {
       background: var(--surface);
@@ -54,40 +55,40 @@
 <body>
   <div class="head">
     <div class="ttl">State glyphs</div>
-    <div class="sub">96×96 PIXEL GRID · ONE THINKING-OBJECT · THREE STATES</div>
+    <div class="sub">THE ICARUS MARK · THE SUN CARRIES THE STATE</div>
   </div>
 
   <div class="row">
     <div class="glyph-card">
-      <div class="stage" id="g-idle"></div>
-      <div class="name">IDLE</div>
-      <div class="desc">Wobbling putty blob. Healthy, dormant. Soap bubble in wind — never quite a sphere.</div>
+      <div class="stage" id="g-running"></div>
+      <div class="name">RUNNING</div>
+      <div class="desc">The sun breathes green and drifts gently up and down. Alive, working, in flight.</div>
     </div>
     <div class="glyph-card">
-      <div class="stage" id="g-thinking"></div>
-      <div class="name">THINKING</div>
-      <div class="desc">Siri-style swirl with heartbeat ring. Active, generating, processing.</div>
+      <div class="stage" id="g-stopped"></div>
+      <div class="name">STOPPED</div>
+      <div class="desc">Sun white, perfectly still. Healthy, at rest — nothing in flight.</div>
     </div>
     <div class="glyph-card error">
-      <div class="stage" id="g-error"></div>
-      <div class="name">ERROR</div>
-      <div class="desc">The thinking sphere, broken. Servos failing, ring shattered. Warning red.</div>
+      <div class="stage" id="g-broken"></div>
+      <div class="name">BROKEN</div>
+      <div class="desc">Alarm red, still. The climb has failed — pair with an alert that says why.</div>
     </div>
   </div>
 
   <div class="doctrine">
-    <strong>One per screen.</strong> The glyph is the §2.6 “moment of surprise” — having two of the same kind on one view flattens the effect. Pick the smallest size that reads: <code>32–48px</code> as a status header replacement, <code>120–180px</code> as a stat-card hero, <code>200px</code> as a dashboard tile, <code>240–288px</code> as a loading takeover. Idle and thinking inherit the canvas’s computed <code>color</code>; error stays warning-red on every surface.
+    <strong>One per thinking object.</strong> The glyph is the app mark doubling as a status light — the wings follow the page colour, only the <strong>sun</strong> changes. Pick the smallest size that reads: <code>32–48px</code> as a status header replacement, <code>120–180px</code> as a stat-card hero, <code>200px</code> as a dashboard tile. Running animates on transform/opacity only and honours <code>prefers-reduced-motion</code>; stopped and broken are static by design — a state change is an instant cut, never an ease. Broken reads in the mode's alarm red (<code>--accent</code>) on every surface.
   </div>
 
   <script type="module">
     import { mountGlyph } from '../../../src/glyphs.js';
     const mounts = [
-      [document.getElementById('g-idle'),     'idle'],
-      [document.getElementById('g-thinking'), 'thinking'],
-      [document.getElementById('g-error'),    'error'],
+      [document.getElementById('g-running'), 'running'],
+      [document.getElementById('g-stopped'), 'stopped'],
+      [document.getElementById('g-broken'),  'broken'],
     ];
     for (const [el, state] of mounts) {
-      mountGlyph(el, { state, size: 200 });
+      mountGlyph(el, { state, size: 180 });
     }
   </script>
 </body>

@@ -1,8 +1,10 @@
 # Data Graphics — Tufte applied to Cicrus
 
-*Adopted: 2026-05-23. Derived from Edward Tufte, *The Visual Display of Quantitative Information* (1983). The book is canonical; this document is its translation into Cicrus tokens, components, and code.*
+*Derived from Edward Tufte: *The Visual Display of Quantitative Information* (1983), *Envisioning Information* (1990), *Visual Explanations* (1997), and *Beautiful Evidence* (2006). The books are canonical; this document is their translation into Cicrus tokens, components, and code.*
 
 Cicrus is already deeply Tufte-aligned: monochrome canvas, typography-first, "subtract don't add," structure as ornament. That alignment is not an accident — it's the same lineage. What was missing was an explicit data-graphics reference. This is it.
+
+> **Shipped components.** The graphic types in §4 are real, plug-and-play classes in [`../src/dataviz.css`](../src/dataviz.css) (all `.c-*`): `.c-spark` (sparkline), `.c-sparkbar`, `.c-bars` (data bars), `.c-dotplot`, `.c-rangebar`, `.c-multiples` (small multiples), `.c-gauge`, `.c-delta`, `.c-metrics` (metric table). Per-instance values pass as unitless 0–100 custom properties via inline `style` (`--v`, `--lo`/`--hi`, `--ref`; the range bar's mid dot is opt-in via `.c-range--mid` + `--mid` — never defaulted, a fabricated median is a lie). Threshold/reference rules: `.c-bar--ref` (data bars) and `.c-dot--ref` (dot plots) draw a dashed rule at `--ref` — pair them with any threshold color so the state survives color-blindness; flagged sparkbar columns widen for the same reason. Catalogued in [`./components.md`](./components.md); live preview in [`../examples/previews/dataviz/`](../examples/previews/dataviz/).
 
 > **Where this applies.** Any quantitative display: sparklines, dashboards, time series, tables of numbers, scatter plots, range bars, small multiples. Operator-console screens are 80% quantitative — read this before drawing anything with axes.
 
@@ -22,7 +24,7 @@ Score every graphic by this ratio. If you can erase a pixel without losing infor
 
 ### 1.3 Erase non-data ink
 - **No frames.** A graphic does not need a box around it. The data IS the boundary.
-- **No filled grids.** A faint dot grid (per `--dot-grid-bg`) may help reading, but a heavy ruled grid competes with the data and is forbidden.
+- **No filled grids.** A faint dot grid (the `.dot-grid-bg` utility) may help reading, but a heavy ruled grid competes with the data and is forbidden.
 - **No background tint.** Plot area background = page background. Always.
 - **No tick marks pointing inward AND outward.** One direction only, outward, only at labeled values.
 - **No redundant axis lines.** If gridlines exist, axis lines repeat them.
@@ -89,25 +91,21 @@ A word-sized line chart — about the height of a line of body text. Tufte's mos
 - Min/max may be dot-marked with `--accent` and `--success` if the *direction* is meaningful.
 - Aspect ratio: roughly **4:1 to 5:1**. Height ≈ `1em` (~16px). Width = whatever fits.
 
-**Implementation:** inline `<svg>` with one `<polyline>`. No `<g>`, no `<defs>`.
+**Implementation:** the `.c-spark` class wraps an inline `<svg>` with one `<polyline>`. No `<g>`, no `<defs>`. Mark the latest value with a `<circle>`; flag a max/min with `.c-spark-hi` / `.c-spark-lo`. Pair with its current number using `.c-spark-pair` + `.c-spark-now`.
 
 ```html
-<svg class="cic-sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"
-     width="100" height="24" aria-label="Trend: 12 → 18 over 30 days">
-  <polyline points="0,18 6,16 12,15 ..." fill="none"
-            stroke="currentColor" stroke-width="1" />
-  <!-- Optional end-dot at the latest value -->
-  <circle cx="100" cy="6" r="1.6" fill="currentColor" />
-</svg>
-```
+<span class="c-spark">
+  <svg viewBox="0 0 100 24" preserveAspectRatio="none"
+       aria-label="Trend: 12 → 18 over 30 days">
+    <polyline points="0,18 6,16 12,15 ..." />
+    <circle cx="100" cy="6" r="1.6" /><!-- latest value -->
+  </svg>
+</span>
 
-```css
-.cic-sparkline {
-  display: inline-block;
-  vertical-align: middle;
-  color: var(--text-primary);
-  overflow: visible; /* let the end-dot extend past the box */
-}
+<!-- inline with its number: 120 ▁▂▃▅▇ 132 -->
+<span class="c-spark-pair">
+  <span>120</span><span class="c-spark"><svg …>…</svg></span><span class="c-spark-now">132</span>
+</span>
 ```
 
 ### 4.2 Sparkbar
@@ -121,9 +119,9 @@ The bar-chart sibling of a sparkline. Tiny vertical bars at body-text height. Fo
 A single dot per value on a horizontal scale. Tufte's recommended replacement for stubby bar charts when the categorical axis has many entries. Reads faster than bars because the eye locks on the dot, not the bar mass.
 
 **Discipline:**
-- Dot diameter 6–8px, fill `--text-primary`.
-- Category labels on the left, Space Mono 12px right-aligned.
-- A single dotted x-axis at the bottom OR a faint vertical reference rule at a meaningful value (target, median, zero) — never both.
+- Dot diameter 8px, fill `--text-display`.
+- Category labels on the left, Space Mono at `--body-sm`.
+- Each track carries a single faint baseline; add `.c-dot--ref` for a dashed vertical reference rule at a meaningful value (target, median, zero). The reference rule doubles as the color-blind-safe cue for threshold states — a flagged dot visibly sits past it.
 - Sort by value, not alphabetically, unless category order has external meaning.
 
 ### 4.4 Range bar (range-frame)
@@ -142,7 +140,7 @@ A grid of small, identically-formatted charts — same axes, same scale, same en
 **Discipline:**
 - **Identical scales** across all panels. Never let a panel re-scale to its own data — comparison is destroyed.
 - 3–8 columns. Below 3, use one larger chart. Above 8, consider whether 50 small panels read at all.
-- Panel header: Space Mono 11px ALL CAPS, the differing dimension only (year, region, team).
+- Panel header: Space Mono at `--label-xs` ALL CAPS, the differing dimension only (year, region, team).
 - No axes in inner panels; one axis on the leftmost and one on the bottom panel ("L-frame").
 - Panel gap: `--space-md` (16px). No panel borders.
 
@@ -176,8 +174,8 @@ A table where the numbers themselves are the visualization. Right-aligned, tabul
 The ONE acceptable circular chart. A single arc encoding one ratio (utilization, capacity, completion). Center holds the value as a Doto/Space Mono numeral.
 
 **Discipline:**
-- Arc thickness 4px. Track color `--border`. Fill `--text-display`, or status colour when threshold-crossing.
-- Center number: hero size. Unit (`%`, `GB/s`) at `--label` size, baseline-aligned to the bottom of the numeral.
+- Arc thickness 5px. Track color `--border`. Fill `--text-display`, or status colour when threshold-crossing (pair it with the numeral — the number, not the hue, is the record).
+- Center number: hero size. Unit (`%`, `GB/s`) at `--label-xs`, stacked beneath the numeral.
 - No second arc. No nested gauges. If two ratios matter, use two gauges side by side, or a range bar.
 
 ---
@@ -203,7 +201,7 @@ Most common sources of lie:
 Tufte: aim for **high data density** — many numbers per unit of screen real estate, made legible by good design.
 
 Cicrus targets:
-- A dashboard tile: 1–5 key numbers, each readable at a glance, plus a sparkline of recent history. Density = ~20 numbers + 30 data points across a single `tb-card`.
+- A dashboard tile: 1–5 key numbers, each readable at a glance, plus a sparkline of recent history. Density = ~20 numbers + 30 data points across a single `.c-card`. The `.c-metrics` table (name · sparkline · now · delta) is the canonical dense tile.
 - A small-multiples grid: 6–16 panels each with 30–100 points = 200–1600 data points on screen, all readable.
 - A timeline or log: 30–60 rows visible, each row a small structured packet. Don't waste vertical space on row padding > 12px.
 
@@ -250,7 +248,64 @@ Tufte: *"Words and labels and pictures of words can fully utilize the powerful a
 
 ---
 
-## 10. CHECKLIST (USE BEFORE SHIPPING ANY CHART)
+## 10. THE SIX PRINCIPLES OF ANALYTICAL DESIGN
+
+From *Beautiful Evidence* — Tufte's most actionable framework, and it applies to any analytical display, not just charts. Walk all six in a critique; the lowest-scoring one is the biggest improvement opportunity.
+
+1. **Show comparisons.** Every display answers “compared to what?” — a baseline, a target, a prior period, a peer. A number alone is not analysis. In Cicrus: pair every hero stat with a `.c-delta`, a `.c-spark`, or a reference rule.
+2. **Show causality, mechanism, structure.** Move past description to the *why*. Annotate the mechanism on the data (see §14); pair a chart with the process diagram (`./schematics.md`) that explains it.
+3. **Show multivariate data.** Real problems have more than one or two variables. Reducing to a single number hides interactions — prefer small multiples (`.c-multiples`) and dot plots that hold several dimensions at once.
+4. **Integrate words, numbers, images, diagrams.** Don’t segregate by mode. Labels sit next to the data they describe (§9); units, sources, and annotations are part of the graphic, not a separate legend.
+5. **Thoroughly describe the evidence.** Provenance, scales, sources, timestamps, authorship. Documentation is what earns trust. A `.c-view-meta` code string, a caption, a footnote — always say where the numbers came from.
+6. **Content is paramount.** No amount of design rescues weak evidence. Quality, relevance, and integrity of the content decide whether the display stands. Design serves the data, never the reverse.
+
+---
+
+## 11. LAYERING & SEPARATION (1+1=3)
+
+From *Envisioning Information*. Visually distinct elements can share the same space if they are *layered* — separated by value, weight, or transparency rather than by spatial isolation. Cicrus does this with opacity and stroke weight, not hue (see §7 for the layer table).
+
+- **The 1+1=3 effect.** Two heavy lines next to each other create a phantom third line in the gap. Lighten one (drop to `--text-disabled`) to suppress the vibration. Any time two strong strokes sit adjacent — borders, bars, rules — watch for the ghost.
+- **Whisper, don’t shout.** Grids, axes, and reference lines recede to `--border` at low opacity; the data stays at `--text-display`.
+- **The squint test.** Squint at the graphic. The most important data should remain visible; chartjunk should disappear first. If a gridline survives the squint and the data doesn’t, the weights are inverted.
+
+---
+
+## 12. MICRO / MACRO READINGS
+
+From *Envisioning Information*. A strong display tells **different stories at different viewing distances** — not a choice between overview and detail, but both at once.
+
+- **Macro** (zoomed out, peripheral): overall pattern, shape, trend. Which rows are rising? Where is the cluster?
+- **Micro** (close inspection): the individual value, label, exception. The exact number; the one outlier.
+
+Canonical examples: a financial table with sparklines (macro = which rows trend up; micro = the actual values); the Vietnam Memorial (macro = the sweep of names; micro = one name). In Cicrus, the `.c-metrics` table is the everyday micro/macro object: scan the sparkline column for shape, read the `now` column for value. **Don’t choose between overview and detail — layer both.**
+
+---
+
+## 13. CONFECTIONS, PARALLELISM, NARRATIVE
+
+From *Visual Explanations*.
+
+- **Confections** — assemblages of disparate elements (data, map, text, diagram) into one explanatory composition. They work when *every* element serves the argument (Minard’s Napoleon march; Snow’s cholera map). On an operator console: a failure post-mortem that places the timeline, the metric that spiked, and the topology diagram in one frame.
+- **Parallelism** — repeating visual structure to enable comparison. Small multiples are one form; it also means side-by-side before/after states and a consistent annotation style across panels. Identical structure is what lets the eye compare.
+- **Narrative of space and time** — combine spatial and temporal dimensions in one frame (Minard encodes troop size, geography, direction, temperature, and time together). When a story is “what moved, where, and when,” resist splitting it across screens.
+
+---
+
+## 14. CAUSE AND EFFECT
+
+From *Visual Explanations*. Causality is hard to show because it requires both the variables **and** the mechanism linking them.
+
+- Show the intervention and the response **in the same frame**.
+- Annotate the causal mechanism directly on the data — typeset, in place, not in a separate caption.
+- Use sequence (small multiples through time) to imply mechanism.
+- Pair the data display with a process diagram of the proposed cause.
+
+**Worked example:** the Challenger O-ring decision. Plotted against temperature, the data showed catastrophic risk — but it was presented in a way that hid the causal relationship. The redesign makes the causality unavoidable. On a console, this is the difference between “latency spiked at 14:02” and a frame that shows the deploy marker, the latency line, and the rollback on one timeline.
+
+---
+
+## 15. CHECKLIST (USE BEFORE SHIPPING ANY CHART)
 
 - [ ] Could the data be conveyed by a small, well-typeset table? If yes, prefer the table.
 - [ ] Is there a frame around the plot area? Remove it.
@@ -264,9 +319,19 @@ Tufte: *"Words and labels and pictures of words can fully utilize the powerful a
 - [ ] Does the chart **read** without its title? (It should — title is a caption, not a crutch.)
 - [ ] In dark mode AND light mode — both rendered correctly?
 
+**Extended test** (analytical design, §10–14):
+
+- [ ] **Comparison:** does it answer “compared to what?” (baseline, target, prior, peer)
+- [ ] **Causality:** is the mechanism visible, not just the pattern?
+- [ ] **Multivariate:** are interactions shown, or has the problem been over-reduced to one number?
+- [ ] **Integration:** are words, numbers, and images interleaved — not segregated into a legend?
+- [ ] **Documentation:** can a stranger evaluate the evidence (sources, scales, timestamps)?
+- [ ] **Layering:** does the primary data dominate and secondary recede? (squint test)
+- [ ] **Micro/macro:** does it reward both a glance and a close read?
+
 ---
 
-## 11. WHEN NOT TO MAKE A CHART
+## 16. WHEN NOT TO MAKE A CHART
 
 Some data is better as text. Use prose or a labeled table when:
 
@@ -279,7 +344,7 @@ A chart is for *pattern, trend, comparison, distribution, anomaly.* Anything els
 
 ---
 
-## 12. FURTHER READING
+## 17. FURTHER READING
 
 - Tufte, *The Visual Display of Quantitative Information* (1983) — the source.
 - Tufte, *Envisioning Information* (1990) — layering, color, micro/macro readings.

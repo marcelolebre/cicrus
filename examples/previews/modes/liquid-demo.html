@@ -1,0 +1,74 @@
+<!-- @dsCard group="Colors" name="Liquid mode" subtitle="Liquid Glass — translucent, reveals content · body.liquid" viewport="1100x860" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Liquid mode — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 56px; }
+    /* Real content behind the glass — the point of the mode is that
+       it reveals this, not a wallpaper. The panes overlap it. */
+    .behind { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .behind .big { position: absolute; top: 8%; left: -2%; font-family: var(--font-display); font-size: 240px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-display); opacity: 0.11; line-height: 1; }
+    .behind .stream { position: absolute; bottom: 6%; right: 3%; font-family: var(--font-mono); font-size: 13px; line-height: 2; color: var(--interactive); opacity: 0.30; text-align: right; }
+    .frame { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; display: grid; gap: 20px; }
+    .glass-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+    .glass-head .ttl { font-family: var(--font-display); font-size: 30px; letter-spacing: -0.02em; color: var(--text-display); }
+    .glass-head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+    .term { font-family: var(--font-mono); font-size: 13px; line-height: 1.8; padding: var(--space-lg); border-radius: var(--radius-card); border: 1px solid var(--border); }
+    .term .ok { color: var(--success); }
+    .term .lnk { color: var(--interactive); }
+    .term .dim { color: var(--text-disabled); font-style: italic; }
+    .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .meta { display: flex; gap: 8px; align-items: center; margin-top: var(--space-sm); }
+    .stip { height: 56px; border-radius: var(--radius-card); border: 1px solid var(--border); }
+  </style>
+</head>
+<body class="liquid">
+  <div class="behind" aria-hidden="true">
+    <div class="big">cicrus</div>
+    <div class="stream">ingest&nbsp;312ms<br>export&nbsp;128ms<br>queue&nbsp;47<br>p99&nbsp;ok<br>watch&nbsp;--stream</div>
+  </div>
+  <div class="frame">
+    <div class="glass-head">
+      <div class="ttl">Liquid</div>
+      <div class="sub">body.liquid · translucent glass · content shows through</div>
+    </div>
+
+    <div class="c-card term">
+      <div><span class="ok">cicrus@console</span>:<span class="lnk">~/ops</span>$ status --all</div>
+      <div>checking 4 services <span class="ok">··· ok</span></div>
+      <div>ingest&nbsp;&nbsp;&nbsp;<span class="ok">UP</span>&nbsp;&nbsp;&nbsp;312ms&nbsp;&nbsp;&nbsp;<span class="dim"># p99, trailing 1h</span></div>
+      <div>export&nbsp;&nbsp;&nbsp;<span class="ok">UP</span>&nbsp;&nbsp;&nbsp;128ms</div>
+      <div><span class="dim">hint: pass --watch to stream</span><span class="c-caret"></span></div>
+    </div>
+
+    <div class="row">
+      <div class="c-card">
+        <div class="t-label-xs">Throughput</div>
+        <div class="t-display-md" style="font-variant-numeric: tabular-nums;">1,284</div>
+        <div class="meta"><span class="c-dot c-dot-up"></span><span class="t-label-xs">Healthy</span></div>
+      </div>
+      <div class="c-card">
+        <div class="t-label-xs">Queue depth</div>
+        <div class="t-display-md" style="font-variant-numeric: tabular-nums;">47</div>
+        <div class="meta"><span class="c-dot c-dot-warn"></span><span class="t-label-xs">Degraded</span></div>
+      </div>
+      <div class="c-card">
+        <div class="t-label-xs">Glass tokens</div>
+        <div class="t-body-sm" style="margin-top: 6px;">Translucent surfaces reveal the content behind; text paints at full opacity on top.</div>
+        <div class="c-alert" style="margin-top: 10px;">[INFO] CONTENT SHOWS THROUGH</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="c-btn c-btn--primary">Run export</button>
+      <button class="c-btn c-btn--secondary">Inspect</button>
+      <button class="c-btn c-btn--ghost">Dismiss</button>
+    </div>
+
+    <div class="stip dot-grid-strong"></div>
+  </div>
+</body>
+</html>

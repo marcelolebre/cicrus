@@ -1,0 +1,281 @@
+/* ============================================================
+   Cicrus · dataviz.css  (ITCSS layer 3c — data graphics)
+   Tufte-aligned quantitative display components, all .c-*.
+   Depends on tokens.css + base.css. Reference: docs/data-graphics.md.
+   ------------------------------------------------------------
+   Discipline baked in: no frames, no filled gridlines, no 3D,
+   no decorative color. Color (success/warning/accent) is a SIGNAL
+   only — threshold crossings, deltas worth flagging. Everything
+   else is the monochrome text scale at graded opacity/weight.
+
+   Per-instance values are passed as UNITLESS 0–100 custom props
+   via inline style, e.g. style="--v: 72". They are runtime data,
+   not theme tokens.
+   ============================================================ */
+
+/* ── Sparkline ───────────────────────────────────────────────
+   Word-sized line chart. Wrap an inline <svg><polyline></svg>.
+   Height ≈ 1em; let the end-dot overflow the box. */
+.c-spark {
+  display: inline-block;
+  vertical-align: middle;
+  width: 96px;
+  height: 22px;
+  color: var(--text-primary);
+  overflow: visible;
+}
+.c-spark svg,
+.c-spark polyline { overflow: visible; }
+.c-spark polyline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+/* Endpoint marker — the latest value */
+.c-spark circle { fill: currentColor; }
+.c-spark .c-spark-hi   { fill: var(--success); }
+.c-spark .c-spark-lo   { fill: var(--accent); }
+
+/* A sparkline paired with its current number + label, inline. */
+.c-spark-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--body-sm);
+  color: var(--text-display);
+  font-variant-numeric: tabular-nums;
+}
+.c-spark-pair .c-spark-now { font-weight: 700; }
+
+/* ── Sparkbar ────────────────────────────────────────────────
+   Tiny inline bar chart. Each column height = --v (0–100). */
+.c-sparkbar {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 22px;
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+.c-sparkbar i {
+  display: block;
+  width: 3px;
+  height: calc(var(--v, 0) * 1%);
+  background: currentColor;
+}
+/* Flagged columns carry a redundant non-color cue (wider column)
+   so threshold states survive color-blindness — WCAG 1.4.1.
+   BEM form (--) is canonical; single-dash aliases are DEPRECATED. */
+.c-sparkbar i.c-bar--hi,    .c-sparkbar i.c-bar-hi    { background: var(--success); width: 5px; }
+.c-sparkbar i.c-bar--warn,  .c-sparkbar i.c-bar-warn  { background: var(--warning); width: 5px; }
+.c-sparkbar i.c-bar--alarm, .c-sparkbar i.c-bar-alarm { background: var(--accent);  width: 5px; }
+
+/* ── Data bars (horizontal) ──────────────────────────────────
+   Labeled bars. Grid: label | track | value. Bars start at 0
+   (no truncation → lie factor 1.0). Width = --v (0–100). */
+.c-bars {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--body-sm);
+}
+.c-bar-label {
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.c-bar-track { position: relative; height: 10px; }
+.c-bar-fill {
+  position: absolute; inset: 0 auto 0 0;
+  width: calc(var(--v, 0) * 1%);
+  background: var(--text-display);
+}
+.c-bar-fill.c-bar--ctx    { background: var(--text-disabled); }   /* comparison series */
+.c-bar-fill.c-bar--over   { background: var(--accent); }          /* threshold crossed */
+.c-bar-fill.c-bar--ok     { background: var(--success); }
+.c-bar-fill.c-bar--warn   { background: var(--warning); }
+.c-bar-value {
+  color: var(--text-display);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+/* Reference rule (target / threshold) on a track: a dashed vertical
+   line at --ref (0–100). Position is the redundant, color-blind-safe
+   cue for threshold states — a flagged bar visibly crosses the rule. */
+.c-bar-track.c-bar--ref::after {
+  content: ''; position: absolute; top: -2px; bottom: -2px;
+  left: calc(var(--ref, 50) * 1%);
+  border-left: 1px dashed var(--border-visible);
+}
+
+/* ── Dot plot ────────────────────────────────────────────────
+   Tufte's replacement for stubby bars. One dot per value on a
+   shared scale. Position = --v (0–100). Sort by value. */
+.c-dotplot {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--body-sm);
+}
+.c-dotplot-label { color: var(--text-secondary); white-space: nowrap; }
+.c-dotplot-track {
+  position: relative; height: 14px;
+  /* a single faint baseline — not a filled grid */
+  background: linear-gradient(var(--border), var(--border)) 0 50% / 100% 1px no-repeat;
+}
+.c-dotplot-track::after {
+  content: ''; position: absolute; top: 50%;
+  left: calc(var(--v, 0) * 1%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-display);
+  transform: translate(-50%, -50%);
+}
+.c-dotplot-track.c-dot--over::after  { background: var(--accent); }
+.c-dotplot-track.c-dot--ok::after    { background: var(--success); }
+.c-dotplot-track.c-dot--ctx::after   { background: var(--text-disabled); }
+/* Reference rule at a meaningful value (target/median/zero). */
+.c-dotplot-track.c-dot--ref::before {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  left: calc(var(--ref, 50) * 1%);
+  border-left: 1px dashed var(--border-visible);
+}
+.c-dotplot-value {
+  color: var(--text-display); text-align: right;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ── Range bar ───────────────────────────────────────────────
+   min ── (median dot) ── max. One channel, three values.
+   --lo / --hi span the track (0–100); --mid is the center dot. */
+.c-rangebar {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--body-sm);
+}
+.c-rangebar-label { color: var(--text-secondary); white-space: nowrap; }
+.c-rangebar-track { position: relative; height: 12px; }
+.c-rangebar-track::before {
+  content: ''; position: absolute; top: 50%;
+  left: calc(var(--lo, 0) * 1%);
+  width: calc((var(--hi, 100) - var(--lo, 0)) * 1%);
+  height: 3px; transform: translateY(-50%);
+  background: var(--text-secondary);
+}
+/* Median/mid dot is opt-in (.c-range--mid + --mid) — a default
+   would fabricate a data point that was never supplied. */
+.c-rangebar-track.c-range--mid::after {
+  content: ''; position: absolute; top: 50%;
+  left: calc(var(--mid, 50) * 1%);
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text-display);
+  transform: translate(-50%, -50%);
+}
+.c-rangebar-value {
+  color: var(--text-display); text-align: right;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ── Small multiples ─────────────────────────────────────────
+   Grid of identically-scaled mini-panels. No panel borders.
+   Comparison through space, not animation. */
+.c-multiples {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  gap: var(--space-md);
+}
+.c-multiple { display: flex; flex-direction: column; gap: var(--space-xs); }
+.c-multiple-label {
+  font-family: var(--font-mono); font-size: var(--label-xs);
+  letter-spacing: var(--ls-wide); text-transform: uppercase;
+  color: var(--text-disabled);
+}
+.c-multiple-value {
+  font-family: var(--font-mono); font-size: var(--body-sm);
+  color: var(--text-display); font-variant-numeric: tabular-nums;
+}
+.c-multiple .c-spark,
+.c-multiple .c-sparkbar { width: 100%; }
+.c-multiple .c-spark svg { width: 100%; height: 100%; }
+
+/* ── Gauge (single arc) ──────────────────────────────────────
+   The ONE acceptable circular chart: one ratio, one channel.
+   --v = 0–100. Pure CSS conic ring; center holds the numeral. */
+.c-gauge {
+  --v: 0; /* @kind other */
+  position: relative;
+  width: 96px; aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(var(--text-display) calc(var(--v) * 1%), var(--border) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+}
+.c-gauge.c-gauge--ok    { background: conic-gradient(var(--success) calc(var(--v) * 1%), var(--border) 0); }
+.c-gauge.c-gauge--warn  { background: conic-gradient(var(--warning) calc(var(--v) * 1%), var(--border) 0); }
+.c-gauge.c-gauge--alarm { background: conic-gradient(var(--accent)  calc(var(--v) * 1%), var(--border) 0); }
+.c-gauge-wrap {
+  position: relative; display: inline-grid; place-items: center;
+}
+.c-gauge-center {
+  position: absolute; inset: 0;
+  display: grid; place-items: center; text-align: center;
+}
+.c-gauge-num {
+  font-family: var(--font-display); font-size: var(--heading);
+  color: var(--text-display); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.c-gauge-unit {
+  font-family: var(--font-mono); font-size: var(--label-xs);
+  color: var(--text-disabled); letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+/* ── Delta indicator ─────────────────────────────────────────
+   Direction + magnitude of change. Glyph carries direction;
+   color carries good/bad (caller decides which way is good). */
+.c-delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: var(--font-mono); font-size: var(--caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-disabled);
+}
+.c-delta::before { content: '→'; font-size: 0.9em; }
+.c-delta.c-delta--up::before   { content: '↑'; }
+.c-delta.c-delta--down::before { content: '↓'; }
+.c-delta.c-delta--good { color: var(--success); }
+.c-delta.c-delta--bad  { color: var(--accent); }
+.c-delta.c-delta--warn { color: var(--warning); }
+
+/* ── Metric table ────────────────────────────────────────────
+   The dashboard small-multiple: name | sparkline | now | delta.
+   Builds on the table grid; scans vertically. */
+.c-metrics {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 0 var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: var(--body-sm);
+}
+.c-metrics > * {
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+.c-metrics .c-metric-name { color: var(--text-secondary); letter-spacing: 0.02em; }
+.c-metrics .c-metric-now {
+  color: var(--text-display); text-align: right;
+  font-variant-numeric: tabular-nums; font-weight: 700;
+}
+.c-metrics .c-metric-spark { color: var(--text-primary); }

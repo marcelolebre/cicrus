@@ -15,43 +15,78 @@ into any stack that can serve a stylesheet.
 tokens.css      → design tokens (settings)        ← edit values here
 base.css        → reset + element defaults
 components.css  → .c-* UI components
+dataviz.css     → .c-* Tufte data graphics
+motion.css      → opt-in animation layer
 content.css     → .doc-* long-form content
+liquid.css      → liquid-glass mode (body.liquid)
 utilities.css   → single-purpose helpers
 ```
 
 Prefer to ship one file or skip a layer? Import the parts you want directly instead
-of the barrel — e.g. tokens + components only.
+of the barrel — e.g. tokens + components only (liquid.css must load after every
+layer it themes).
 
-For production, concatenate/minify the five files (any bundler, or `cat`). The
-`@import`s are authoring conveniences, not a runtime requirement.
+For production, concatenate/minify the eight files in barrel order (any bundler, or
+`npm run build`). The `@import`s are authoring conveniences, not a runtime
+requirement.
 
 ## 2. Pick a mode
 
-Dark is the default. Light is a parallel theme, not a derivation — add `class="light"`
-to `<body>`:
+Dark is the default. Two alternates, both first-class:
 
 ```html
-<body class="light"> … </body>
+<body> … </body>                <!-- dark (default) -->
+<body class="light"> … </body>  <!-- light -->
+<body class="liquid"> … </body> <!-- liquid glass -->
 ```
 
-To let users toggle and persist their choice without a flash on reload, set the class
-before first paint:
+**Light** is a parallel theme, not a derivation — a printed manual to dark's OLED panel.
+
+**Liquid** is a true *Liquid Glass* material (iOS 26 / macOS Tahoe reference): it has
+**no color of its own**. Panes are milky white films — `rgba(255,255,255,0.10–0.18)` —
+that frost whatever sits behind them, with a specular top edge and an edge ring; the
+backdrop supplies the color, the material supplies the frost, and `saturate(200%)`
+keeps that color glowing through instead of going gray. Two rendering contexts:
+**native** (`body.liquid.native`) — the window is transparent, OS vibrancy supplies a
+blurred desktop, the page paints only a faint veil (see `platform-mapping.md` §4) —
+and **browser** (default), where nothing exists behind a tab so the page keeps an
+opaque base + painted backdrop as a *fallback* (never animate it; animated color
+fields read as objects behind the glass, not as the glass). Floor discipline: the
+body is the floor — full-bleed wrappers must stay `background: transparent` in liquid
+or they occlude the glass; only true surfaces (inputs, chips, thumbnails) carry
+`--surface-raised` fills; modals are the exception and use heavy occluding glass
+(`--glass-heavy-fill` + blur). Token caveats: `--black` doubles as ink-on-light and
+must never go transparent — fix occlusions at the usage; surfaces reading
+`var(--surface)` go glass for free, hardcoded fills don't (always reference tokens).
+Liquid is the one mode that softens radius (16px cards / 12px technical); dark and
+light keep the 8px/4px console geometry. Browsers without `backdrop-filter` get
+near-opaque panes automatically. Blur applies to standalone surfaces only — never
+small atoms, and never a second pass on nested surfaces.
+
+To let users toggle and persist their choice without a flash on reload, apply the
+class before the first frame paints — an inline script immediately inside `<body>`
+runs before layout:
 
 ```html
-<head>
+<body>
   <script>
-    // run before CSS paints
-    if (localStorage.getItem('mode') === 'light') document.documentElement.dataset.mode = 'light';
+    // first thing inside <body> — runs before first paint
+    var m = localStorage.getItem('mode');           // 'light' | 'liquid' | null (dark)
+    if (m === 'light' || m === 'liquid') document.body.classList.add(m);
   </script>
-</head>
-<body class="{{ mode }}"> … </body>
-<script>
-  function setMode(m){ document.body.classList.toggle('light', m === 'light');
-    localStorage.setItem('mode', m); }
-</script>
+  …
+  <script>
+    function setMode(m) {                            // 'dark' | 'light' | 'liquid'
+      document.body.classList.remove('light', 'liquid');
+      if (m !== 'dark') document.body.classList.add(m);
+      localStorage.setItem('mode', m);
+    }
+  </script>
+</body>
 ```
 
-Use whatever storage key your app prefers; the design system doesn't reserve one.
+(If you render server-side, prefer emitting `<body class="light">` directly.) Use
+whatever storage key your app prefers; the design system doesn't reserve one.
 
 ## 3. Use tokens, never raw values
 
@@ -69,8 +104,8 @@ free:
 ```
 
 Don't hardcode hex that might differ per mode. If you need a new semantic color, add it
-to **both** the dark (`body`) and light (`body.light`) blocks in `tokens.css` — never a
-one-off literal. Promote a value to a token once it's used in 3+ places.
+to **all three** mode blocks in `tokens.css` (`body`, `body.light`, `body.liquid`) —
+never a one-off literal. Promote a value to a token once it's used in 3+ places.
 
 ## 4. Compose with `.c-*` / `.doc-*`
 
@@ -80,8 +115,10 @@ For app-specific widgets, add your own prefixed namespace (`.app-*`, `.x-*`) tha
 
 ## 5. Machine-readable tokens
 
-[`../tokens.json`](../tokens.json) mirrors `tokens.css` in
-[W3C DTCG](https://www.w3.org/community/design-tokens/) format — feed it to Style
+[`../tokens.json`](../tokens.json) mirrors `tokens.css` in a
+[W3C DTCG](https://www.w3.org/community/design-tokens/)-style shape (per-mode values
+keyed `dark`/`light`/`liquid` inside `$value` — DTCG-compatible, not strictly
+conformant, since DTCG has no mode axis) — feed it to Style
 Dictionary, a Tailwind config generator, or an agent that needs the values and the
 "why" behind each role. It is the source of truth for tooling; `tokens.css` is the
 source of truth for the browser. Keep them in sync.
@@ -90,11 +127,15 @@ source of truth for the browser. Keep them in sync.
 
 Three Google Fonts, loaded by `tokens.css`: **Space Grotesk** (body), **Space Mono**
 (labels/data), **Doto** (hero display). All are open-licensed (SIL OFL). For offline /
-air-gapped operation, self-host them and replace the `@import` at the top of
-`tokens.css` with local `@font-face` rules.
+air-gapped operation — or to avoid a third-party font CDN entirely (a GDPR
+consideration for EU-facing deployments) — self-host them and replace the `@import`
+at the top of `tokens.css` with local `@font-face` rules.
 
 ## 7. Accessibility
 
 Every text role clears WCAG AA on its intended background (ratios in
-[`tokens.md`](./tokens.md) §2). If you introduce new color pairings, verify contrast —
-`--text-disabled` (~3:1) is for non-content only (placeholders, disabled controls).
+[`tokens.md`](./tokens.md) §2) — including `--text-disabled` (4.7–6.5:1 per mode),
+so meta text and placeholders are safe. If you introduce new color pairings, verify
+contrast. Liquid caveat: in the native context the OS desktop is unbounded — keep it
+mid-tone or darker, or put a contrast plate behind text-dense panes (see the note in
+`tokens.css`).

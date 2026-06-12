@@ -179,6 +179,10 @@
   @keyframes blinker { 50% { opacity: 0.3; } }
 
   body { padding-bottom: 28px; }
+
+  /* timeline rows sit inside a tight grid column on this page —
+     suppress the component's full-bleed hover gutter */
+  .grid-2 .c-timeline-row { margin: 0; padding-left: 0; padding-right: 0; }
 </style>
 </head>
 <body>
@@ -274,8 +278,8 @@
         </div>
         <div class="c-toolbar-right">
           <button class="c-filter-btn">7D <svg viewBox="0 0 10 10"><path d="M2 4l3 3 3-3" stroke="currentColor" fill="none"/></svg></button>
-          <button class="c-btn c-btn-secondary c-btn-sm">Logs</button>
-          <button class="c-btn c-btn-primary c-btn-sm">Restart</button>
+          <button class="c-btn c-btn--secondary c-btn--sm">Logs</button>
+          <button class="c-btn c-btn--primary c-btn--sm">Restart</button>
         </div>
       </header>
 
@@ -295,41 +299,41 @@
       </nav>
 
       <!-- stat grid -->
-      <div class="c-stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: var(--space-lg);">
+      <div class="c-stats" style="grid-template-columns: repeat(4, 1fr); margin-bottom: var(--space-lg);">
         <div class="c-stat">
           <div class="c-stat-value c-stat-value--danger">99.4<span style="font-size:18px;color:var(--text-disabled);">%</span></div>
           <div class="c-stat-label">Uptime · 7d</div>
           <div class="c-stat-bar">
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span>
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg danger"></span><span class="seg danger"></span>
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="danger"></span><span class="danger"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
           </div>
         </div>
         <div class="c-stat">
           <div class="c-stat-value">214<span style="font-size:18px;color:var(--text-disabled);">ms</span></div>
           <div class="c-stat-label">Latency · p95</div>
           <div class="c-stat-bar">
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg"></span><span class="seg filled"></span>
-            <span class="seg"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg warning"></span>
-            <span class="seg filled"></span><span class="seg"></span><span class="seg filled"></span><span class="seg"></span>
+            <span class="on"></span><span class="on"></span><span class=""></span><span class="on"></span>
+            <span class=""></span><span class="on"></span><span class="on"></span><span class="warning"></span>
+            <span class="on"></span><span class=""></span><span class="on"></span><span class=""></span>
           </div>
         </div>
         <div class="c-stat">
           <div class="c-stat-value">8.2<span style="font-size:18px;color:var(--text-disabled);">k/s</span></div>
           <div class="c-stat-label">Throughput</div>
           <div class="c-stat-bar">
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span>
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg"></span>
-            <span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span><span class="seg filled"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class=""></span>
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
           </div>
         </div>
         <div class="c-stat">
           <div class="c-stat-value c-stat-value--warning">04</div>
           <div class="c-stat-label">Failures · 24h</div>
           <div class="c-stat-bar">
-            <span class="seg"></span><span class="seg"></span><span class="seg warning"></span><span class="seg"></span>
-            <span class="seg"></span><span class="seg warning"></span><span class="seg"></span><span class="seg"></span>
-            <span class="seg danger"></span><span class="seg"></span><span class="seg warning"></span><span class="seg"></span>
+            <span class=""></span><span class=""></span><span class="warning"></span><span class=""></span>
+            <span class=""></span><span class="warning"></span><span class=""></span><span class=""></span>
+            <span class="danger"></span><span class=""></span><span class="warning"></span><span class=""></span>
           </div>
         </div>
       </div>

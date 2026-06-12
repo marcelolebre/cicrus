@@ -1,0 +1,49 @@
+<!-- @dsCard group="Content" name="Callouts" subtitle="Five long-form asides: note, tip, warn, danger, example" viewport="860x760" -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Callouts — Cicrus</title>
+  <link rel="stylesheet" href="../../../src/cicrus.css">
+  <style>
+    body { padding: 48px; }
+    .head { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+    .head .ttl { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; color: var(--text-display); }
+    .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-disabled); }
+    .stack { display: grid; gap: 20px; max-width: 720px; }
+  </style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Callouts</div>
+    <div class="sub">.doc-callout · --tip · --warn · --danger · --example</div>
+  </div>
+
+  <div class="stack">
+    <aside class="doc-callout">
+      <div class="doc-callout-tag">Note</div>
+      <div class="doc-callout-body"><p>Context the reader could miss but shouldn't. Keep it under three sentences — anything longer belongs in body prose.</p></div>
+    </aside>
+
+    <aside class="doc-callout doc-callout--tip">
+      <div class="doc-callout-tag">Tip</div>
+      <div class="doc-callout-body"><p>A shortcut or best practice. Tips are optional reading — the document must work without them.</p></div>
+    </aside>
+
+    <aside class="doc-callout doc-callout--warn">
+      <div class="doc-callout-tag">Warning</div>
+      <div class="doc-callout-body"><p>Something that can go wrong, with the condition stated first: when running against production, exports lock the table.</p></div>
+    </aside>
+
+    <aside class="doc-callout doc-callout--danger">
+      <div class="doc-callout-tag">Danger</div>
+      <div class="doc-callout-body"><p>Irreversible consequences only — data loss, security exposure. If everything is danger, nothing is.</p></div>
+    </aside>
+
+    <aside class="doc-callout doc-callout--example">
+      <div class="doc-callout-tag">Example</div>
+      <div class="doc-callout-body"><p>A worked instance of the concept just introduced. Keep the scenario concrete and small enough to verify by hand.</p></div>
+    </aside>
+  </div>
+</body>
+</html>

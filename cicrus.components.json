@@ -1,12 +1,16 @@
 {
   "name": "cicrus",
-  "description": "Machine-readable index of Cicrus components. Each entry's `preview` is a self-contained, copy-pasteable HTML snippet that links src/cicrus.css. Class semantics: docs/components.md. Tokens: tokens.json.",
+  "version": "2.9.0",
+  "description": "Machine-readable index of Cicrus components. Each entry's `preview` is a self-contained, copy-pasteable HTML snippet that links src/cicrus.css; the first line carries `@dsCard` metadata (group/name/subtitle/viewport). Class semantics: docs/components.md. Tokens: tokens.json. Three modes: dark (default) / body.light / body.liquid.",
   "css": "src/cicrus.css",
   "tokens": "tokens.json",
   "docs": {
     "components": "docs/components.md",
     "brief": "docs/SKILL.md",
-    "integration": "docs/integration.md"
+    "integration": "docs/integration.md",
+    "dataviz": "docs/data-graphics.md",
+    "motion": "docs/motion.md",
+    "glyphs": "docs/glyphs.md"
   },
   "groups": {
     "cards": {
@@ -15,6 +19,7 @@
         {
           "id": "badges",
           "title": "Badges",
+          "subtitle": "Border-only category pills",
           "classes": [
             "c-badge",
             "c-badge--info",
@@ -29,52 +34,81 @@
           "preview": "examples/previews/cards/badges.html"
         },
         {
+          "id": "brand-logo",
+          "title": "App logo",
+          "subtitle": "Icarus — wings & sun on liquid glass",
+          "classes": [],
+          "preview": "examples/previews/cards/brand-logo.html"
+        },
+        {
           "id": "brand-wordmark",
-          "title": "Brand wordmark",
+          "title": "Wordmark",
+          "subtitle": "The Cicrus mono wordmark",
           "classes": [],
           "preview": "examples/previews/cards/brand-wordmark.html"
         },
         {
           "id": "buttons",
           "title": "Buttons",
+          "subtitle": "Primary / secondary / ghost / danger",
           "classes": [
             "c-btn",
-            "c-btn-danger",
-            "c-btn-ghost",
-            "c-btn-primary",
-            "c-btn-secondary",
-            "c-btn-sm",
+            "c-btn--danger",
+            "c-btn--ghost",
+            "c-btn--primary",
+            "c-btn--secondary",
+            "c-btn--sm",
             "c-filter-btn"
           ],
           "preview": "examples/previews/cards/buttons.html"
         },
         {
+          "id": "callouts",
+          "title": "Callouts",
+          "subtitle": "Five long-form asides: note, tip, warn, danger, example",
+          "classes": [
+            "doc-callout",
+            "doc-callout--danger",
+            "doc-callout--example",
+            "doc-callout--tip",
+            "doc-callout--warn",
+            "doc-callout-body",
+            "doc-callout-tag"
+          ],
+          "preview": "examples/previews/cards/callouts.html"
+        },
+        {
           "id": "color-dark",
-          "title": "Color — Dark mode",
+          "title": "Color · dark mode",
+          "subtitle": "OLED-black canvas, layered greys",
           "classes": [],
           "preview": "examples/previews/cards/color-dark.html"
         },
         {
           "id": "color-light",
-          "title": "Color — Light mode",
+          "title": "Color · light mode",
+          "subtitle": "Printed-manual light theme",
           "classes": [],
           "preview": "examples/previews/cards/color-light.html"
         },
         {
           "id": "color-status",
           "title": "Status colors",
+          "subtitle": "Red interrupt · green · amber · blue",
           "classes": [],
           "preview": "examples/previews/cards/color-status.html"
         },
         {
           "id": "dot-matrix-motif",
           "title": "Dot-matrix motif",
+          "subtitle": "Pixel-grid background texture",
           "classes": [],
           "preview": "examples/previews/cards/dot-matrix-motif.html"
         },
         {
           "id": "inputs",
           "title": "Inputs",
+          "subtitle": "Underline fields & search pill",
           "classes": [
             "c-input",
             "c-input--error",
@@ -86,24 +120,28 @@
         {
           "id": "nav-and-mode-toggle",
           "title": "Nav & mode toggle",
+          "subtitle": "Tabs, sidebar, dark/light switch",
           "classes": [],
           "preview": "examples/previews/cards/nav-and-mode-toggle.html"
         },
         {
           "id": "spacing-radius",
           "title": "Spacing & radii",
+          "subtitle": "8px base grid, three radii",
           "classes": [],
           "preview": "examples/previews/cards/spacing-radius.html"
         },
         {
           "id": "state-glyphs",
           "title": "State glyphs",
+          "subtitle": "The Icarus mark as a status light",
           "classes": [],
           "preview": "examples/previews/cards/state-glyphs.html"
         },
         {
           "id": "status-signals",
           "title": "Status signals",
+          "subtitle": "Health lights, state dots, alerts",
           "classes": [
             "c-alert",
             "c-alert--info",
@@ -120,7 +158,8 @@
         },
         {
           "id": "surfaces-cards",
-          "title": "Surfaces & cards",
+          "title": "Cards & surfaces",
+          "subtitle": "Generic surface + rich item card",
           "classes": [
             "c-badge",
             "c-badge--strong",
@@ -152,7 +191,8 @@
         },
         {
           "id": "timeline-row",
-          "title": "Timeline & list rows",
+          "title": "Timeline & detail",
+          "subtitle": "Event rows + slide-in panel",
           "classes": [
             "c-badge",
             "c-badge--info",
@@ -177,13 +217,15 @@
         },
         {
           "id": "type-philosophy",
-          "title": "Three families",
+          "title": "Type philosophy",
+          "subtitle": "Two families, three sizes, two weights",
           "classes": [],
           "preview": "examples/previews/cards/type-philosophy.html"
         },
         {
           "id": "type-scale",
           "title": "Type scale",
+          "subtitle": "Display / heading / body / label ramp",
           "classes": [],
           "preview": "examples/previews/cards/type-scale.html"
         }
@@ -194,7 +236,8 @@
       "components": [
         {
           "id": "card-done",
-          "title": "Card · done",
+          "title": "Item · done",
+          "subtitle": ".c-item",
           "classes": [
             "c-item",
             "c-item--done",
@@ -213,7 +256,8 @@
         },
         {
           "id": "card-review",
-          "title": "Card · review",
+          "title": "Item · review",
+          "subtitle": ".c-item",
           "classes": [
             "c-item",
             "c-item-action",
@@ -230,7 +274,8 @@
         },
         {
           "id": "card-running",
-          "title": "Card · running",
+          "title": "Item · running",
+          "subtitle": ".c-item",
           "classes": [
             "c-item",
             "c-item--running",
@@ -249,7 +294,8 @@
         },
         {
           "id": "card-todo",
-          "title": "Card · todo",
+          "title": "Item · todo",
+          "subtitle": ".c-item",
           "classes": [
             "c-item",
             "c-item-action",
@@ -264,7 +310,8 @@
         },
         {
           "id": "column-empty",
-          "title": "Column · empty",
+          "title": "Board column · empty",
+          "subtitle": ".c-col",
           "classes": [
             "c-col",
             "c-col-count",
@@ -278,7 +325,8 @@
         },
         {
           "id": "column-header",
-          "title": "Column header",
+          "title": "Board column header",
+          "subtitle": ".c-col",
           "classes": [
             "c-col",
             "c-col-count",
@@ -291,7 +339,8 @@
         },
         {
           "id": "detail-row",
-          "title": "Detail row",
+          "title": "KV detail row",
+          "subtitle": ".c-item-detail-list",
           "classes": [
             "c-item-detail-list"
           ],
@@ -300,6 +349,7 @@
         {
           "id": "filter-button",
           "title": "Filter button",
+          "subtitle": ".c-filter-btn",
           "classes": [
             "c-filter-btn"
           ],
@@ -308,6 +358,7 @@
         {
           "id": "footer-stat",
           "title": "Footer stat",
+          "subtitle": ".c-foot",
           "classes": [
             "c-foot",
             "c-foot-stats"
@@ -316,7 +367,8 @@
         },
         {
           "id": "nav-archive",
-          "title": "Archive button",
+          "title": "Sidebar archive link",
+          "subtitle": ".c-side-archive",
           "classes": [
             "c-side-archive"
           ],
@@ -324,7 +376,8 @@
         },
         {
           "id": "nav-item",
-          "title": "Nav item",
+          "title": "Sidebar nav item",
+          "subtitle": ".c-side",
           "classes": [
             "c-side",
             "c-side-count",
@@ -336,7 +389,8 @@
         },
         {
           "id": "nav-section-title",
-          "title": "Nav section title",
+          "title": "Sidebar section title",
+          "subtitle": ".c-side",
           "classes": [
             "c-side",
             "c-side-section-title"
@@ -345,7 +399,8 @@
         },
         {
           "id": "output-block",
-          "title": "Output block",
+          "title": "Output log block",
+          "subtitle": ".c-panel-output",
           "classes": [
             "c-panel-output"
           ],
@@ -353,7 +408,8 @@
         },
         {
           "id": "page-meta",
-          "title": "Page meta",
+          "title": "View meta",
+          "subtitle": ".c-head-meta",
           "classes": [
             "c-head-meta"
           ],
@@ -361,7 +417,8 @@
         },
         {
           "id": "page-title",
-          "title": "Page title",
+          "title": "View title",
+          "subtitle": ".c-head-title",
           "classes": [
             "c-head-sub",
             "c-head-title"
@@ -371,6 +428,7 @@
         {
           "id": "panel-button",
           "title": "Panel button",
+          "subtitle": ".c-panel-btn",
           "classes": [
             "c-panel-btn",
             "c-panel-btn--primary"
@@ -380,6 +438,7 @@
         {
           "id": "panel-header",
           "title": "Panel header",
+          "subtitle": ".c-panel",
           "classes": [
             "c-panel",
             "c-panel-close",
@@ -391,6 +450,7 @@
         {
           "id": "panel-progress",
           "title": "Panel progress",
+          "subtitle": ".c-panel-progress-wrap",
           "classes": [
             "c-panel-meter",
             "c-panel-progress",
@@ -402,6 +462,7 @@
         {
           "id": "panel-section-title",
           "title": "Panel section title",
+          "subtitle": ".c-panel-section",
           "classes": [
             "c-panel-section"
           ],
@@ -409,7 +470,8 @@
         },
         {
           "id": "panel-status-pill",
-          "title": "Status pill",
+          "title": "Panel status pill",
+          "subtitle": ".c-panel-pill",
           "classes": [
             "c-panel-pill",
             "c-panel-pill--neutral",
@@ -420,6 +482,7 @@
         {
           "id": "panel-title",
           "title": "Panel title",
+          "subtitle": ".c-panel-title",
           "classes": [
             "c-panel-title"
           ],
@@ -428,6 +491,7 @@
         {
           "id": "search-pill",
           "title": "Search pill",
+          "subtitle": ".c-input-pill",
           "classes": [
             "c-caps",
             "c-input-pill",
@@ -439,6 +503,7 @@
         {
           "id": "stat-tile",
           "title": "Stat tile",
+          "subtitle": ".c-stats",
           "classes": [
             "c-stat",
             "c-stat-bar",
@@ -451,7 +516,8 @@
         },
         {
           "id": "status-dot",
-          "title": "Status dot",
+          "title": "Status dots",
+          "subtitle": ".c-status-dot",
           "classes": [
             "c-status-dot",
             "c-status-dot--running"
@@ -461,6 +527,7 @@
         {
           "id": "tab-link",
           "title": "Tab link",
+          "subtitle": ".c-tabs",
           "classes": [
             "c-tab",
             "c-tab--active",
@@ -470,7 +537,8 @@
         },
         {
           "id": "theme-toggle",
-          "title": "Theme toggle",
+          "title": "Mode toggle",
+          "subtitle": ".c-mode",
           "classes": [
             "c-mode"
           ],
@@ -478,7 +546,8 @@
         },
         {
           "id": "timeline-item",
-          "title": "Timeline item",
+          "title": "Timeline row",
+          "subtitle": ".c-panel-timeline",
           "classes": [
             "c-panel-dot",
             "c-panel-step",
@@ -490,6 +559,7 @@
         {
           "id": "version-tag",
           "title": "Version tag",
+          "subtitle": ".c-brand",
           "classes": [
             "c-brand"
           ],
@@ -502,7 +572,8 @@
       "components": [
         {
           "id": "brand-mark",
-          "title": "Brand mark",
+          "title": "Doc brand mark",
+          "subtitle": ".doc-brand",
           "classes": [
             "doc-brand"
           ],
@@ -511,6 +582,7 @@
         {
           "id": "breadcrumb",
           "title": "Breadcrumb",
+          "subtitle": ".doc-crumb",
           "classes": [
             "doc-crumb"
           ],
@@ -519,6 +591,7 @@
         {
           "id": "bullet-list",
           "title": "Bullet list",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -526,7 +599,8 @@
         },
         {
           "id": "callout-danger",
-          "title": "Danger",
+          "title": "Callout · danger",
+          "subtitle": ".doc-callout",
           "classes": [
             "doc-callout",
             "doc-callout--danger",
@@ -537,7 +611,8 @@
         },
         {
           "id": "callout-example",
-          "title": "Example",
+          "title": "Callout · example",
+          "subtitle": ".doc-callout",
           "classes": [
             "doc-callout",
             "doc-callout--example",
@@ -548,7 +623,8 @@
         },
         {
           "id": "callout-note",
-          "title": "Note",
+          "title": "Callout · note",
+          "subtitle": ".doc-callout",
           "classes": [
             "doc-callout",
             "doc-callout-body",
@@ -558,7 +634,8 @@
         },
         {
           "id": "callout-tip",
-          "title": "Tip",
+          "title": "Callout · tip",
+          "subtitle": ".doc-callout",
           "classes": [
             "doc-callout",
             "doc-callout--tip",
@@ -569,7 +646,8 @@
         },
         {
           "id": "callout-warn",
-          "title": "Warning",
+          "title": "Callout · warn",
+          "subtitle": ".doc-callout",
           "classes": [
             "doc-callout",
             "doc-callout--warn",
@@ -581,6 +659,7 @@
         {
           "id": "choice-option",
           "title": "Choice option",
+          "subtitle": ".doc-quiz-opts",
           "classes": [
             "doc-quiz-opt",
             "doc-quiz-opts"
@@ -590,6 +669,7 @@
         {
           "id": "code-block",
           "title": "Code block",
+          "subtitle": ".doc-code",
           "classes": [
             "doc-code",
             "doc-code-copy",
@@ -601,6 +681,7 @@
         {
           "id": "definition-row",
           "title": "Definition row",
+          "subtitle": ".doc-defs",
           "classes": [
             "doc-defs"
           ],
@@ -609,6 +690,7 @@
         {
           "id": "disclosure",
           "title": "Disclosure",
+          "subtitle": ".doc-reveal",
           "classes": [
             "doc-reveal",
             "doc-reveal-chev",
@@ -621,6 +703,7 @@
         {
           "id": "display-heading",
           "title": "Display heading",
+          "subtitle": ".doc-title",
           "classes": [
             "doc-title"
           ],
@@ -629,6 +712,7 @@
         {
           "id": "eyebrow",
           "title": "Eyebrow",
+          "subtitle": ".doc-eyebrow",
           "classes": [
             "doc-eyebrow"
           ],
@@ -637,6 +721,7 @@
         {
           "id": "figure",
           "title": "Figure",
+          "subtitle": ".doc-figure",
           "classes": [
             "doc-figure",
             "doc-figure-frame"
@@ -646,6 +731,7 @@
         {
           "id": "footnote-item",
           "title": "Footnote item",
+          "subtitle": ".doc-footnotes",
           "classes": [
             "doc-footnotes"
           ],
@@ -653,7 +739,8 @@
         },
         {
           "id": "footnote-ref",
-          "title": "Footnote reference",
+          "title": "Footnote ref",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -662,6 +749,7 @@
         {
           "id": "glossary-row",
           "title": "Glossary row",
+          "subtitle": ".doc-glossary",
           "classes": [
             "doc-glossary"
           ],
@@ -670,6 +758,7 @@
         {
           "id": "inline-code",
           "title": "Inline code",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -677,7 +766,8 @@
         },
         {
           "id": "kbd",
-          "title": "Keyboard",
+          "title": "Keyboard key",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -685,7 +775,8 @@
         },
         {
           "id": "keylist",
-          "title": "Key list",
+          "title": "Keylist",
+          "subtitle": ".doc-keylist",
           "classes": [
             "doc-keylist",
             "doc-keylist-label",
@@ -696,6 +787,7 @@
         {
           "id": "lead-paragraph",
           "title": "Lead paragraph",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -704,6 +796,7 @@
         {
           "id": "lede",
           "title": "Lede",
+          "subtitle": ".doc-deck",
           "classes": [
             "doc-deck"
           ],
@@ -712,14 +805,14 @@
         {
           "id": "margin-note",
           "title": "Margin note",
-          "classes": [
-            "margin-note"
-          ],
+          "subtitle": ".margin-note",
+          "classes": [],
           "preview": "examples/previews/content/margin-note.html"
         },
         {
           "id": "meta-row",
-          "title": "Meta row",
+          "title": "Doc meta row",
+          "subtitle": ".doc-meta",
           "classes": [
             "doc-meta"
           ],
@@ -727,7 +820,8 @@
         },
         {
           "id": "nav-item",
-          "title": "Nav item",
+          "title": "Doc nav item",
+          "subtitle": ".doc-toc",
           "classes": [
             "doc-toc",
             "doc-toc-list"
@@ -737,6 +831,7 @@
         {
           "id": "numbered-list",
           "title": "Numbered list",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -745,6 +840,7 @@
         {
           "id": "pager-link",
           "title": "Pager link",
+          "subtitle": ".doc-modnav",
           "classes": [
             "doc-modnav"
           ],
@@ -752,7 +848,8 @@
         },
         {
           "id": "panel-bad",
-          "title": "Comparison panel · bad",
+          "title": "Compare · don’t",
+          "subtitle": ".doc-compare",
           "classes": [
             "doc-compare",
             "doc-compare--dont"
@@ -761,7 +858,8 @@
         },
         {
           "id": "panel-good",
-          "title": "Comparison panel · good",
+          "title": "Compare · do",
+          "subtitle": ".doc-compare",
           "classes": [
             "doc-compare",
             "doc-compare--do"
@@ -771,6 +869,7 @@
         {
           "id": "paragraph",
           "title": "Paragraph",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -779,6 +878,7 @@
         {
           "id": "progress-rail",
           "title": "Progress rail",
+          "subtitle": ".doc-progress",
           "classes": [
             "doc-progress",
             "doc-progress-rail"
@@ -788,6 +888,7 @@
         {
           "id": "prompt-block",
           "title": "Prompt block",
+          "subtitle": ".doc-prompt",
           "classes": [
             "doc-prompt",
             "doc-prompt-body",
@@ -800,6 +901,7 @@
         {
           "id": "pull-quote",
           "title": "Pull quote",
+          "subtitle": ".doc-quote",
           "classes": [
             "doc-quote"
           ],
@@ -808,6 +910,7 @@
         {
           "id": "question-prompt",
           "title": "Question prompt",
+          "subtitle": ".doc-quiz-tag",
           "classes": [
             "doc-quiz-q",
             "doc-quiz-tag"
@@ -817,6 +920,7 @@
         {
           "id": "response-prompt",
           "title": "Response prompt",
+          "subtitle": ".doc-reflect",
           "classes": [
             "doc-reflect",
             "doc-reflect-q",
@@ -827,18 +931,21 @@
         {
           "id": "section-heading",
           "title": "Section heading",
+          "subtitle": "Cicrus atom",
           "classes": [],
           "preview": "examples/previews/content/section-heading.html"
         },
         {
           "id": "sparkline",
-          "title": "Sparkline",
+          "title": "Inline sparkline",
+          "subtitle": ".spark",
           "classes": [],
           "preview": "examples/previews/content/sparkline.html"
         },
         {
           "id": "step-item",
           "title": "Step item",
+          "subtitle": ".doc-steps",
           "classes": [
             "doc-step",
             "doc-step-body",
@@ -850,12 +957,14 @@
         {
           "id": "subheading",
           "title": "Subheading",
+          "subtitle": "Cicrus atom",
           "classes": [],
           "preview": "examples/previews/content/subheading.html"
         },
         {
           "id": "table",
-          "title": "Data table",
+          "title": "Table",
+          "subtitle": ".doc-table-wrap",
           "classes": [
             "doc-table",
             "doc-table-wrap"
@@ -865,6 +974,7 @@
         {
           "id": "takeaway-item",
           "title": "Takeaway item",
+          "subtitle": ".doc-summary",
           "classes": [
             "doc-summary",
             "doc-summary-body",
@@ -875,6 +985,7 @@
         {
           "id": "task-input",
           "title": "Task input",
+          "subtitle": ".doc-lab",
           "classes": [
             "doc-lab",
             "doc-lab-body",
@@ -887,7 +998,8 @@
         },
         {
           "id": "term-mark",
-          "title": "Term",
+          "title": "Term mark",
+          "subtitle": ".doc-body",
           "classes": [
             "doc-body"
           ],
@@ -895,11 +1007,142 @@
         },
         {
           "id": "theme-toggle",
-          "title": "Theme toggle",
+          "title": "Doc mode switch",
+          "subtitle": ".doc-mode-switch",
           "classes": [
             "doc-mode-switch"
           ],
           "preview": "examples/previews/content/theme-toggle.html"
+        }
+      ]
+    },
+    "dataviz": {
+      "about": "Tufte-aligned data graphics (.c-*) — sparklines, bars, dot plots, gauges, metric tables.",
+      "components": [
+        {
+          "id": "data-graphics",
+          "title": "Data graphics",
+          "subtitle": "Tufte-aligned: sparklines, bars, dot plots, gauges",
+          "classes": [
+            "c-bar--alarm",
+            "c-bar--ctx",
+            "c-bar--hi",
+            "c-bar--ok",
+            "c-bar--over",
+            "c-bar--ref",
+            "c-bar--warn",
+            "c-bar-fill",
+            "c-bar-label",
+            "c-bar-track",
+            "c-bar-value",
+            "c-bars",
+            "c-data-enter",
+            "c-delta",
+            "c-delta--bad",
+            "c-delta--down",
+            "c-delta--good",
+            "c-delta--up",
+            "c-delta--warn",
+            "c-dot--ctx",
+            "c-dot--ok",
+            "c-dot--over",
+            "c-dot--ref",
+            "c-dotplot",
+            "c-dotplot-label",
+            "c-dotplot-track",
+            "c-dotplot-value",
+            "c-gauge",
+            "c-gauge--alarm",
+            "c-gauge--ok",
+            "c-gauge--warn",
+            "c-gauge-center",
+            "c-gauge-num",
+            "c-gauge-unit",
+            "c-gauge-wrap",
+            "c-metric-name",
+            "c-metric-now",
+            "c-metric-spark",
+            "c-metrics",
+            "c-multiple",
+            "c-multiple-label",
+            "c-multiple-value",
+            "c-multiples",
+            "c-range--mid",
+            "c-rangebar",
+            "c-rangebar-label",
+            "c-rangebar-track",
+            "c-rangebar-value",
+            "c-spark",
+            "c-spark-hi",
+            "c-spark-now",
+            "c-spark-pair",
+            "c-sparkbar"
+          ],
+          "preview": "examples/previews/dataviz/data-graphics.html"
+        }
+      ]
+    },
+    "motion": {
+      "about": "The motion layer demo — entrances, data sweeps, signals, ticks (all reduced-motion-safe).",
+      "components": [
+        {
+          "id": "motion-demo",
+          "title": "Motion",
+          "subtitle": "Percussive, compositor-only: entrances, sweeps, signals, ticks",
+          "classes": [
+            "c-bar--ctx",
+            "c-bar--warn",
+            "c-bar-fill",
+            "c-bar-label",
+            "c-bar-track",
+            "c-bar-value",
+            "c-bars",
+            "c-blink",
+            "c-caret",
+            "c-data-enter",
+            "c-dot",
+            "c-dot--down",
+            "c-gauge",
+            "c-gauge--ok",
+            "c-gauge-center",
+            "c-gauge-num",
+            "c-gauge-unit",
+            "c-gauge-wrap",
+            "c-loading",
+            "c-loading--live",
+            "c-rise",
+            "c-slide-in",
+            "c-spark",
+            "c-sparkbar",
+            "c-stagger",
+            "c-status-dot",
+            "c-status-dot--running",
+            "c-tick"
+          ],
+          "preview": "examples/previews/motion/motion-demo.html"
+        }
+      ]
+    },
+    "modes": {
+      "about": "Mode demonstrations — liquid glass material over real content.",
+      "components": [
+        {
+          "id": "liquid-demo",
+          "title": "Liquid mode",
+          "subtitle": "Liquid Glass — translucent, reveals content · body.liquid",
+          "classes": [
+            "c-alert",
+            "c-btn",
+            "c-btn--ghost",
+            "c-btn--primary",
+            "c-btn--secondary",
+            "c-card",
+            "c-caret",
+            "c-dot",
+            "c-dot-up",
+            "c-dot-warn"
+          ],
+          "preview": "examples/previews/modes/liquid-demo.html"
         }
       ]
     }

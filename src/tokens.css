@@ -1,10 +1,12 @@
 /* ============================================================
    Cicrus · tokens.css  (ITCSS layer 1 — settings)
-   Design tokens only: fonts, color (dark + light), spacing, radii.
+   Design tokens only: fonts, color (dark / light / liquid),
+   spacing, radii, motion.
    Loaded first. Machine-readable mirror lives in tokens.json.
    Drop in before any other stylesheet. Defaults to dark mode;
-   add class="light" to <body> for light mode. Both modes are
-   first-class — neither is derived from the other.
+   add class="light" to <body> for light mode, class="liquid"
+   for liquid-glass mode (milky white films that frost whatever
+   sits behind them — see liquid.css). All modes are first-class.
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Doto:wght@400;500;700&display=swap');
@@ -25,6 +27,15 @@
   --radius-tech: 4px;     /* alert banners, modals, code chips */
   --radius-card: 8px;     /* cards (task, service, stat, kanban) */
   --radius-pill: 999px;   /* badges, buttons, toggles */
+
+  /* ── Motion ──
+     One curve: percussive ease-out. Click, not swoosh — never
+     spring, never bounce. Mode-independent, so they live in :root. */
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1); /* @kind other */
+  --dur-micro: 150ms;     /* @kind other */ /* hover, focus, small state flips */
+  --dur-switch: 300ms;    /* @kind other */ /* toggles, tabs, reveals, value ticks */
+  --dur-view: 400ms;      /* @kind other */ /* view / panel / data entrances */
+  --dur-data: 600ms;      /* @kind other */ /* data sweeps: progress fills, bar entrances, gauge arcs */
 
   /* ── Shadows ── */
   --hover-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -59,11 +70,14 @@ body {
   --text-secondary: #B8B8B8;
   --text-primary: #E8E8E8;
   --text-display: #FFFFFF;
-  --accent: #D71921;
-  --accent-subtle: rgba(215, 25, 33, 0.15);
+  /* Brand red #D71921 is the print/light interrupt; on OLED black it
+     reads 4.05:1 as text, so dark mode brightens it — the same
+     legibility move liquid makes. Interrupt role unchanged. */
+  --accent: #F0353D;
+  --accent-subtle: rgba(240, 53, 61, 0.15);
   --success: #4A9E5C;
   --warning: #D4A843;
-  --error: #D71921;
+  --error: var(--accent);
   --interactive: #5B9BF6;
 
   --font-body: 'Space Grotesk', system-ui, sans-serif;
@@ -72,16 +86,6 @@ body {
 
   --heading-weight: 300;
   --heading-ls: -0.02em;
-
-  font-family: var(--font-body);
-  background: var(--black);
-  color: var(--text-primary);
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-              color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* ── Light mode override ── */
@@ -91,30 +95,83 @@ body.light {
   --surface-raised: #F0F0F0;
   --border: #D9D9D9;
   --border-visible: #9E9E9E;
-  --text-disabled: #737373;
+  --text-disabled: #6B6B6B;
   --text-secondary: #595959;
   --text-primary: #1A1A1A;
   --text-display: #000000;
+  --accent: #D71921;        /* brand red holds AA on paper (4.76:1) */
   --accent-subtle: rgba(215, 25, 33, 0.08);
-  --interactive: #007AFF;
+  --success: #2E7D32;       /* dark-mode greens/ambers wash out on paper; deepen for AA */
+  --warning: #8F6A00;
+  --interactive: #0058CC;
 
   --heading-weight: 400;
   --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
-/* ── Semantic typographic classes ── */
-.t-display-xl { font-family: var(--font-display); font-size: var(--display-xl); line-height: 1.0; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: 400; }
-.t-display-lg { font-family: var(--font-display); font-size: var(--display-lg); line-height: 1.05; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: 400; }
-.t-display-md { font-family: var(--font-display); font-size: var(--display-md); line-height: 1.1; letter-spacing: var(--ls-tight); color: var(--text-display); font-weight: var(--heading-weight); }
-.t-heading    { font-family: var(--font-body); font-size: var(--heading); line-height: 1.2; letter-spacing: -0.01em; color: var(--text-primary); font-weight: 500; }
-.t-subheading { font-family: var(--font-body); font-size: var(--subheading); line-height: 1.3; color: var(--text-primary); font-weight: 400; }
-.t-body       { font-family: var(--font-body); font-size: var(--body); line-height: 1.5; color: var(--text-primary); font-weight: 400; }
-.t-body-sm    { font-family: var(--font-body); font-size: var(--body-sm); line-height: 1.5; letter-spacing: 0.01em; color: var(--text-primary); font-weight: 400; }
-.t-caption    { font-family: var(--font-body); font-size: var(--caption); line-height: 1.4; letter-spacing: 0.04em; color: var(--text-secondary); font-weight: 400; }
-.t-label      { font-family: var(--font-mono); font-size: var(--label); line-height: 1.2; letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--text-secondary); font-weight: 400; }
-.t-label-xs   { font-family: var(--font-mono); font-size: var(--label-xs); line-height: 1.2; letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-disabled); font-weight: 400; }
-.t-mono       { font-family: var(--font-mono); }
+/* ── Liquid mode override — Liquid Glass (iOS 26 / macOS Tahoe reference) ──
+   The material has NO COLOR of its own: panes are milky white
+   films that frost whatever sits behind them. The backdrop
+   supplies the color, the material supplies the frost — if a
+   surface paints its own color, it isn't glass. Two rendering
+   contexts (see liquid.css): native app shells expose the OS
+   vibrancy behind a faint veil; browsers keep an opaque base +
+   painted backdrop as fallback. Text stays crisp at full paint;
+   red keeps its interrupt role; interactive/success shift to
+   mint-cyan so the glass reads cool rather than alarmed. */
+body.liquid {
+  /* --black doubles as floor AND ink-on-light (primary-button text):
+     it must stay opaque. Fix floor occlusions at the usage (make the
+     wrapper transparent), never by redefining this token. */
+  --black: #0A0A14;
+  --border: rgba(255, 255, 255, 0.14);
+  --border-visible: rgba(255, 255, 255, 0.35);
+  --text-disabled: rgba(255, 255, 255, 0.50);
+  --text-secondary: rgba(255, 255, 255, 0.62);
+  --text-primary: rgba(255, 255, 255, 0.78);
+  --text-display: #FFFFFF;
+  --accent-subtle: rgba(255, 92, 92, 0.16);
+  --accent: #FF5C5C; /* dark-console red is illegible on milky films; brighten, keep the interrupt role */
+  --interactive: #7DE8D8;
+  --success: #5EE596;
+  --warning: #E8CC74;
 
-/* ── Dot-matrix motif ── */
-.dot-grid-bg     { background-image: radial-gradient(circle, var(--border) 0.5px, transparent 0.5px); background-size: 16px 16px; }
-.dot-grid-strong { background-image: radial-gradient(circle, var(--border-visible) 1px, transparent 1px); background-size: 16px 16px; }
+  /* fills — milky white films. The white tint matters more than the
+     blur amount: panes read as glass because they're milky and rimmed. */
+  --glass-chrome-fill: rgba(255, 255, 255, 0.10);  /* bars: flush, no float shadow */
+  --glass-panel-fill:  rgba(255, 255, 255, 0.12);  /* cards, panels, long-form blocks */
+  --glass-heavy-fill:  rgba(13, 13, 22, 0.82);     /* modals — must occlude what they float over (no .c-modal ships yet; this is the spec'd material for one) */
+  --glass-veil: rgba(10, 10, 20, 0.15);            /* native context: the only thing the page paints */
+  --glass-fallback-fill: rgba(13, 13, 22, 0.94);   /* no-backdrop-filter fallback: near-opaque, text stays readable */
+  --surface: var(--glass-panel-fill);
+  --surface-raised: rgba(255, 255, 255, 0.18);     /* inputs, selects, chips, thumbnails, nested true surfaces */
+
+  /* one blur for all glass — saturate(200%) keeps the backdrop's
+     color glowing through the white film instead of going gray */
+  --glass-blur: blur(24px) saturate(200%); /* @kind other */
+
+  /* specular rim — top edge + edge ring */
+  --glass-specular: inset 0 1px 0 rgba(255, 255, 255, 0.35); /* @kind shadow */
+  --glass-hairline: inset 0 0 0 1px rgba(255, 255, 255, 0.18); /* @kind shadow */
+  --glass-shadow-float: 0 12px 40px rgba(0, 0, 0, 0.25);
+  --glass-shadow-rest: 0 8px 28px rgba(0, 0, 0, 0.20);
+  --glass-rim: var(--glass-specular), var(--glass-hairline);
+
+  /* liquid is the one mode that softens radius; dark/light keep console geometry */
+  --radius-card: 16px;
+  --radius-tech: 12px;
+
+  --card-shadow: none; /* liquid.css composes rim+shadow itself */
+}
+
+/* CONTRAST CAVEAT — native context. The text alphas above clear AA
+   composited over the panel film on the browser backdrop. In
+   body.liquid.native the page paints only --glass-veil and the OS
+   desktop supplies the rest: over a white desktop the film+veil
+   stack collapses below AA. Host apps own their backdrop — keep it
+   mid-tone or darker, or put a contrast plate behind text-dense
+   panes. See docs/integration.md §liquid. */
+
+/* Semantic typographic classes (.t-*) and the dot-matrix motif
+   (.dot-grid-*) live in utilities.css — this file emits no selectors
+   beyond the mode scopes above. */

@@ -6,6 +6,9 @@
 <title>Long-form article · Cicrus</title>
 <link rel="stylesheet" href="../src/cicrus.css" />
 <style>
+  /* Page-local styles only. The .doc-* component layer comes from
+     src/content.css (linked above) — do not re-declare it here. */
+
   /* ============================================================
      Content — typographic & structural elements for long-form documents.
      Built on Cicrus tokens. Every element earns its pixel.
@@ -29,11 +32,6 @@
     display: inline-flex; align-items: baseline;
   }
   .doc-brand .stem { position: relative; display: inline-block; letter-spacing: 0; }
-  .doc-brand .stem::after {
-    content: ''; position: absolute; left: 50%; bottom: 0.86em;
-    width: 0.20em; height: 0.20em; border-radius: 50%;
-    background: currentColor; transform: translateX(-50%);
-  }
   .doc-crumb {
     display: flex; gap: 10px; align-items: center;
     font-family: var(--font-mono); font-size: 11px;
@@ -41,12 +39,6 @@
     color: var(--text-disabled);
   }
   .doc-crumb a { color: var(--text-disabled); text-decoration: none; }
-  .doc-crumb a:hover { color: var(--text-primary); }
-  .doc-crumb .sep { color: var(--border-visible); }
-  .doc-mode-switch {
-    display: flex; border: 1px solid var(--border);
-    border-radius: var(--radius-pill); overflow: hidden;
-  }
   .doc-mode-switch button {
     background: transparent; border: 0; padding: 6px 12px;
     font-family: var(--font-mono); font-size: 10px;
@@ -75,13 +67,6 @@
   }
   @media (max-width: 900px) {
     .doc-page { grid-template-columns: 1fr; padding: var(--space-2xl) var(--space-md); }
-    .doc-toc { display: none; }
-  }
-
-  /* ── Table of contents (left rail) ────────────────── */
-  .doc-toc {
-    position: sticky; top: 100px; align-self: start;
-    display: flex; flex-direction: column; gap: var(--space-md);
   }
   .doc-toc-eyebrow {
     font-family: var(--font-mono); font-size: 10px;
@@ -89,19 +74,7 @@
     color: var(--text-disabled);
   }
   .doc-toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-  .doc-toc-list a {
-    display: block; padding: 6px 0;
-    font-family: var(--font-body); font-size: 13px;
-    color: var(--text-secondary); text-decoration: none;
-    border-left: 1px solid var(--border);
-    padding-left: 14px;
-    transition: color 0.15s, border-color 0.15s;
-  }
   .doc-toc-list a:hover { color: var(--text-primary); border-color: var(--border-visible); }
-  .doc-toc-list a.is-current {
-    color: var(--text-display);
-    border-left-color: var(--text-display);
-  }
   .doc-toc-list a .num {
     font-family: var(--font-mono); font-size: 10px;
     color: var(--text-disabled); letter-spacing: 0.06em;
@@ -120,12 +93,6 @@
     display: inline-flex; align-items: center; gap: 10px;
   }
   .doc-eyebrow b { font-weight: 400; color: var(--text-secondary); }
-  .doc-eyebrow .dot { width: 4px; height: 4px; background: var(--border-visible); border-radius: 50%; display: inline-block; }
-  .doc-title {
-    font-family: var(--font-display); font-weight: 400;
-    font-size: 56px; line-height: 1.0; letter-spacing: -0.01em;
-    color: var(--text-display); text-wrap: balance;
-  }
   .doc-deck {
     font-family: var(--font-body); font-weight: 300;
     font-size: 19px; line-height: 1.5;
@@ -140,18 +107,6 @@
     text-transform: uppercase;
   }
   .doc-meta b { color: var(--text-primary); font-weight: 400; }
-
-  /* ── Body prose ───────────────────────────────────── */
-  .doc-body { font-family: var(--font-body); color: var(--text-primary); }
-  .doc-body > * + * { margin-top: var(--space-lg); }
-  .doc-body h2 {
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 28px; line-height: 1.2; letter-spacing: -0.01em;
-    color: var(--text-display); margin-top: var(--space-3xl);
-    padding-top: var(--space-lg); border-top: 1px solid var(--border);
-    scroll-margin-top: 100px;
-    text-wrap: balance;
-  }
   .doc-body h2 .num {
     font-family: var(--font-mono); font-size: 12px;
     color: var(--text-disabled); letter-spacing: 0.16em;
@@ -172,21 +127,9 @@
     color: var(--text-display); line-height: 1.55;
   }
   .doc-body ul, .doc-body ol { margin-left: 0; padding-left: 0; list-style: none; }
-  .doc-body ul li, .doc-body ol li {
-    position: relative; padding-left: 24px; margin-top: var(--space-sm);
-    font-size: 17px; line-height: 1.6; color: var(--text-primary);
-  }
   .doc-body ul li::before {
     content: ''; position: absolute; left: 4px; top: 0.78em;
     width: 6px; height: 1px; background: var(--text-disabled);
-  }
-  .doc-body ol { counter-reset: doc-ol; }
-  .doc-body ol li::before {
-    counter-increment: doc-ol; content: counter(doc-ol);
-    position: absolute; left: 0; top: 0.1em;
-    font-family: var(--font-mono); font-size: 11px;
-    letter-spacing: 0.06em; color: var(--text-disabled);
-    font-variant-numeric: tabular-nums;
   }
 
   /* Inline elements */
@@ -209,14 +152,6 @@
     text-underline-offset: 3px; transition: text-decoration-color 0.15s;
   }
   .doc-body a:hover { text-decoration-color: var(--text-display); }
-  .doc-body strong { font-weight: 500; color: var(--text-display); }
-  .doc-body em { font-style: italic; color: var(--text-primary); }
-  /* Key-term — highlight the FIRST mention of a vocabulary word */
-  .doc-body .term {
-    font-weight: 500; color: var(--text-display);
-    border-bottom: 1px dashed var(--border-visible);
-    cursor: help;
-  }
 
   /* Footnote reference (numeric superscript) */
   .doc-body sup.fn {
@@ -247,16 +182,7 @@
     align-self: start; padding-top: 2px;
   }
   .doc-callout-body { font-size: 15px; line-height: 1.6; color: var(--text-primary); }
-  .doc-callout-body p + p { margin-top: var(--space-sm); }
-  .doc-callout-body strong { color: var(--text-display); font-weight: 500; }
   .doc-callout--tip     { border-left-color: var(--success); }
-  .doc-callout--tip     .doc-callout-tag { color: var(--success); }
-  .doc-callout--warn    { border-left-color: var(--warning); }
-  .doc-callout--warn    .doc-callout-tag { color: var(--warning); }
-  .doc-callout--danger  { border-left-color: var(--accent); }
-  .doc-callout--danger  .doc-callout-tag { color: var(--accent); }
-  .doc-callout--example { border-left-color: var(--interactive); }
-  .doc-callout--example .doc-callout-tag { color: var(--interactive); }
 
   /* ── Pull quote ───────────────────────────────────── */
   .doc-quote {
@@ -279,20 +205,6 @@
     white-space: nowrap;
   }
   .doc-quote cite b { color: var(--text-primary); font-weight: 400; }
-
-  /* ── Figure ───────────────────────────────────────── */
-  .doc-figure { margin: var(--space-xl) 0; }
-  .doc-figure-frame {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    aspect-ratio: 16 / 9;
-    display: grid; place-items: center;
-    color: var(--text-disabled);
-    font-family: var(--font-mono); font-size: 11px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    background-image: radial-gradient(circle, var(--border-visible) 0.5px, transparent 0.5px);
-    background-size: 12px 12px;
-  }
   .doc-figure figcaption {
     display: grid; grid-template-columns: auto 1fr; gap: 14px;
     margin-top: 10px;
@@ -335,38 +247,6 @@
 
   /* ── Data table ───────────────────────────────────── */
   .doc-table-wrap { margin: var(--space-xl) 0; overflow-x: auto; }
-  .doc-table {
-    width: 100%; border-collapse: collapse;
-    font-family: var(--font-body); font-size: 14px;
-  }
-  .doc-table th, .doc-table td {
-    text-align: left; padding: 10px 14px 10px 0;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-  .doc-table th {
-    font-family: var(--font-mono); font-weight: 400;
-    font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--text-disabled);
-    border-bottom-color: var(--border-visible);
-    padding-bottom: var(--space-sm);
-  }
-  .doc-table td { color: var(--text-primary); }
-  .doc-table td.num {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    text-align: right; padding-right: var(--space-lg);
-    color: var(--text-display);
-  }
-
-  /* ── Code block ───────────────────────────────────── */
-  .doc-code {
-    margin: var(--space-xl) 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
   .doc-code-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px var(--space-md);
@@ -376,21 +256,7 @@
     color: var(--text-disabled);
   }
   .doc-code-head b { color: var(--text-primary); font-weight: 400; }
-  .doc-code-copy {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-secondary); cursor: pointer;
-    padding: 4px 10px; border-radius: var(--radius-pill);
-    font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    transition: color 0.15s, border-color 0.15s;
-  }
   .doc-code-copy:hover { color: var(--text-display); border-color: var(--border-visible); }
-  .doc-code pre {
-    margin: 0; padding: var(--space-md) 0;
-    font-family: var(--font-mono); font-size: 13px;
-    line-height: 1.55; color: var(--text-primary);
-    overflow-x: auto;
-  }
   .doc-code-line {
     display: grid; grid-template-columns: 48px 1fr;
     padding: 0 var(--space-md);
@@ -400,18 +266,6 @@
     text-align: right; padding-right: var(--space-md);
     font-variant-numeric: tabular-nums;
   }
-  .tok-key { color: var(--interactive); }
-  .tok-str { color: var(--warning); }
-  .tok-num { color: var(--success); }
-  .tok-com { color: var(--text-disabled); font-style: italic; }
-  .tok-fn  { color: var(--text-display); }
-
-  /* ── Steps (numbered procedure) ───────────────────── */
-  .doc-steps {
-    margin: var(--space-xl) 0;
-    counter-reset: doc-step;
-    display: flex; flex-direction: column;
-  }
   .doc-step {
     display: grid; grid-template-columns: 56px 1fr;
     gap: var(--space-md);
@@ -419,19 +273,7 @@
     border-top: 1px solid var(--border);
   }
   .doc-step:last-child { border-bottom: 1px solid var(--border); }
-  .doc-step-num {
-    counter-increment: doc-step;
-    font-family: var(--font-display); font-weight: 400;
-    font-size: 32px; line-height: 1;
-    color: var(--text-display);
-    font-variant-numeric: tabular-nums;
-  }
   .doc-step-num::before { content: counter(doc-step, decimal-leading-zero); }
-  .doc-step-body h4 {
-    font-family: var(--font-body); font-weight: 500;
-    font-size: 17px; color: var(--text-display);
-    margin-bottom: 6px;
-  }
   .doc-step-body p {
     font-size: 15px; line-height: 1.55; color: var(--text-primary);
   }
@@ -455,16 +297,6 @@
     margin-bottom: var(--space-sm);
   }
   .doc-compare--do    h5 { color: var(--success); }
-  .doc-compare--dont  h5 { color: var(--accent); }
-  .doc-compare p { font-size: 15px; line-height: 1.5; color: var(--text-primary); }
-
-  /* ── Reveal / spoiler ─────────────────────────────── */
-  .doc-reveal {
-    margin: var(--space-xl) 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
   .doc-reveal-toggle {
     width: 100%; display: flex; align-items: center; justify-content: space-between;
     padding: var(--space-md);
@@ -474,21 +306,8 @@
     color: var(--text-secondary); text-align: left;
   }
   .doc-reveal-toggle:hover { color: var(--text-display); background: var(--surface); }
-  .doc-reveal-chev {
-    width: 12px; height: 12px;
-    transition: transform 0.28s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
   .doc-reveal.is-open .doc-reveal-chev { transform: rotate(180deg); }
-  .doc-reveal-content {
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-  .doc-reveal.is-open .doc-reveal-content { max-height: 600px; }
-  .doc-reveal-inner {
-    padding: 0 var(--space-md) var(--space-md);
-    border-top: 1px solid var(--border);
-    font-size: 15px; line-height: 1.6; color: var(--text-primary);
-  }
+  .doc-reveal.is-open .doc-reveal-content { grid-template-rows: 1fr; }
   .doc-reveal-inner > * { margin-top: var(--space-md); }
 
   /* ── Quiz / check-in ──────────────────────────────── */
@@ -511,22 +330,7 @@
     line-height: 1.4; text-wrap: balance;
   }
   .doc-quiz-opts { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-  .doc-quiz-opt {
-    display: grid; grid-template-columns: 28px 1fr 20px; align-items: center;
-    gap: var(--space-sm);
-    padding: 12px 14px;
-    background: var(--black);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-tech);
-    cursor: pointer;
-    font-size: 15px; color: var(--text-primary);
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
-  }
   .doc-quiz-opt:hover { border-color: var(--border-visible); }
-  .doc-quiz-opt .letter {
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--text-disabled); letter-spacing: 0.08em;
-  }
   .doc-quiz-opt .check {
     width: 14px; height: 14px; border: 1px solid var(--border-visible);
     border-radius: 50%; opacity: 0.4;
@@ -560,14 +364,6 @@
     letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
   }
   .doc-quiz-submit:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ── Lab / exercise ───────────────────────────────── */
-  .doc-lab {
-    margin: var(--space-xl) 0;
-    border: 1px solid var(--border-visible);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
   .doc-lab-head {
     padding: var(--space-md) var(--space-lg);
     display: flex; justify-content: space-between; align-items: center;
@@ -584,7 +380,6 @@
     color: var(--text-disabled);
   }
   .doc-lab-body { padding: var(--space-lg); font-size: 15px; line-height: 1.55; color: var(--text-primary); }
-  .doc-lab-body p + p { margin-top: var(--space-md); }
   .doc-lab-input {
     margin-top: var(--space-md);
     display: flex; align-items: center; gap: var(--space-sm);
@@ -594,19 +389,7 @@
     font-family: var(--font-mono);
   }
   .doc-lab-input .prompt { color: var(--text-disabled); font-size: 13px; }
-  .doc-lab-input input {
-    flex: 1; background: transparent; border: 0; outline: 0;
-    color: var(--text-display); font-family: var(--font-mono); font-size: 14px;
-  }
   .doc-lab-input input::placeholder { color: var(--text-disabled); }
-
-  /* ── Reflection prompt ────────────────────────────── */
-  .doc-reflect {
-    margin: var(--space-xl) 0;
-    padding: var(--space-lg) 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
   .doc-reflect-tag {
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.16em; text-transform: uppercase;
@@ -626,17 +409,6 @@
     transition: border-color 0.15s;
   }
   .doc-reflect textarea:focus { outline: 0; border-color: var(--text-display); }
-
-  /* ── Summary / takeaways ──────────────────────────────
-     Treated as the closing plate of the lesson. Big numbered
-     entries, hairlines between, a short hook + a clarifier on
-     each one. Different visual rhythm from the body. */
-  .doc-summary {
-    margin: var(--space-3xl) 0 var(--space-xl);
-    padding: var(--space-xl) 0 var(--space-md);
-    border-top: 1px solid var(--text-display);
-    border-bottom: 1px solid var(--border);
-  }
   .doc-summary-head {
     display: flex; align-items: baseline; justify-content: space-between;
     margin-bottom: var(--space-xl);
@@ -658,11 +430,6 @@
     color: var(--text-disabled); line-height: 1.6;
   }
   .doc-summary-head-meta b { color: var(--text-primary); font-weight: 400; }
-
-  .doc-summary ul {
-    list-style: none; display: flex; flex-direction: column;
-    counter-reset: tk;
-  }
   .doc-summary li {
     display: grid;
     grid-template-columns: 72px 1fr;
@@ -672,14 +439,6 @@
     align-items: baseline;
   }
   .doc-summary li:first-child { border-top: 0; padding-top: 0; }
-  /* The numeric tag, in Doto, with a leading-zero feel */
-  .doc-summary li::before {
-    counter-increment: tk;
-    content: counter(tk, decimal-leading-zero);
-    font-family: var(--font-display); font-weight: 400;
-    font-size: 40px; line-height: 1; color: var(--text-display);
-    font-variant-numeric: tabular-nums;
-  }
   .doc-summary-headline {
     display: block;
     font-family: var(--font-body); font-weight: 500;
@@ -709,33 +468,17 @@
     transition: border-color 0.15s, background 0.15s;
   }
   .doc-modnav a:hover { border-color: var(--border-visible); background: var(--surface-raised); }
-  .doc-modnav .dir {
-    font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--text-disabled);
-  }
   .doc-modnav .label {
     font-family: var(--font-body); font-weight: 500;
     font-size: 17px; color: var(--text-display);
   }
   .doc-modnav .next { text-align: right; }
-
-  /* ── Footnotes ────────────────────────────────────── */
-  .doc-footnotes {
-    margin-top: var(--space-2xl);
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--border);
-  }
   .doc-footnotes h6 {
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--text-disabled); margin-bottom: var(--space-md);
   }
   .doc-footnotes ol { list-style: none; counter-reset: fn; display: flex; flex-direction: column; gap: var(--space-sm); }
-  .doc-footnotes li {
-    counter-increment: fn; padding-left: 32px; position: relative;
-    font-size: 13px; line-height: 1.5; color: var(--text-secondary);
-  }
   .doc-footnotes li::before {
     content: counter(fn);
     position: absolute; left: 0; top: 0;
@@ -751,25 +494,6 @@
     display: flex; flex-direction: column; gap: var(--space-2xl);
     padding-top: 80px; /* align with hero baseline */
   }
-  .margin-note {
-    font-family: var(--font-body); font-size: 12px;
-    line-height: 1.55; color: var(--text-secondary);
-    padding-left: var(--space-md);
-    border-left: 1px solid var(--border);
-  }
-  .margin-note h6 {
-    font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--text-disabled); margin-bottom: 6px;
-  }
-  .margin-note p + p { margin-top: 8px; }
-
-  /* ── Sparkline (Tufte-aligned, see references/data-graphics.md) ─ */
-  .spark {
-    display: inline-block; vertical-align: middle;
-    color: var(--text-display);
-    margin: 0 6px;
-  }
 
   /* ── Bottom progress bar (sticky) ─────────────────── */
   .doc-progress {
@@ -784,20 +508,10 @@
     color: var(--text-disabled); z-index: 40;
   }
   .doc-progress b { color: var(--text-primary); font-weight: 400; }
-  .doc-progress-rail {
-    width: 240px; height: 1px;
-    background:
-      linear-gradient(to right,
-        var(--text-display) 0,
-        var(--text-display) var(--p, 0%),
-        var(--border-visible) var(--p, 0%),
-        var(--border-visible) 100%);
-  }
 
   /* ── Light-mode tweaks (only the bits the design system overrides
         aren't already handling) ──────────────────────  */
   body.light .doc-callout { background: var(--surface-raised); }
-  body.light .doc-code pre { color: var(--text-primary); }
 </style>
 </head>
 <body>
@@ -1120,7 +834,7 @@
           <b>app/report/sync.js</b>
           <button type="button" class="doc-code-copy" data-copy>Copy</button>
         </div>
-        <pre><div class="doc-code-line"><span class="ln">1</span><span><span class="tok-com"># entry point for the worker</span></span></div><div class="doc-code-line"><span class="ln">2</span><span><span class="tok-key">defmodule</span> <span class="tok-fn">Cicrus.Payroll.Sync</span> <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">3</span><span>  <span class="tok-key">use</span> Cicrus.Worker, queue: <span class="tok-str">"report.sync"</span></span></div><div class="doc-code-line"><span class="ln">4</span><span></span></div><div class="doc-code-line"><span class="ln">5</span><span>  <span class="tok-key">def</span> <span class="tok-fn">perform</span>(%{<span class="tok-str">"entity_id"</span> => id, <span class="tok-str">"cycle"</span> => cycle}) <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">6</span><span>    {:ok, runs} = Payroll.<span class="tok-fn">load_runs</span>(id, cycle)</span></div><div class="doc-code-line"><span class="ln">7</span><span>    runs</span></div><div class="doc-code-line"><span class="ln">8</span><span>    |&gt; Enum.<span class="tok-fn">map</span>(&amp;FX.<span class="tok-fn">normalize</span>/<span class="tok-num">1</span>)</span></div><div class="doc-code-line"><span class="ln">9</span><span>    |&gt; Ledger.<span class="tok-fn">commit!</span>()</span></div><div class="doc-code-line"><span class="ln">10</span><span>  <span class="tok-key">end</span></span></div><div class="doc-code-line"><span class="ln">11</span><span><span class="tok-key">end</span></span></div></pre>
+        <pre><div class="doc-code-line"><span class="ln">1</span><span><span class="tok-com"># entry point for the worker</span></span></div><div class="doc-code-line"><span class="ln">2</span><span><span class="tok-key">defmodule</span> <span class="tok-fn">App.Report.Sync</span> <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">3</span><span>  <span class="tok-key">use</span> App.Worker, queue: <span class="tok-str">"report.sync"</span></span></div><div class="doc-code-line"><span class="ln">4</span><span></span></div><div class="doc-code-line"><span class="ln">5</span><span>  <span class="tok-key">def</span> <span class="tok-fn">perform</span>(%{<span class="tok-str">"entity_id"</span> => id, <span class="tok-str">"cycle"</span> => cycle}) <span class="tok-key">do</span></span></div><div class="doc-code-line"><span class="ln">6</span><span>    {:ok, runs} = Report.<span class="tok-fn">load_runs</span>(id, cycle)</span></div><div class="doc-code-line"><span class="ln">7</span><span>    runs</span></div><div class="doc-code-line"><span class="ln">8</span><span>    |&gt; Enum.<span class="tok-fn">map</span>(&amp;FX.<span class="tok-fn">normalize</span>/<span class="tok-num">1</span>)</span></div><div class="doc-code-line"><span class="ln">9</span><span>    |&gt; Ledger.<span class="tok-fn">commit!</span>()</span></div><div class="doc-code-line"><span class="ln">10</span><span>  <span class="tok-key">end</span></span></div><div class="doc-code-line"><span class="ln">11</span><span><span class="tok-key">end</span></span></div></pre>
       </div>
 
       <!-- Callout: EXAMPLE -->

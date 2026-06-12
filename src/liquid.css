@@ -1,0 +1,224 @@
+/* ============================================================
+   Cicrus · liquid.css  (ITCSS layer — liquid-glass mode)
+   What tokens can't express: the rendering contexts, the
+   backdrop-filter, the floor discipline, and the specular rim.
+   Active only under body.liquid — zero cost in dark/light.
+   ------------------------------------------------------------
+   THE MATERIAL HAS NO COLOR OF ITS OWN (iOS 26 / macOS Tahoe
+   reference). Panes are milky white films — rgba(255,255,255,…)
+   fills — that frost whatever sits behind them. The backdrop
+   supplies the color, the material supplies the frost. If a
+   surface paints its own color, it isn't glass. The white tint
+   matters more than the blur amount: panes read as glass
+   because they're milky and rimmed, and saturate(200%) keeps
+   the backdrop's color glowing through instead of going gray.
+   ------------------------------------------------------------
+   TWO RENDERING CONTEXTS
+   · NATIVE (body.liquid.native) — the app shell window is
+     transparent and the OS supplies a blurred desktop behind
+     the page (macOS: NSVisualEffectView .hudWindow material +
+     behind-window blending — NOT .underWindowBackground, which
+     renders near-opaque; see docs/platform-mapping.md §4). The
+     page contributes only a faint dark veil.
+   · BROWSER (default) — nothing exists behind a tab, so the
+     page keeps an opaque base and a painted backdrop. The
+     painted backdrop is a browser-only FALLBACK, not part of
+     the material: never animate it, never stack it opaque.
+   ------------------------------------------------------------
+   FLOOR DISCIPLINE (the biggest bug source in production)
+   · The body is the floor. Full-bleed wrappers — page shells,
+     sidebars' containers, split panes, canvas areas — must be
+     background: transparent in liquid, or they occlude the
+     glass with an opaque slab.
+   · Only true surfaces carry fills: inputs, selects, code
+     chips, thumbnails use --surface-raised.
+   · Modals are the exception: they must occlude what they
+     float over — heavy glass (--glass-heavy-fill + blur),
+     never a transparent pane.
+   · Never fix a floor occlusion by redefining --black: it
+     doubles as ink-on-light (primary-button text).
+   ------------------------------------------------------------
+   BLUR BUDGET: backdrop-filter is applied to a bounded list of
+   major surfaces, one pass per stack (nested glass falls back
+   to raised fills — see the nesting rule). .c-item/.c-card are
+   the only high-cardinality members; on dense boards keep items
+   inside .c-col so the nesting rule collapses them to fills.
+   ============================================================ */
+
+/* ── Context: BROWSER (default) ────────────────────────────
+   Opaque base + painted backdrop fallback. Calm and low-
+   saturation — saturate(200%) in the glass amplifies it. */
+body.liquid {
+  background:
+    radial-gradient(140% 100% at 50% -20%, rgba(72, 82, 132, 0.20) 0%, transparent 55%),
+    radial-gradient(120% 90% at 100% 120%, rgba(40, 96, 116, 0.16) 0%, transparent 55%),
+    #0A0A14;
+  background-attachment: fixed;
+}
+
+/* ── Context: NATIVE (body.liquid.native) ──────────────────
+   The OS vibrancy supplies the entire backdrop; the page paints
+   only a faint dark veil so text contrast holds. */
+body.liquid.native {
+  background: var(--glass-veil);
+}
+
+/* The .c-view fade-up entrance would make the page wrapper a
+   backdrop root while its opacity animates (Chromium), visibly
+   un-frosting every pane for 400ms. Liquid cuts straight in. */
+body.liquid .c-view { animation: none; }
+
+/* Focus on glass: the 1px ring alone can vanish over a light
+   desktop in the native context — back it with a dark halo. */
+body.liquid :focus-visible {
+  box-shadow: 0 0 0 3px rgba(10, 10, 20, 0.55);
+}
+
+/* ── Tier: CHROME ──────────────────────────────────────────
+   Edge-to-edge bars; flush, no float shadow. Covers app chrome
+   (.c-*) and document chrome (.doc-top header, .doc-progress). */
+body.liquid .c-topbar,
+body.liquid .c-side,
+body.liquid .doc-top,
+body.liquid .doc-progress {
+  background: var(--glass-chrome-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+body.liquid .c-topbar,
+body.liquid .doc-top,
+body.liquid .doc-progress { box-shadow: var(--glass-specular), inset 0 -1px 0 rgba(255, 255, 255, 0.10); }
+body.liquid .c-side   { box-shadow: var(--glass-specular), inset -1px 0 0 rgba(255, 255, 255, 0.10); }
+
+/* ── Tier: PANEL ───────────────────────────────────────────
+   The one standalone-surface material: milky film, blur,
+   specular top edge + edge ring, soft float shadow. */
+body.liquid .c-card,
+body.liquid .c-item,
+body.liquid .c-col,
+body.liquid .c-statuscard,
+body.liquid .c-panel,
+body.liquid .c-alert,
+body.liquid .c-stats,
+body.liquid .c-panel-output,
+body.liquid .doc-callout,
+body.liquid .doc-code,
+body.liquid .doc-prompt,
+body.liquid .doc-compare,
+body.liquid .doc-figure-frame,
+body.liquid .doc-quiz,
+body.liquid .doc-lab,
+body.liquid .doc-keylist,
+body.liquid .doc-modnav a {
+  background: var(--glass-panel-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-rim), var(--glass-shadow-float);
+  border-color: transparent;
+}
+
+/* Long-form blocks, alerts, data zones: resting lift, not floating. */
+body.liquid .c-alert,
+body.liquid .c-stats,
+body.liquid .c-panel-output,
+body.liquid .doc-code,
+body.liquid .doc-prompt,
+body.liquid .doc-compare,
+body.liquid .doc-figure-frame,
+body.liquid .doc-quiz,
+body.liquid .doc-lab,
+body.liquid .doc-keylist,
+body.liquid .doc-modnav a {
+  box-shadow: var(--glass-rim), var(--glass-shadow-rest);
+}
+
+/* Dense mono text needs more film behind it — data zones read
+   on the raised fill (still one blur pass, still rimmed). */
+body.liquid .doc-code,
+body.liquid .c-panel-output {
+  background: var(--surface-raised);
+}
+
+/* Semantic state must survive the material: re-state the
+   variant signals the panel rule's border-color reset wiped. */
+body.liquid .c-alert--warning {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+}
+body.liquid .c-alert--info { border-color: var(--interactive); }
+body.liquid .c-item--running { border-color: color-mix(in srgb, var(--warning) 45%, transparent); }
+body.liquid .c-item.is-open { border-color: var(--text-display); }
+
+/* Opaque children inside glass panes — the floor discipline,
+   applied to the components that paint --black in dark/light. */
+body.liquid .c-stat,
+body.liquid .c-panel-foot { background: transparent; }
+body.liquid .doc-quiz-opt,
+body.liquid .doc-lab-input { background: var(--surface-raised); }
+
+/* ── True surfaces: raised fills, no blur ──────────────────
+   Inputs, chips, and anything nested inside a glass pane use
+   the raised film only — one blur pass per stack (a second
+   pass compounds to mud). */
+body.liquid .c-input-pill,
+body.liquid .c-input {
+  background: var(--surface-raised);
+  box-shadow: var(--glass-hairline);
+  border-color: transparent;
+}
+body.liquid .c-input-pill:focus-within {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.50), var(--glass-hairline);
+}
+
+/* Nested glass-in-glass collapses to a raised fill — structural
+   rule, not an enumerated list, so any combination is covered. */
+body.liquid
+  :is(.c-card, .c-item, .c-col, .c-statuscard, .c-panel, .c-alert, .c-stats,
+      .c-panel-output, .doc-callout, .doc-code, .doc-prompt, .doc-compare,
+      .doc-figure-frame, .doc-quiz, .doc-lab, .doc-keylist)
+  :is(.c-card, .c-item, .c-statuscard, .c-alert, .c-stats, .c-panel-output,
+      .doc-code, .doc-prompt, .doc-figure-frame) {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--glass-hairline);
+  background: var(--surface-raised);
+}
+
+/* ── Decorative stipple ────────────────────────────────────
+   Dotted motifs pick up the accent at low weight. */
+body.liquid .dot-grid-bg {
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--interactive) 28%, transparent) 0.5px, transparent 0.5px);
+}
+body.liquid .dot-grid-strong {
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--interactive) 42%, transparent) 1px, transparent 1px);
+}
+
+/* ── Fallback ──────────────────────────────────────────────
+   No backdrop-filter support → near-opaque panes so text stays
+   readable. Specular rim kept (it's just a box-shadow). */
+@supports not (backdrop-filter: blur(1px)) {
+  body.liquid .c-topbar,
+  body.liquid .c-side,
+  body.liquid .doc-top,
+  body.liquid .doc-progress,
+  body.liquid .c-card,
+  body.liquid .c-item,
+  body.liquid .c-col,
+  body.liquid .c-statuscard,
+  body.liquid .c-stats,
+  body.liquid .c-panel,
+  body.liquid .c-alert,
+  body.liquid .c-input-pill,
+  body.liquid .doc-callout,
+  body.liquid .doc-prompt,
+  body.liquid .doc-code,
+  body.liquid .doc-compare,
+  body.liquid .doc-figure-frame,
+  body.liquid .doc-quiz,
+  body.liquid .doc-lab,
+  body.liquid .doc-keylist,
+  body.liquid .doc-modnav a,
+  body.liquid .c-panel-output {
+    background: var(--glass-fallback-fill);
+  }
+}

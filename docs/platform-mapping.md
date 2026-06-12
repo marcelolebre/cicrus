@@ -18,7 +18,7 @@ Load fonts via Google Fonts `<link>` in `<head>`. Use CSS custom properties. Mod
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Doto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="cicrus.css">
+  <link rel="stylesheet" href="path/to/src/cicrus.css">
 </head>
 <body><!-- add class="light" for light mode -->
   ...
@@ -253,7 +253,38 @@ struct CicrusBadge: View {
 
 ---
 
-## 4. FIGMA
+## 4. NATIVE macOS SHELL — LIQUID MODE
+
+Liquid glass only reaches its reference look when the OS supplies the backdrop. Shipping
+the web UI inside a native macOS shell (learned in production, Icarus v2.7 integration):
+
+### Window + vibrancy
+
+```swift
+window.isOpaque = false
+window.backgroundColor = .clear
+window.titlebarAppearsTransparent = true
+window.styleMask.insert(.fullSizeContentView)   // material runs edge to edge
+
+let vibrancy = NSVisualEffectView()
+vibrancy.material = .hudWindow                  // NOT .underWindowBackground —
+vibrancy.blendingMode = .behindWindow           // that one renders near-opaque
+vibrancy.state = .active
+```
+
+Layer order: vibrancy view at the back, a **non-drawing webview** on top
+(`webview.setValue(false, forKey: "drawsBackground")`). The page adds
+`class="liquid native"` to `<body>` — in that context it paints only the faint dark veil
+(`rgba(10, 10, 20, 0.15)`); the blurred desktop supplies all the color.
+
+### Chrome details
+
+- **Traffic lights** float over the glass — give top-bar content ~**92px left clearance**.
+- Add a **28px drag strip** above the webview: the webview otherwise swallows window drags.
+
+---
+
+## 5. FIGMA
 
 - Create two variable collections: `Mode = Dark / Light`. Token variables per `tokens.md` §2 table. Every usage binds to the variable, never a raw hex.
 - Use a 4px base grid (8px primary). Auto-layout with gaps from the spacing scale only.
@@ -263,7 +294,7 @@ struct CicrusBadge: View {
 
 ---
 
-## 5. GENERAL OUTPUT CONVENTIONS
+## 6. GENERAL OUTPUT CONVENTIONS
 
 - **One source of tokens per project.** Don't duplicate hex values in components — always reference the token.
 - **Always ship dark AND light together.** Never merge a "dark-only" feature; the light equivalent must exist or the PR is incomplete.

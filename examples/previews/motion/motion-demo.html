@@ -1,0 +1,148 @@
+<!-- @dsCard group="Motion" name="Motion" subtitle="Percussive, compositor-only: entrances, sweeps, signals, ticks" viewport="1100x980" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion — Cicrus</title>
+<link rel="stylesheet" href="../../../src/cicrus.css">
+<style>
+  body { padding: 48px 56px; }
+  .head { margin-bottom: 36px; padding-bottom: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; justify-content: space-between; }
+  .head .ttl { font-family: var(--font-display); font-size: 30px; letter-spacing: -0.02em; color: var(--text-display); }
+  .head .sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-disabled); }
+  section { margin-bottom: 40px; }
+  .lblrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-disabled); }
+  .replay { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); background: none; border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 4px 12px; cursor: pointer; transition: color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease); }
+  .replay:hover { color: var(--text-display); border-color: var(--text-display); }
+  .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .demo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--space-md); }
+  .demo-card .k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-disabled); margin-bottom: 6px; }
+  .demo-card .v { font-family: var(--font-body); font-size: 22px; color: var(--text-display); font-variant-numeric: tabular-nums; }
+  .sigrow { display: flex; align-items: center; gap: 48px; }
+  .sig { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); }
+  .gaugerow { display: flex; align-items: center; gap: 48px; }
+  .term { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-tech); padding: 12px 14px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="ttl">Motion</div>
+    <div class="sub">One curve · four durations · opacity + transform only</div>
+  </div>
+
+  <section>
+    <div class="lblrow">
+      <div class="lbl">Entrance — .c-stagger (children rise 35ms apart)</div>
+      <button class="replay" id="replay-stagger">Replay</button>
+    </div>
+    <div class="row3 c-stagger" id="stagger-grid">
+      <div class="demo-card"><div class="k">Throughput</div><div class="v">1,284/s</div></div>
+      <div class="demo-card"><div class="k">P99 latency</div><div class="v">312 ms</div></div>
+      <div class="demo-card"><div class="k">Error rate</div><div class="v">0.04%</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lblrow">
+      <div class="lbl">Entrances — .c-rise (fade-up) · .c-slide-in (panel, from the right)</div>
+      <button class="replay" id="replay-entrances">Replay</button>
+    </div>
+    <div class="row3">
+      <div class="demo-card c-rise" id="rise-card"><div class="k">.c-rise</div><div class="v">Fade-up</div></div>
+      <div class="demo-card c-slide-in" id="slide-card"><div class="k">.c-slide-in</div><div class="v">Slide-in</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lblrow">
+      <div class="lbl">Data entrance — .c-data-enter (bars sweep from zero · honest origin)</div>
+      <button class="replay" id="replay-data">Replay</button>
+    </div>
+    <div class="c-data-enter" id="data-block">
+      <div class="c-bars" style="max-width: 520px;">
+        <span class="c-bar-label">INGEST</span>
+        <span class="c-bar-track"><span class="c-bar-fill" style="--v: 78"></span></span>
+        <span class="c-bar-value">78%</span>
+        <span class="c-bar-label">PARSE</span>
+        <span class="c-bar-track"><span class="c-bar-fill c-bar--warn" style="--v: 52"></span></span>
+        <span class="c-bar-value">52%</span>
+        <span class="c-bar-label">EXPORT</span>
+        <span class="c-bar-track"><span class="c-bar-fill c-bar--ctx" style="--v: 31"></span></span>
+        <span class="c-bar-value">31%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:48px; margin-top:20px;">
+        <span class="sig"><span class="c-sparkbar"><i style="--v:30"></i><i style="--v:45"></i><i style="--v:38"></i><i style="--v:60"></i><i style="--v:52"></i><i style="--v:74"></i><i style="--v:66"></i><i style="--v:88"></i><i style="--v:80"></i><i style="--v:100"></i></span> SPARKBAR RISE</span>
+        <span class="sig"><span class="c-spark"><svg viewBox="0 0 96 22" width="96" height="22" preserveAspectRatio="none" role="img" aria-label="Sparkline draw demo: rising trend">
+          <polyline pathLength="1" points="0,20 12,17 24,18 36,13 48,14 60,9 72,10 84,5 96,2"></polyline>
+        </svg></span> SPARKLINE DRAW</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lblrow">
+      <div class="lbl">Gauge sweep — JS sets --v, the ring animates (var(--dur-data) · 0.6s)</div>
+      <button class="replay" id="cycle-gauge">Cycle value</button>
+    </div>
+    <div class="gaugerow">
+      <div class="c-gauge-wrap">
+        <div class="c-gauge c-gauge--ok" id="gauge" style="--v: 64"></div>
+        <div class="c-gauge-center"><span class="c-gauge-num" id="gauge-num">64</span><span class="c-gauge-unit">%</span></div>
+      </div>
+      <div class="demo-card" style="min-width: 180px;">
+        <div class="k">Value tick — .c-tick</div>
+        <div class="v c-tick" id="tick-val">1,284</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="lbl" style="margin-bottom: 16px;">Signals — steps(), not fades</div>
+    <div class="sigrow">
+      <span class="sig"><span class="c-blink">●</span> LIVE</span>
+      <span class="sig"><span class="c-dot c-dot--down"></span> ALERTING</span>
+      <span class="sig"><span class="c-status-dot c-status-dot--running"></span> RUNNING</span>
+      <span class="sig c-loading c-loading--live"></span>
+      <span class="term">$ tail -f /var/log/app<span class="c-caret"></span></span>
+    </div>
+  </section>
+
+<script>
+  // Replay helpers: yank + restore the class to restart CSS animations.
+  function replay(el, cls) {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+  document.getElementById('replay-stagger').addEventListener('click', function () {
+    replay(document.getElementById('stagger-grid'), 'c-stagger');
+  });
+  document.getElementById('replay-data').addEventListener('click', function () {
+    replay(document.getElementById('data-block'), 'c-data-enter');
+  });
+  document.getElementById('replay-entrances').addEventListener('click', function () {
+    replay(document.getElementById('rise-card'), 'c-rise');
+    replay(document.getElementById('slide-card'), 'c-slide-in');
+  });
+
+  // Gauge: set --v from JS; the registered property transitions.
+  var gaugeVals = [64, 22, 91, 47];
+  var gi = 0;
+  document.getElementById('cycle-gauge').addEventListener('click', function () {
+    gi = (gi + 1) % gaugeVals.length;
+    var v = gaugeVals[gi];
+    document.getElementById('gauge').style.setProperty('--v', v);
+    document.getElementById('gauge-num').textContent = v;
+  });
+
+  // Value tick: number changes flip with a relay-step.
+  var tickEl = document.getElementById('tick-val');
+  setInterval(function () {
+    var n = 1200 + Math.floor(Math.random() * 160);
+    tickEl.textContent = n.toLocaleString('en-US');
+    replay(tickEl, 'c-tick');
+  }, 2600);
+</script>
+</body>
+</html>

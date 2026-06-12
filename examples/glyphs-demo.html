@@ -14,17 +14,18 @@
     --black: #060606;
     --text-disabled: #8F8F8F;
     --text-secondary: #B8B8B8;
-    --accent: #ff5c5c;
+    --accent: #F0353D;   /* dark-mode alarm red — matches tokens.css */
+    --success: #4A9E5C;  /* dark-mode green */
     --font-mono: 'Space Mono', monospace;
   }
 
-  html, body { background: var(--black); min-height: 100vh; }
+  html, body { background: var(--black); color: #f5f5f5; min-height: 100vh; }
   body { display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
 
   .stage { background: var(--black); border-radius: 16px; padding: 28px 22px 22px; max-width: 720px; }
   .row { display: flex; gap: 28px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
   .cell { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .glyph { width: 200px; height: 200px; }
+  .glyph { width: 200px; height: 170px; }
 
   .label {
     font-family: var(--font-mono);
@@ -33,33 +34,33 @@
     text-transform: uppercase;
     margin: 0;
   }
-  .l-idle     { color: var(--text-disabled); }
-  .l-thinking { color: var(--text-secondary); }
-  .l-error    { color: var(--accent); }
+  .l-running { color: var(--text-secondary); }
+  .l-stopped { color: var(--text-disabled); }
+  .l-broken  { color: var(--accent); }
 </style>
 </head>
 <body>
 <div class="stage">
   <div class="row">
     <div class="cell">
-      <div class="glyph" id="g-idle" aria-label="idle"></div>
-      <p class="label l-idle">idle</p>
+      <div class="glyph" id="g-running"></div>
+      <p class="label l-running">running</p>
     </div>
     <div class="cell">
-      <div class="glyph" id="g-thinking" aria-label="thinking"></div>
-      <p class="label l-thinking">thinking</p>
+      <div class="glyph" id="g-stopped"></div>
+      <p class="label l-stopped">stopped</p>
     </div>
     <div class="cell">
-      <div class="glyph" id="g-error" aria-label="error"></div>
-      <p class="label l-error">error</p>
+      <div class="glyph" id="g-broken"></div>
+      <p class="label l-broken">broken</p>
     </div>
   </div>
 </div>
 <script type="module">
   import { mountGlyph } from '../src/glyphs.js';
-  mountGlyph(document.getElementById('g-idle'),     { state: 'idle' });
-  mountGlyph(document.getElementById('g-thinking'), { state: 'thinking' });
-  mountGlyph(document.getElementById('g-error'),    { state: 'error' });
+  mountGlyph(document.getElementById('g-running'), { state: 'running' });
+  mountGlyph(document.getElementById('g-stopped'), { state: 'stopped' });
+  mountGlyph(document.getElementById('g-broken'),  { state: 'broken' });
 </script>
 </body>
 </html>
