@@ -1090,6 +1090,92 @@
   color: var(--accent); border-color: var(--accent);
 }
 
+/* ── Modal · centered dialog over a dimmed scrim ──────────
+   Structure:
+     .c-modal-overlay  fixed scrim, dims + centers
+       .c-modal        the dialog card (role="dialog" aria-modal)
+         .c-modal-head   eyebrow + close
+         .c-modal-body   content
+         .c-modal-foot   meta + actions
+   Entrance/exit animation lives in motion.css (overlay fades,
+   dialog scales in; add .is-closing to the overlay to play the
+   reverse, then remove the node on animationend). */
+.c-modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-xl);
+  background: rgba(0, 0, 0, 0.6);
+}
+.c-modal {
+  width: 480px; max-width: 100%; max-height: 100%;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  background: var(--black);
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius-tech);
+  box-shadow: var(--hover-shadow, 0 24px 80px rgba(0, 0, 0, 0.45));
+}
+.c-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-md) var(--space-xl);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.c-modal-eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-sm);
+  font-family: var(--font-mono); font-size: var(--label);
+  letter-spacing: var(--ls-label); text-transform: uppercase;
+  color: var(--text-disabled);
+}
+.c-modal-eyebrow b { color: var(--text-display); font-weight: 400; }
+.c-modal-close {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-tech);
+  color: var(--text-secondary); cursor: pointer;
+  transition:
+    color var(--dur-micro) var(--ease),
+    border-color var(--dur-micro) var(--ease),
+    background var(--dur-micro) var(--ease);
+}
+.c-modal-close:hover {
+  color: var(--text-display);
+  border-color: var(--border-visible);
+  background: var(--surface);
+}
+.c-modal-close svg { width: 12px; height: 12px; }
+.c-modal-body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: var(--space-xl);
+  display: flex; flex-direction: column; gap: var(--space-md);
+}
+.c-modal-title {
+  font-family: var(--font-display); font-size: var(--display-md);
+  font-weight: var(--heading-weight);
+  line-height: 1.15; letter-spacing: var(--ls-tight);
+  color: var(--text-display); margin: 0; text-wrap: pretty;
+}
+.c-modal-text {
+  font-family: var(--font-body); font-size: var(--body);
+  font-weight: 300; line-height: 1.6;
+  color: var(--text-secondary); margin: 0;
+}
+.c-modal-foot {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-xl);
+  border-top: 1px solid var(--border);
+}
+.c-modal-foot-meta {
+  font-family: var(--font-mono); font-size: var(--label);
+  color: var(--text-disabled); letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+.c-modal-actions { display: flex; gap: var(--space-sm); }
+
 
 /* Standalone safety net — when components.css is consumed without
    motion.css (whose global kill-switch normally handles this),

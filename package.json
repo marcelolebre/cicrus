@@ -1,6 +1,6 @@
 {
   "name": "cicrus",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "A monochromatic, typography-first CSS design system for operator consoles, dashboards, and internal tools. Plain CSS + design tokens — no build step, no framework. Three first-class modes: dark, light, and liquid glass.",
   "keywords": [
     "design-system",

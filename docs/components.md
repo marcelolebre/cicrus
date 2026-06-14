@@ -96,6 +96,7 @@ Mono 10px, ALL-CAPS. Max 3 per surface. Apply color to text + border, never fill
 | `.c-panel-timeline` | Run-log list (`li.is-done/.is-active/.is-pending`): `.c-panel-time`, `.c-panel-dot`, `.c-panel-step`. |
 | `.c-panel-output` | Monospace log block. |
 | `.c-panel-foot` / `.c-panel-btn` | Sticky footer + buttons (`--primary`, `--danger`). |
+| `.c-modal` | Centred dialog over a dimmed scrim (`.c-modal-overlay` > `.c-modal`): `.c-modal-head`, `.c-modal-eyebrow`, `.c-modal-close`, `.c-modal-body` (`.c-modal-title`, `.c-modal-text`), `.c-modal-foot` (`.c-modal-foot-meta`, `.c-modal-actions`). Animates via `motion.css` (add `.is-closing` to dismiss); heavy occluding glass in liquid. |
 
 ## Index & misc
 
@@ -142,6 +143,12 @@ Full guide: [`motion.md`](./motion.md).
 | `.c-caret` / `.c-blink` | Hard `steps()` blink — terminal caret / liveness. |
 | `.c-loading--live` | Cycling dots on `.c-loading` (fixed width). |
 | `.c-tick` | One-shot relay-flip for a changed value (re-add from JS). |
+| `.c-flip` / `.c-swap` | One-shot: a number arriving (blur-drop) / a label changing meaning (blur-in). |
+| `.c-shake` / `.c-check` | One-shot: rejected input (three knocks) / a completion landing (scale-in). |
+| `.c-icon-swap` / `.c-badge-in` / `.c-dissolve` | One-shot: icon replaced / badge arriving / field cleared. |
+| `.c-skeleton` / `.c-shimmer` | Looping: loading placeholder sheen / live "thinking" text sweep. |
+| `.c-chevron` / `.c-resize` | Disclosure caret rotate / height reveal (`0fr→1fr`, toggle `.is-open`). |
+| `.c-modal` | Centred dialog over a scrim; scales in, `.is-closing` reverses. Heavy glass in liquid. |
 
 Motion tokens: `--ease` (the one curve), `--dur-micro` 150ms, `--dur-switch` 300ms,
 `--dur-view` 400ms, `--dur-data` 600ms (data sweeps). The gauge's `--v` is registered,

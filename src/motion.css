@@ -8,8 +8,10 @@
    · Compositor-only: entrances animate opacity + transform.
      Sanctioned exceptions, all small and bounded: SVG stroke
      draw (c-draw), registered custom-prop sweeps (--v, --p),
-     and the doc-reveal grid-rows disclosure. No layout
-     properties otherwise, no blanket will-change.
+     the doc-reveal / c-resize grid-rows disclosure, a thread
+     of blur (≤4px) on one-shot state transitions, and the
+     skeleton/shimmer sweeps (translate, not background-position).
+     No layout properties otherwise, no blanket will-change.
    · End-state is the base style. Every entrance lives inside
      @media (prefers-reduced-motion: no-preference), so print,
      export, and reduced-motion users see finished content.
@@ -25,6 +27,30 @@
 /* The caret GLYPH is content, not motion — it must survive
    reduced-motion; only its blink is gated below. */
 .c-caret::after { content: "_"; color: var(--text-display); }
+
+/* ── Base-level state helpers ────────────────────────────────
+   The end-state (rotation, expanded height) is a base rule so it
+   holds for everyone; only the transition is motion, and the
+   reduced-motion block below collapses its duration to instant. */
+
+/* Chevron / disclosure caret: rotates when its control opens.
+   Use on an icon inside an [aria-expanded] control, or add
+   .c-chevron--open directly. */
+.c-chevron { transition: transform var(--dur-micro) var(--ease); }
+[aria-expanded="true"] .c-chevron,
+.c-chevron--open { transform: rotate(180deg); }
+
+/* Height reveal (card/row resize) without a magic pixel value.
+   Wrap the collapsible content; toggle .is-open on the wrapper.
+     <div class="c-resize"><div> …content… </div></div>
+   This is the same sanctioned grid-rows disclosure as .doc-reveal —
+   accurate height beats a capped `max-height` lie. */
+.c-resize {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-switch) var(--ease);
+}
+.c-resize.is-open { grid-template-rows: 1fr; }
+.c-resize > * { overflow: hidden; min-height: 0; }
 
 @media (prefers-reduced-motion: no-preference) {
 
@@ -128,6 +154,136 @@
     from { opacity: 0.25; }
     to   { opacity: 1; }
   }
+
+  /* ════════════════════════════════════════════════════════
+     ONE-SHOT STATE TRANSITIONS
+     Re-trigger from JS — set textContent/state, then:
+       el.classList.remove('c-flip');
+       void el.offsetWidth;           // reflow restarts the animation
+       el.classList.add('c-flip');
+     Each blurs only a hair (≤4px) and settles hard on our one
+     curve — percussive, never spring. No rotate flourishes.
+     ════════════════════════════════════════════════════════ */
+
+  /* Number flip — a digit arriving: drops in from above through
+     a thread of blur, then lands. The upgrade over .c-tick for
+     .c-stat-value, .c-dotplot-value, .c-bar-value, the gauge
+     centre, column/sidebar counts. */
+  .c-flip { animation: c-flip var(--dur-switch) var(--ease); }
+  @keyframes c-flip {
+    0%  { opacity: 0; transform: translateY(-0.42em); filter: blur(3px); }
+    55% { filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* Text-state swap — a label changing meaning (RUN → RUNNING →
+     DONE, button labels, panel pills). Blur-dissolves in as the
+     new word lands. Pairs with the glyph's running/stopped/broken. */
+  .c-swap { animation: c-swap var(--dur-switch) var(--ease); }
+  @keyframes c-swap {
+    from { opacity: 0; filter: blur(4px); }
+    to   { opacity: 1; filter: blur(0); }
+  }
+
+  /* Error shake — three hard lateral knocks (~5px) on our curve,
+     then dead still. Pair with .c-input--error / .c-btn--danger
+     on a rejected submit. Percussive, not a springy wobble. */
+  .c-shake { animation: c-shake 0.32s var(--ease); }
+  @keyframes c-shake {
+    0%, 100% { transform: translateX(0); }
+    18% { transform: translateX(-5px); }
+    42% { transform: translateX(4px); }
+    66% { transform: translateX(-2px); }
+    84% { transform: translateX(1px); }
+  }
+
+  /* Success settle — a completion landing: scales up from 0.7
+     through a touch of blur and settles at 1. No rotate. Use on
+     a check mark revealed in .c-status-dot--done / a done badge. */
+  .c-check { animation: c-check var(--dur-switch) var(--ease); }
+  @keyframes c-check {
+    from { opacity: 0; transform: scale(0.7); filter: blur(2px); }
+    to   { opacity: 1; transform: scale(1);   filter: blur(0); }
+  }
+
+  /* Icon swap — a glyph replaced in place: scale + blur in.
+     Re-trigger after swapping the <svg>/glyph. */
+  .c-icon-swap { animation: c-icon-swap var(--dur-micro) var(--ease); }
+  @keyframes c-icon-swap {
+    from { opacity: 0; transform: scale(0.6); filter: blur(2px); }
+    to   { opacity: 1; transform: scale(1);   filter: blur(0); }
+  }
+
+  /* Badge appear — a count/label arriving: quick scale + fade,
+     no diagonal spring pop. Use on .c-badge, counts. */
+  .c-badge-in { animation: c-badge-in var(--dur-micro) var(--ease); }
+  @keyframes c-badge-in {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Dissolve out (forwards) — clearing an input or removing a
+     chip: blur + fade, holds the end-state. Remove the node (or
+     the class) on animationend. */
+  .c-dissolve { animation: c-dissolve var(--dur-micro) var(--ease) forwards; }
+  @keyframes c-dissolve {
+    to { opacity: 0; filter: blur(4px); }
+  }
+
+  /* ── Skeleton + shimmer (looping signals) ──────────────────
+     A loading placeholder and the "processing" text cue. Both
+     run on the compositor: a highlight pseudo-element TRANSLATES
+     across, rather than animating background-position.
+     Loop periods (1.4s/2.4s) are loop-timed, not transition tokens —
+     signals carve-out, same as the dot cycle and pulses. */
+  .c-skeleton {
+    position: relative; overflow: hidden;
+    background: var(--surface-raised);
+    border-radius: var(--radius-tech);
+    color: transparent;
+  }
+  .c-skeleton::after {
+    content: ""; position: absolute; inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg, transparent 0%,
+      color-mix(in srgb, var(--text-display) 6%, transparent) 50%,
+      transparent 100%);
+    animation: c-sheen 1.4s var(--ease) infinite;
+  }
+  @keyframes c-sheen { to { transform: translateX(100%); } }
+
+  /* Shimmer text — a live "thinking / planning…" cue that ties
+     to the glyph running state. A bright band sweeps the copy. */
+  .c-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--text-disabled) 0%,
+      var(--text-display) 50%,
+      var(--text-disabled) 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: c-shimmer 2.4s linear infinite;
+  }
+  @keyframes c-shimmer {
+    from { background-position: 120% 0; }
+    to   { background-position: -120% 0; }
+  }
+
+  /* ── Modal (entrance + exit) ───────────────────────────────
+     Scrim fades; the dialog scales up from 0.96 through a hair
+     of blur and settles. Add .is-closing to the overlay to play
+     the reverse, then remove the node on animationend. */
+  .c-modal-overlay { animation: c-overlay-in var(--dur-micro) var(--ease); }
+  .c-modal-overlay > .c-modal { animation: c-modal-in var(--dur-switch) var(--ease); }
+  @keyframes c-overlay-in { from { opacity: 0; } }
+  @keyframes c-modal-in {
+    from { opacity: 0; transform: scale(0.96); filter: blur(2px); }
+    to   { opacity: 1; transform: scale(1);    filter: blur(0); }
+  }
+  .c-modal-overlay.is-closing { animation: c-overlay-in var(--dur-micro) var(--ease) reverse forwards; }
+  .c-modal-overlay.is-closing > .c-modal { animation: c-modal-in var(--dur-micro) var(--ease) reverse forwards; }
 }
 
 /* ── Reduced motion: kill everything, everywhere ──────────────

@@ -13,9 +13,11 @@ Live demo: [`../examples/previews/motion/motion-demo.html`](../examples/previews
    blink signals liveness; a tick marks a change. If a motion encodes nothing, cut it.
 3. **High frame rate by construction.** Entrances animate **opacity + transform**
    (compositor-friendly — no layout, no paint storms, no blanket `will-change`).
-   Three sanctioned, bounded exceptions: SVG stroke draw (`c-draw`), registered
-   custom-prop sweeps (`--v`, `--p`), and the `.doc-reveal` grid-rows disclosure
-   (accurate height beats a capped `max-height` lie).
+   Sanctioned bounded exceptions, all small: SVG stroke draw (`c-draw`), registered
+   custom-prop sweeps (`--v`, `--p`), the grid-rows disclosure used by `.doc-reveal`
+   and `.c-resize` (accurate height beats a capped `max-height` lie), a thread of
+   blur (≤4px) on one-shot state transitions, and the skeleton/shimmer sweeps
+   (translate, not background-position).
 4. **Four durations.** `--dur-micro` 150ms (hover, focus, small flips) ·
    `--dur-switch` 300ms (toggles, reveals, ticks) · `--dur-view` 400ms (view and panel
    entrances) · `--dur-data` 600ms (data sweeps: progress fills, sparkline draws, gauge
@@ -39,10 +41,38 @@ Live demo: [`../examples/previews/motion/motion-demo.html`](../examples/previews
 | `.c-blink` | Hard on/off blink (steps, 1.1s loop) | Any liveness signal. |
 | `.c-loading--live` | Cycling dots on `.c-loading`, fixed width | Loading stubs. |
 | `.c-tick` | One-shot relay-flip (half-dim → full, 2 steps) | A value that just changed — re-add the class from JS. |
+| `.c-skeleton` | Looping sheen (a highlight pseudo translates across) | Loading placeholders — give the block a size; it greys and shimmers. |
+| `.c-shimmer` | A bright band sweeps the text (2.4s loop) | A live "thinking / planning…" cue; pairs with the glyph running state. |
 
-Already-shipped motion that composes with these: `.c-view` fade-in, `.c-dot-down` /
+Already-shipped motion that composes with these: `.c-view` fade-in, `.c-dot--down` /
 `.c-status-dot--running` pulse, `.c-item--running` breathing glow, `.c-panel-timeline`
 pulse-ring, `.c-item-progress` / `.c-panel-progress` meter transitions.
+
+### One-shot state transitions
+
+Each blurs only a hair (≤4px) and settles hard on the one curve — percussive, never
+spring, no rotate flourishes. Re-trigger from JS with the class-yank idiom (§3).
+
+| Class | Motion | Use |
+|-------|--------|-----|
+| `.c-flip` | Digit drops in from above through blur, lands | A number arriving — the upgrade over `.c-tick` for stat values, bar/dotplot values, gauge centre, counts. |
+| `.c-swap` | Blur-dissolve in | A label changing meaning (RUN → RUNNING → DONE), button labels, panel pills. |
+| `.c-shake` | Three hard lateral knocks (~5px), then still | A rejected submit — pair with `.c-input--error` / `.c-btn--danger`. |
+| `.c-check` | Scale up from 0.7 through blur | A completion landing — a check revealed in `.c-status-dot--done` / a done badge. |
+| `.c-icon-swap` | Scale + blur in (150ms) | A glyph replaced in place. |
+| `.c-badge-in` | Quick scale + fade (150ms) | A count or label arriving on `.c-badge`. |
+| `.c-dissolve` | Blur + fade out, holds end-state (`forwards`) | Clearing an input or removing a chip — drop the node on `animationend`. |
+
+### Disclosure, layout & overlay
+
+These carry their **end-state as a base rule** (so it holds under reduced motion); only
+the transition is gated.
+
+| Class | Motion | Use |
+|-------|--------|-----|
+| `.c-chevron` | Rotates 180° when its control opens | A disclosure caret — toggles on `[aria-expanded="true"]` or `.c-chevron--open`. |
+| `.c-resize` | Height reveal via a `0fr → 1fr` grid track (no magic pixel value) | Wrap collapsible content; toggle `.is-open`. |
+| `.c-modal` | Scrim fades, dialog scales up from 0.96 + blur, settles | A centred dialog (`.c-modal-overlay > .c-modal`); add `.is-closing` to the overlay to play the reverse, then remove on `animationend`. Liquid mode renders it as heavy occluding glass. |
 
 ## 3. JS HOOKS
 
@@ -60,13 +90,25 @@ el.classList.add('c-stagger');
 gauge.style.setProperty('--v', 64);   // sweeps to 64% over var(--dur-data) (0.6s)
 ```
 
-**Tick a changed value:**
+**Tick a changed value** (or `.c-flip` for the blur-drop variant — same shape, harder
+visual):
 
 ```js
 valueEl.textContent = next;
-valueEl.classList.remove('c-tick');
+valueEl.classList.remove('c-flip');
 void valueEl.offsetWidth;
-valueEl.classList.add('c-tick');
+valueEl.classList.add('c-flip');
+```
+
+**Open a modal** (entrance animates; `.is-closing` plays the reverse):
+
+```js
+const overlay = root.firstElementChild;        // .c-modal-overlay
+function close() {
+  overlay.classList.add('is-closing');
+  overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
+}
+overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 ```
 
 ## 4. WHEN *NOT* TO ANIMATE

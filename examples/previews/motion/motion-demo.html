@@ -1,4 +1,4 @@
-<!-- @dsCard group="Motion" name="Motion" subtitle="Percussive, compositor-only: entrances, sweeps, signals, ticks" viewport="1100x980" -->
+<!-- @dsCard group="Motion" name="Motion" subtitle="Percussive, compositor-only: entrances, state transitions, signals" viewport="1100x1640" -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,12 +23,27 @@
   .sig { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); }
   .gaugerow { display: flex; align-items: center; gap: 48px; }
   .term { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-tech); padding: 12px 14px; }
+  .subhead { font-family: var(--font-display); font-size: 18px; color: var(--text-display); letter-spacing: -0.01em; margin: 0 0 18px; padding-top: 8px; border-top: 1px solid var(--border); padding-top: 24px; }
+  .stcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--space-md); display: flex; flex-direction: column; gap: 14px; }
+  .stcard .k { font-family: var(--font-mono); font-size: 11px; color: var(--text-display); }
+  .stcard .d { font-family: var(--font-body); font-size: 12px; font-weight: 300; color: var(--text-secondary); line-height: 1.5; }
+  .stcard .stage { min-height: 72px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: var(--radius-tech); padding: 14px; }
+  .stcard .stage--block { display: block; }
+  .stcard .replay { align-self: flex-start; }
+  .bignum { font-family: var(--font-display); font-size: 40px; color: var(--text-display); font-variant-numeric: tabular-nums; line-height: 1; }
+  .statelbl { font-family: var(--font-mono); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
+  .checkmark { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid var(--success); color: var(--success); }
+  .checkmark svg { width: 17px; height: 17px; }
+  .iconbox { color: var(--text-display); } .iconbox svg { width: 26px; height: 26px; }
+  .skelblock .c-skeleton { height: 12px; margin-bottom: 8px; }
+  .skelblock .c-skeleton:nth-child(2) { width: 70%; }
+  .skelblock .c-skeleton:last-child { width: 45%; margin-bottom: 0; }
 </style>
 </head>
 <body>
   <div class="head">
     <div class="ttl">Motion</div>
-    <div class="sub">One curve · four durations · opacity + transform only</div>
+    <div class="sub">One curve · four durations · opacity + transform</div>
   </div>
 
   <section>
@@ -40,17 +55,6 @@
       <div class="demo-card"><div class="k">Throughput</div><div class="v">1,284/s</div></div>
       <div class="demo-card"><div class="k">P99 latency</div><div class="v">312 ms</div></div>
       <div class="demo-card"><div class="k">Error rate</div><div class="v">0.04%</div></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="lblrow">
-      <div class="lbl">Entrances — .c-rise (fade-up) · .c-slide-in (panel, from the right)</div>
-      <button class="replay" id="replay-entrances">Replay</button>
-    </div>
-    <div class="row3">
-      <div class="demo-card c-rise" id="rise-card"><div class="k">.c-rise</div><div class="v">Fade-up</div></div>
-      <div class="demo-card c-slide-in" id="slide-card"><div class="k">.c-slide-in</div><div class="v">Slide-in</div></div>
     </div>
   </section>
 
@@ -71,18 +75,12 @@
         <span class="c-bar-track"><span class="c-bar-fill c-bar--ctx" style="--v: 31"></span></span>
         <span class="c-bar-value">31%</span>
       </div>
-      <div style="display:flex; align-items:center; gap:48px; margin-top:20px;">
-        <span class="sig"><span class="c-sparkbar"><i style="--v:30"></i><i style="--v:45"></i><i style="--v:38"></i><i style="--v:60"></i><i style="--v:52"></i><i style="--v:74"></i><i style="--v:66"></i><i style="--v:88"></i><i style="--v:80"></i><i style="--v:100"></i></span> SPARKBAR RISE</span>
-        <span class="sig"><span class="c-spark"><svg viewBox="0 0 96 22" width="96" height="22" preserveAspectRatio="none" role="img" aria-label="Sparkline draw demo: rising trend">
-          <polyline pathLength="1" points="0,20 12,17 24,18 36,13 48,14 60,9 72,10 84,5 96,2"></polyline>
-        </svg></span> SPARKLINE DRAW</span>
-      </div>
     </div>
   </section>
 
   <section>
     <div class="lblrow">
-      <div class="lbl">Gauge sweep — JS sets --v, the ring animates (var(--dur-data) · 0.6s)</div>
+      <div class="lbl">Gauge sweep — JS sets --v, the ring animates (--dur-data 600ms)</div>
       <button class="replay" id="cycle-gauge">Cycle value</button>
     </div>
     <div class="gaugerow">
@@ -100,13 +98,104 @@
   <section>
     <div class="lbl" style="margin-bottom: 16px;">Signals — steps(), not fades</div>
     <div class="sigrow">
-      <span class="sig"><span class="c-blink">●</span> LIVE</span>
       <span class="sig"><span class="c-dot c-dot--down"></span> ALERTING</span>
       <span class="sig"><span class="c-status-dot c-status-dot--running"></span> RUNNING</span>
       <span class="sig c-loading c-loading--live"></span>
       <span class="term">$ tail -f /var/log/app<span class="c-caret"></span></span>
     </div>
   </section>
+
+  <h2 class="subhead">State transitions — one-shot, re-triggered from JS</h2>
+  <section>
+    <div class="row3">
+      <div class="stcard">
+        <div class="k">.c-flip</div>
+        <div class="d">A number arriving — drops in through a thread of blur and lands.</div>
+        <div class="stage"><span class="bignum" id="d-flip">128</span></div>
+        <button class="replay" data-target="d-flip" data-cls="c-flip" data-num>Replay</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-swap</div>
+        <div class="d">A label changing meaning — RUN → RUNNING → DONE.</div>
+        <div class="stage"><span class="statelbl" id="d-swap" style="color:var(--warning)">RUNNING</span></div>
+        <button class="replay" data-target="d-swap" data-cls="c-swap" data-swap>Replay</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-shake</div>
+        <div class="d">Rejected input — three hard knocks, then still.</div>
+        <div class="stage stage--block"><input class="c-input c-input--error" id="d-shake" value="invalid-token" readonly></div>
+        <button class="replay" data-target="d-shake" data-cls="c-shake">Replay</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-check</div>
+        <div class="d">A completion landing — scales up through a touch of blur. No rotate.</div>
+        <div class="stage"><span class="checkmark" id="d-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span></div>
+        <button class="replay" data-target="d-check" data-cls="c-check">Replay</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-icon-swap</div>
+        <div class="d">A glyph replaced in place — scale + blur in.</div>
+        <div class="stage"><span class="iconbox" id="d-icon"></span></div>
+        <button class="replay" data-target="d-icon" data-cls="c-icon-swap" data-icon>Replay</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-badge-in</div>
+        <div class="d">A count or label arriving — quick scale + fade, no spring pop.</div>
+        <div class="stage"><span class="c-badge c-badge--info" id="d-badge">3 NEW</span></div>
+        <button class="replay" data-target="d-badge" data-cls="c-badge-in">Replay</button>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="subhead">Disclosure, layout &amp; clearing</h2>
+  <section>
+    <div class="row3">
+      <div class="stcard">
+        <div class="k">.c-chevron</div>
+        <div class="d">A disclosure caret rotating 180° as its control opens.</div>
+        <div class="stage">
+          <button class="c-filter-btn" id="d-chev" aria-expanded="false" style="cursor:pointer">DETAILS
+            <svg class="c-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+        </div>
+        <button class="replay" id="d-chev-toggle">Toggle</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-resize</div>
+        <div class="d">Height reveal with no magic pixel value — a <code>0fr→1fr</code> grid.</div>
+        <div class="stage stage--block"><div class="c-resize" id="d-resize"><div><p class="d" style="padding-top:2px">Collapsible detail that expands by animating its track height — content stays in flow, nothing is measured.</p></div></div></div>
+        <button class="replay" id="d-resize-toggle">Toggle</button>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-dissolve</div>
+        <div class="d">Clearing a field or chip — blur + fade, holds the end-state.</div>
+        <div class="stage"><span class="c-badge c-badge--muted" id="d-dissolve">draft-07</span></div>
+        <button class="replay" data-target="d-dissolve" data-cls="c-dissolve" data-dissolve>Replay</button>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="subhead">Loading &amp; overlay</h2>
+  <section style="margin-bottom:0">
+    <div class="row3">
+      <div class="stcard">
+        <div class="k">.c-skeleton</div>
+        <div class="d">A loading placeholder — a sheen translates across (compositor, not background-position).</div>
+        <div class="stage stage--block"><div class="skelblock"><div class="c-skeleton"></div><div class="c-skeleton"></div><div class="c-skeleton"></div></div></div>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-shimmer</div>
+        <div class="d">A live “thinking” cue — a bright band sweeps the copy. Ties to the glyph running state.</div>
+        <div class="stage"><span class="c-shimmer statelbl" style="letter-spacing:.06em">Planning next moves…</span></div>
+      </div>
+      <div class="stcard">
+        <div class="k">.c-modal</div>
+        <div class="d">A dialog over a dimmed scrim — scrim fades, dialog scales up and settles.</div>
+        <div class="stage"><button class="c-btn c-btn--primary" id="d-modal-open">Open modal</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="modal-root"></div>
 
 <script>
   // Replay helpers: yank + restore the class to restart CSS animations.
@@ -120,10 +209,6 @@
   });
   document.getElementById('replay-data').addEventListener('click', function () {
     replay(document.getElementById('data-block'), 'c-data-enter');
-  });
-  document.getElementById('replay-entrances').addEventListener('click', function () {
-    replay(document.getElementById('rise-card'), 'c-rise');
-    replay(document.getElementById('slide-card'), 'c-slide-in');
   });
 
   // Gauge: set --v from JS; the registered property transitions.
@@ -143,6 +228,63 @@
     tickEl.textContent = n.toLocaleString('en-US');
     replay(tickEl, 'c-tick');
   }, 2600);
+
+  // ── State-transition demos ──────────────────────────────
+  var ICONS = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"></path></svg>'
+  ];
+  var iconI = 0;
+  document.getElementById('d-icon').innerHTML = ICONS[0];
+  var SWAPS = [['RUNNING','var(--warning)'], ['DONE','var(--success)'], ['QUEUED','var(--text-disabled)']];
+  var swapI = 0;
+
+  document.querySelectorAll('.replay[data-cls]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.dataset.target);
+      if (btn.hasAttribute('data-num')) el.textContent = Math.floor(100 + Math.random() * 900);
+      if (btn.hasAttribute('data-swap')) { swapI = (swapI + 1) % SWAPS.length; el.textContent = SWAPS[swapI][0]; el.style.color = SWAPS[swapI][1]; }
+      if (btn.hasAttribute('data-icon')) { iconI = (iconI + 1) % ICONS.length; el.innerHTML = ICONS[iconI]; }
+      if (btn.hasAttribute('data-dissolve')) {
+        replay(el, btn.dataset.cls);
+        el.addEventListener('animationend', function once() { el.style.opacity = ''; el.style.filter = ''; el.classList.remove(btn.dataset.cls); el.removeEventListener('animationend', once); });
+        return;
+      }
+      replay(el, btn.dataset.cls);
+    });
+  });
+
+  var chev = document.getElementById('d-chev');
+  function toggleChev() { chev.setAttribute('aria-expanded', chev.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); }
+  document.getElementById('d-chev-toggle').addEventListener('click', toggleChev);
+  chev.addEventListener('click', toggleChev);
+  document.getElementById('d-resize-toggle').addEventListener('click', function () {
+    document.getElementById('d-resize').classList.toggle('is-open');
+  });
+
+  document.getElementById('d-modal-open').addEventListener('click', function () {
+    var root = document.getElementById('modal-root');
+    root.innerHTML =
+      '<div class="c-modal-overlay">' +
+        '<div class="c-modal" role="dialog" aria-modal="true">' +
+          '<div class="c-modal-head"><span class="c-modal-eyebrow"><b>CONFIRM</b> · destructive</span>' +
+            '<button class="c-modal-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>' +
+          '<div class="c-modal-body"><h3 class="c-modal-title">Delete this run?</h3>' +
+            '<p class="c-modal-text">This removes the run and its logs. This action cannot be undone.</p></div>' +
+          '<div class="c-modal-foot"><span class="c-modal-foot-meta">run #4821</span>' +
+            '<div class="c-modal-actions"><button class="c-btn c-btn--secondary" data-close>Cancel</button>' +
+            '<button class="c-btn c-btn--danger" data-close>Delete</button></div></div>' +
+        '</div></div>';
+    var overlay = root.firstElementChild;
+    function close() {
+      overlay.classList.add('is-closing');
+      overlay.addEventListener('animationend', function () { root.innerHTML = ''; }, { once: true });
+      setTimeout(function () { if (root.firstChild) root.innerHTML = ''; }, 360);
+    }
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    overlay.querySelectorAll('[data-close], .c-modal-close').forEach(function (b) { b.addEventListener('click', close); });
+  });
 </script>
 </body>
 </html>

@@ -4,6 +4,52 @@ All notable changes to Cicrus are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com); versioning is
 [Semantic Versioning](https://semver.org).
 
+## [2.10.0] — 2026-06-14
+
+Motion expansion. Audited every component against a catalog of common UI transitions
+and added the ones that encode real state. All adapted to the percussive doctrine
+(one curve, ≤4px blur, no spring/bounce/rotate) and gated behind
+`prefers-reduced-motion`. New `.c-modal` component the tokens already anticipated.
+
+### Added
+- **`motion.css` one-shot state transitions** (re-trigger via class-yank):
+  `.c-flip` (number arriving — blur-drop; the upgrade over `.c-tick`),
+  `.c-swap` (label changing meaning), `.c-shake` (rejected input — three hard
+  knocks), `.c-check` (completion landing), `.c-icon-swap`, `.c-badge-in`,
+  `.c-dissolve` (field/chip clear, `forwards`).
+- **Disclosure & layout helpers** (end-state is a base rule; only the transition
+  is gated): `.c-chevron` (rotate-on-open via `[aria-expanded]` / `.c-chevron--open`),
+  `.c-resize` (height reveal via a `0fr→1fr` grid track — same sanctioned
+  grid-rows mechanism as `.doc-reveal`, no magic pixel value).
+- **Looping signals**: `.c-skeleton` (loading sheen — a highlight pseudo
+  translates across, not `background-position`), `.c-shimmer` (live "thinking"
+  text sweep, tied to the glyph running state). The skeleton highlight is
+  `color-mix()`'d off `--text-display`, so the sheen re-themes in light/liquid.
+- **`.c-modal` component** (`components.css`): `.c-modal-overlay` > `.c-modal`
+  with head/body/foot (`.c-modal-eyebrow`, `.c-modal-close`, `.c-modal-title`,
+  `.c-modal-text`, `.c-modal-foot-meta`, `.c-modal-actions`). Entrance/exit in
+  `motion.css` (scrim fades, dialog scales in from 0.96 + 2px blur; `.is-closing`
+  reverses). Liquid mode renders it as heavy occluding glass
+  (`--glass-heavy-fill` + the shared blur + specular rim + float shadow) per the
+  floor-discipline exception, with a no-backdrop-filter fallback to
+  `--glass-fallback-fill`. The `--glass-heavy-fill` token loses its "no `.c-modal`
+  ships yet" caveat — it is now a real consumer.
+- Motion card (`examples/previews/motion/motion-demo.html`) replaced with live,
+  replayable demos of every new class (number flip, label swap, shake, check,
+  icon swap, badge in, chevron, resize, dissolve, skeleton, shimmer, modal);
+  `docs/motion.md` and `docs/components.md` updated with the new tables.
+
+### Changed
+- Motion doctrine (`motion.css` + `docs/motion.md` §1.3): the "opacity + transform
+  only" rule now lists the full set of sanctioned bounded exceptions — SVG stroke
+  draw (`c-draw`), registered custom-prop sweeps (`--v`, `--p`), the grid-rows
+  disclosure (`.doc-reveal` / `.c-resize`), a thread of blur (≤4px) on one-shot
+  state transitions, and the skeleton/shimmer sweeps (translate, not
+  `background-position`).
+- `docs/motion.md` JS hooks: example tick now uses `.c-flip` (the percussive
+  upgrade) and adds the modal open/close pattern (`.is-closing` on the overlay,
+  remove the node on `animationend`).
+
 ## [2.9.0] — 2026-06-12
 
 Open-source quality pass: four adversarial design reviews (foundations, components,

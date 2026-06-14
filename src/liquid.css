@@ -184,6 +184,20 @@ body.liquid
   background: var(--surface-raised);
 }
 
+/* ── Modal: the floor-discipline exception ─────────────────
+   Modals must occlude what they float over — heavy near-opaque
+   glass (--glass-heavy-fill), one blur pass, the specular rim,
+   a deep float shadow. Never a transparent pane. The scrim that
+   dims the backdrop is the overlay's own rgba fill (no blur on
+   the overlay itself — only the dialog frosts). */
+body.liquid .c-modal {
+  background: var(--glass-heavy-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-rim), var(--glass-shadow-float);
+  border-color: transparent;
+}
+
 /* ── Decorative stipple ────────────────────────────────────
    Dotted motifs pick up the accent at low weight. */
 body.liquid .dot-grid-bg {
@@ -209,6 +223,7 @@ body.liquid .dot-grid-strong {
   body.liquid .c-panel,
   body.liquid .c-alert,
   body.liquid .c-input-pill,
+  body.liquid .c-modal,
   body.liquid .doc-callout,
   body.liquid .doc-prompt,
   body.liquid .doc-code,

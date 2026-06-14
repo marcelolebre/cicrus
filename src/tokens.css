@@ -140,7 +140,7 @@ body.liquid {
      blur amount: panes read as glass because they're milky and rimmed. */
   --glass-chrome-fill: rgba(255, 255, 255, 0.10);  /* bars: flush, no float shadow */
   --glass-panel-fill:  rgba(255, 255, 255, 0.12);  /* cards, panels, long-form blocks */
-  --glass-heavy-fill:  rgba(13, 13, 22, 0.82);     /* modals — must occlude what they float over (no .c-modal ships yet; this is the spec'd material for one) */
+  --glass-heavy-fill:  rgba(13, 13, 22, 0.82);     /* modals — must occlude what they float over (consumed by .c-modal in liquid.css) */
   --glass-veil: rgba(10, 10, 20, 0.15);            /* native context: the only thing the page paints */
   --glass-fallback-fill: rgba(13, 13, 22, 0.94);   /* no-backdrop-filter fallback: near-opaque, text stays readable */
   --surface: var(--glass-panel-fill);
